@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "9001:9000"
+    networks:
+      - app-network
+
+  webserver:
+    image: nginx:alpine
+    volumes:
+      - .:/var/www/html
+      - './docker/conf/nginx:/etc/nginx/conf.d'
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  db:
+    image: postgres:16.6
+    environment:
+      POSTGRES_DB: online_shop_db
+      POSTGRES_USER: user_db
+      POSTGRES_PASSWORD: 123
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "54323:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
