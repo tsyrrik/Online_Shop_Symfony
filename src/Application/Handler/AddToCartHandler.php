@@ -6,16 +6,9 @@ use App\Application\Command\AddToCartCommand;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 use App\Domain\Cart\Repository\CartRepositoryInterface;
 use App\Domain\Cart\Cart;
-class AddToCartHandler
+readonly class AddToCartHandler
 {
-    private ProductRepositoryInterface $productRepository;
-    private CartRepositoryInterface $cartRepository;
-
-    public function __construct(ProductRepositoryInterface $productRepository, CartRepositoryInterface $cartRepository)
-    {
-        $this->productRepository = $productRepository;
-        $this->cartRepository = $cartRepository;
-    }
+    public function __construct(private ProductRepositoryInterface $productRepository, private CartRepositoryInterface $cartRepository) {}
 
     public function handle(AddToCartCommand $command): void
     {

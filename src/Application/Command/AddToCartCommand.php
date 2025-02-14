@@ -2,18 +2,9 @@
 
 namespace App\Application\Command;
 
-class AddToCartCommand
+readonly class AddToCartCommand
 {
-    private int $userId;
-    private int $productId;
-    private int $quantity;
-
-    public function __construct(int $userId, int $productId, int $quantity = 1)
-    {
-        $this->userId = $userId;
-        $this->productId = $productId;
-        $this->quantity = $quantity;
-    }
+    public function __construct(private int $userId, private int $productId, private int $quantity = 1) {}
 
     public function getUserId(): int
     {

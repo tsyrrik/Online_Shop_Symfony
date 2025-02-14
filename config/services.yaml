@@ -19,6 +19,15 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\Domain\Product\Repository\ProductRepositoryInterface:
+        alias: App\Infrastructure\Repository\InMemoryProductRepository
 
+    App\Domain\Cart\Repository\CartRepositoryInterface:
+        alias: App\Infrastructure\Repository\InMemoryCartRepository
+
+    App\Application\Handler\AddToCartHandler:
+        arguments:
+            $productRepository: '@App\Domain\Product\Repository\ProductRepositoryInterface'
+            $cartRepository: '@App\Domain\Cart\Repository\CartRepositoryInterface'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
