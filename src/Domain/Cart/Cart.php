@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Cart;
 
 use App\Domain\Product\Product;
@@ -16,6 +18,7 @@ class Cart
         foreach ($this->items as $item) {
             if ($item->getProduct()->getId() === $product->getId()) {
                 $item->increaseQuantity($quantity);
+
                 return;
             }
         }
@@ -24,9 +27,7 @@ class Cart
 
     public function removeProduct(int $productId): void
     {
-        $this->items = array_filter($this->items, function (CartItem $item) use ($productId) {
-            return $item->getProduct()->getId() !== $productId;
-        });
+        $this->items = array_filter($this->items, static fn(CartItem $item) => $item->getProduct()->getId() !== $productId);
     }
 
     /**

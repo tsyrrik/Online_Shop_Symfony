@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Security;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,9 +22,10 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     {
         $username = $request->request->get('username', '');
         $password = $request->request->get('password', '');
+
         return new Passport(
             new UserBadge($username),
-            new PasswordCredentials($password)
+            new PasswordCredentials($password),
         );
     }
 
@@ -31,6 +34,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
+
         return new RedirectResponse('/');
     }
 

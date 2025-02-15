@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Product\Product;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
+
 class InMemoryProductRepository implements ProductRepositoryInterface
 {
     /**
      * @var Product[]
      */
     private array $products = [];
+
     public function __construct()
     {
         $this->products = [
@@ -27,10 +31,12 @@ class InMemoryProductRepository implements ProductRepositoryInterface
             ]),
         ];
     }
+
     public function save(Product $product): void
     {
         $this->products[$product->getId()] = $product;
     }
+
     public function findById(int $id): ?Product
     {
         return $this->products[$id] ?? null;

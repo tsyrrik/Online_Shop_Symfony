@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Command;
 
 readonly class AddToCartCommand
@@ -10,10 +12,12 @@ readonly class AddToCartCommand
     {
         return $this->userId;
     }
+
     public function getProductId(): int
     {
         return $this->productId;
     }
+
     public function getQuantity(): int
     {
         return $this->quantity;

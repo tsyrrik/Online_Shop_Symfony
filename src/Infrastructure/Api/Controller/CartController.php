@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Api\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Application\Command\AddToCartCommand;
 use App\Application\Handler\AddToCartHandler;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class CartController extends AbstractController
 {
-    public function __construct(private AddToCartHandler $addToCartHandler){}
+    public function __construct(private AddToCartHandler $addToCartHandler) {}
 
     /**
      * @Route("/api/cart/add", name="api_cart_add", methods={"POST"})
@@ -29,7 +32,7 @@ class CartController extends AbstractController
 
         try {
             $this->addToCartHandler->handle($command);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], 500);
         }
 

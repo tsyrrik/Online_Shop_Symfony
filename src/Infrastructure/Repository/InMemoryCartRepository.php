@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Cart\Cart;
 use App\Domain\Cart\Repository\CartRepositoryInterface;
+
 class InMemoryCartRepository implements CartRepositoryInterface
 {
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Api\Controller;
 
 use App\Domain\Product\Repository\ProductRepositoryInterface;
@@ -9,10 +11,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class ProductController extends AbstractController
 {
     public function __construct(private ProductRepositoryInterface $productRepository) {}
+
     /**
      * @Route("/api/products", name="api_products", methods={"GET"})
      */
-
     public function list(): JsonResponse
     {
         $products = $this->productRepository->findAll();
@@ -25,9 +27,10 @@ class ProductController extends AbstractController
                 'description' => $product->getDescription(),
                 'cost'        => $product->getCost(),
                 'tax'         => $product->getTax(),
-                'measurements'=> $product->getMeasurements(),
+                'measurements' => $product->getMeasurements(),
             ];
         }
+
         return new JsonResponse($data);
     }
 }
