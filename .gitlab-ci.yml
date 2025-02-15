@@ -18,7 +18,7 @@
 
 stages:          # List of stages for jobs, and their order of execution
   - build
-  - test
+  - quality
   - deploy
 
 cache:
@@ -37,7 +37,7 @@ build-job:
 
 # Можно добавить несколько отдельных job-ов в стадии test, например, для юнит-тестов и для статического анализа кода
 phpunit-test-job:
-  stage: test
+  stage: quality
   image: php:8.2
   variables:
     # Если нужно, указываем окружение. Для Symfony может потребоваться APP_ENV=test
@@ -46,6 +46,12 @@ phpunit-test-job:
     - ./vendor/bin/phpunit
     # при необходимости можно запустить функциональные тесты:
     # - ./vendor/bin/phpunit --testsuite=Functional
+php-css:
+  stage: quality
+  image: php:8.2
+  script:
+    - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
+    
 
 # Деплой. Может потребоваться SSH-доступ или деплой через Docker, Kubernetes и т.д.
 deploy-job:
