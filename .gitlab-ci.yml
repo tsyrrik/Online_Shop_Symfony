@@ -50,7 +50,7 @@ php-css:
   stage: quality
   image: php:8.2
   script:
-    - ./vendor/bin/php-cs-fixer fix src --stop-on-violation
+    - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
     
 
 # Деплой. Может потребоваться SSH-доступ или деплой через Docker, Kubernetes и т.д.
