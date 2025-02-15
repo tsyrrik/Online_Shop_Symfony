@@ -21,29 +21,43 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/
+
+build-job:
   stage: build
+  image: composer:latest
   script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
+    - composer install --prefer-dist --no-interaction
+  artifacts:
+    paths:
+      - vendor/
 
-unit-test-job:   # This job runs in the test stage.
-  stage: test    # It only starts when the job in the build stage completes successfully.
+# Можно добавить несколько отдельных job-ов в стадии test, например, для юнит-тестов и для статического анализа кода
+phpunit-test-job:
+  stage: test
+  image: php:8.1
+  variables:
+    # Если нужно, указываем окружение. Для Symfony может потребоваться APP_ENV=test
+    APP_ENV: test
   script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
+    - php --version
+    - composer --version
+    - ./vendor/bin/phpunit --testsuite=Unit
+    # при необходимости можно запустить функциональные тесты:
+    # - ./vendor/bin/phpunit --testsuite=Functional
 
-lint-test-job:   # This job also runs in the test stage.
-  stage: test    # It can run at the same time as unit-test-job (in parallel).
-  script:
-    - echo "Linting code... This will take about 10 seconds."
-    - sleep 10
-    - echo "No lint issues found."
-
-deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+# Деплой. Может потребоваться SSH-доступ или деплой через Docker, Kubernetes и т.д.
+deploy-job:
+  stage: deploy
   environment: production
+  only:
+    - main   # или любая другая ветка, с которой вы деплоите (master, production и пр.)
   script:
-    - echo "Deploying application..."
+    - echo "Deploying the application..."
+    # Пример: копирование артефактов или выполнение команд на сервере
+    # - scp -r . user@your-server.com:/var/www/your-project
+    # - ssh user@your-server.com 'cd /var/www/your-project && php bin/console cache:clear --env=prod'
     - echo "Application successfully deployed."
