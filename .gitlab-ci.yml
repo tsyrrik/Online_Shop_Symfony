@@ -54,7 +54,7 @@ deploy-job:
   stage: deploy
   environment: production
   only:
-    - main   # или любая другая ветка, с которой вы деплоите (master, production и пр.)
+    - master   # или любая другая ветка, с которой вы деплоите (master, production и пр.)
   script:
     - echo "Deploying the application..."
     # Пример: копирование артефактов или выполнение команд на сервере
