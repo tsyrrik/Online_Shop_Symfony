@@ -38,7 +38,7 @@ build-job:
 # Можно добавить несколько отдельных job-ов в стадии test, например, для юнит-тестов и для статического анализа кода
 phpunit-test-job:
   stage: test
-  image: php:8.1
+  image: php:8.2
   variables:
     # Если нужно, указываем окружение. Для Symfony может потребоваться APP_ENV=test
     APP_ENV: test
