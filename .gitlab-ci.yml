@@ -43,8 +43,6 @@ phpunit-test-job:
     # Если нужно, указываем окружение. Для Symfony может потребоваться APP_ENV=test
     APP_ENV: test
   script:
-    - php --version
-    - ls
     - ./vendor/bin/phpunit --testsuite=Unit
     # при необходимости можно запустить функциональные тесты:
     # - ./vendor/bin/phpunit --testsuite=Functional
