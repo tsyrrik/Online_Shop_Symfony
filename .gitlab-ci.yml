@@ -44,7 +44,7 @@ phpunit-test-job:
     APP_ENV: test
   script:
     - php --version
-    - composer --version
+    - ls
     - ./vendor/bin/phpunit --testsuite=Unit
     # при необходимости можно запустить функциональные тесты:
     # - ./vendor/bin/phpunit --testsuite=Functional
