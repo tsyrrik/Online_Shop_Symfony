@@ -1,0 +1,22 @@
+-   name: doctrine
+    hosts: localhost
+    remote_user: ans
+    vars:
+      -   work_dir: "/tmp"
+      -   build_tag: "build-sphere-backend-{{ CI_COMMIT_SHORT_SHA }}"
+
+    tasks:
+      -   name: Определяем последнюю тестовую сборку
+          raw: ls -d -r {{ work_dir }}/{{ build_tag }}_* | head -n  1
+          register: build_dir_result
+
+      -   name: Директория для проверок
+          debug: var=build_dir_result.stdout_lines
+
+      -   raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" \
+              && php8.2 bin/console cache:clear --env=prod \
+              && bin/console lint:container --env=prod
+          register: di_result
+
+      -   name: "Вывод:"
+          debug: var=di_result.stdout_lines

@@ -1,0 +1,18 @@
+- name: clear-build-dir
+  hosts: localhost
+  remote_user: ans
+  vars:
+    - work_dir: "/tmp"
+    - build_tag: "build-sphere-backend-{{ CI_COMMIT_SHORT_SHA }}"
+
+  tasks:
+    - name: Определяем последнюю тестовую сборку
+      raw: ls -dt {{ work_dir }}/{{ build_tag }}_* | head -n  1
+      register: build_dir_result
+
+    - name: Директория для проверок
+      debug: var=build_dir_result.stdout_lines
+
+    - name: Очищаем от старых сборок
+      raw: rm -rf {{ build_dir_result.stdout_lines[0] }}
+      become: true

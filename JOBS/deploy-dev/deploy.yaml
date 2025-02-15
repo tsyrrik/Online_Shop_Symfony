@@ -1,0 +1,72 @@
+- name: deploy
+  hosts: localhost
+  remote_user: ans
+  vars:
+    - version: "{{ CI_COMMIT_SHA }}"
+    - work_dir: "/var/www/{{ HOST }}-mossphere.kr.digital/backend"
+    - release_dir: "{{ work_dir }}/build-{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}"
+    - repo: "{{ CI_REPOSITORY_URL|regex_replace('(https:\\/\\/)(.*)@(.*)', 'ssh://git@\\3') }}"
+    - php: php8.2
+
+  tasks:
+    - git:
+        repo: "{{ repo }}"
+        dest: "{{ release_dir }}"
+        version: "{{ version }}"
+        accept_hostkey: true
+        force: yes
+
+    - copy:
+        src: .env.local
+        dest: "{{ release_dir }}/app/.env.local"
+
+    - copy:
+        src: auth.json
+        dest: "{{ release_dir }}/app/auth.json"
+
+    - name: composer install
+      raw: cd "{{ release_dir }}/app" && {{ php }} /usr/local/bin/composer install --no-interaction
+      register: composer_install
+
+    - debug: var=composer_install.stdout_lines
+
+    - name: database migrate
+      raw: cd "{{ release_dir }}/app" && {{ php }} bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+      register: doctrine_migrations_migrate
+
+    - debug: var=doctrine_migrations_migrate.stdout_lines
+
+    - name: make supervisor config
+      raw: cd "{{ release_dir }}/app" && {{ php }} bin/console make:supervisor:config
+      ignore_errors: true
+      register: s_m_c
+
+    - name: release owner
+      file:
+        path: "{{ release_dir }}"
+        owner: www-data
+        group: www-data
+        recurse: yes
+      become: yes
+
+    - name: enable
+      file:
+        dest: "{{ work_dir }}/current"
+        src: "{{ release_dir }}"
+        state: link
+        force: yes
+      become: yes
+
+    - name: Перезапускаем супервизор
+      systemd:
+        state: restarted
+        name: supervisor
+      become: yes
+      register: supervisorctl_restart_all
+    - debug: var=supervisorctl_restart_all.stdout_lines
+
+    - name: Очищаем от старых сборок
+      raw: cd "{{ work_dir }}" && rm -rf `ls -d build-[0-9]*  | head -n -2`
+      become: yes
+
+

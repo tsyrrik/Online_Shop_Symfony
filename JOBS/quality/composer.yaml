@@ -1,0 +1,25 @@
+-   name: composer
+    hosts: localhost
+    remote_user: ans
+    vars:
+      -   work_dir: "/tmp"
+      -   build_tag: "build-sphere-backend-{{ CI_COMMIT_SHORT_SHA }}"
+
+    tasks:
+      -   name: Определяем последнюю тестовую сборку
+          raw: ls -d -r {{ work_dir }}/{{ build_tag }}_* | head -n  1
+          register: build_dir_result
+
+      -   name: Директория для проверок
+          debug: var=build_dir_result.stdout_lines
+
+      -   raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" \
+            && composer normalize --diff --dry-run \
+            && composer validate \
+            && php8.2 vendor/bin/composer-require-checker check --config-file=composer-require-checker.json \
+            && php8.2 vendor/bin/composer-unused \
+            && composer audit
+          register: composer_result
+
+      -   name: "Вывод:"
+          debug: var=composer_result.stdout_lines

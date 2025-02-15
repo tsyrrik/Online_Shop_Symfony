@@ -1,0 +1,36 @@
+- name: phpunit
+  hosts: localhost
+  remote_user: ans
+  vars:
+    - work_dir: "/tmp"
+    - build_tag: "build-sphere-backend-{{ CI_COMMIT_SHORT_SHA }}"
+
+  tasks:
+    - name: Определяем последнюю тестовую сборку
+      raw: ls -d -r {{ work_dir }}/{{ build_tag }}_* | head -n  1
+      register: build_dir_result
+
+    - name: Директория для проверок
+      debug: var=build_dir_result.stdout_lines
+
+    - copy:
+        src: .env.test.local
+        dest: "{{ build_dir_result.stdout_lines[0] }}/app/.env.test.local"
+
+    - name: doctrine:database:create --if-not-exists
+      raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" && php8.2 bin/console doctrine:database:create --if-not-exists --env=test
+      register: doctrine_database_create
+
+    - debug: var=doctrine_database_create.stdout_lines
+
+    - raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" && XDEBUG_MODE=coverage php8.2 ./bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml
+      register: tests_result
+
+    - name: Скачиваем артефакты
+      fetch:
+        src: /{{ build_dir_result.stdout_lines[0] }}/app/coverage.cobertura.xml
+        dest: "{{ CI_PROJECT_DIR }}/"
+        flat: yes
+
+    - name: "Вывод:"
+      debug: var=tests_result.stdout_lines
