@@ -1,5 +1,7 @@
 {
     "license": "proprietary",
+    "name": "tsyren/onlineshop",
+    "description": "online-shop",
     "type": "project",
     "require": {
         "php": ">=8.2",
