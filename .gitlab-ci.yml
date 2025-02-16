@@ -56,11 +56,9 @@ composer:
   stage: quality
   image: php:8.2
   script:
-    - a --diff --dry-run
-    - composer validate
-    - php8.2 vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
-    - php8.2 vendor/bin/composer-unused
-    - composer audit
+    - ./vendor/bin/composer-require-normalize --diff --dry-run -a --diff --dry-run
+    - ./vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
+    - ./vendor/bin/composer-unused
 
 deploy-job:
   stage: deploy
