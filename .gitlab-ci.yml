@@ -56,7 +56,7 @@ composer:
   stage: quality
   image: php:8.2
   script:
-    - ./vendor/bin/composer-require-normalize --diff --dry-run -a --diff --dry-run
+    - ./vendor/bin/composer-require-normalize --diff --dry-run
     - ./vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
     - ./vendor/bin/composer-unused
 
