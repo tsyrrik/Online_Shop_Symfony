@@ -26,7 +26,7 @@ cache:
   paths:
     - vendor/
 
-build-job:
+build-job: 
   stage: build
   image: composer:latest
   script:
@@ -36,7 +36,7 @@ build-job:
       - vendor/
 
 # Можно добавить несколько отдельных job-ов в стадии test, например, для юнит-тестов и для статического анализа кода
-phpunit-test-job:
+phpunit:
   stage: quality
   image: php:8.2
   variables:
@@ -46,14 +46,22 @@ phpunit-test-job:
     - ./vendor/bin/phpunit
     # при необходимости можно запустить функциональные тесты:
     # - ./vendor/bin/phpunit --testsuite=Functional
-php-css:
+cs:
   stage: quality
   image: php:8.2
   script:
     - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
-    
 
-# Деплой. Может потребоваться SSH-доступ или деплой через Docker, Kubernetes и т.д.
+composer:
+  stage: quality
+  image: php:8.2
+  script:
+    - a --diff --dry-run
+    - composer validate
+    - php8.2 vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
+    - php8.2 vendor/bin/composer-unused
+    - composer audit
+
 deploy-job:
   stage: deploy
   environment: production
