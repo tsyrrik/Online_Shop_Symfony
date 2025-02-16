@@ -66,6 +66,11 @@ di:
     - bin/console cache:clear --env=prod
     - bin/console lint:container --env=prod
 
+rector:
+  stage: quality
+  image: composer:latest
+  script:
+    - vendor/rector/rector/bin/rector --dry-run
 
 deploy-job:
   stage: deploy
