@@ -54,7 +54,8 @@ cs:
 
 composer:
   stage: quality
-  image: php:8.2
+  image: composer:latest
+  
   script:
     - composer normalize --diff --dry-run
     - composer validate
