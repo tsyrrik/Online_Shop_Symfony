@@ -64,8 +64,8 @@ composer:
 di:
   stage: quality
   script:
-    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
     - bin/console cache:clear --env=prod
+    - bin/console lint:container --env=prod
 
 
 deploy-job:
