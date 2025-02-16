@@ -66,6 +66,17 @@ di:
     - bin/console cache:clear --env=prod
     - bin/console lint:container --env=prod
 
+rector:
+  stage: quality
+  image: composer:latest
+  script:
+    - vendor/rector/rector/bin/rector --dry-run
+
+schema-validate:
+  stage: quality
+  image: composer:latest
+  script:
+    - bin/console doctrine:schema:validate --skip-sync
 
 deploy-job:
   stage: deploy
