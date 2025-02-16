@@ -55,12 +55,18 @@ cs:
 composer:
   stage: quality
   image: composer:latest
-  
   script:
     - composer normalize --diff --dry-run
     - composer validate
     - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
+    #- php8.2 vendor/bin/composer-unused
     - composer audit
+di:
+  stage: quality
+  script:
+    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
+    - bin/console cache:clear --env=prod
+
 
 deploy-job:
   stage: deploy
