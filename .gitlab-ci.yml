@@ -72,6 +72,12 @@ rector:
   script:
     - vendor/rector/rector/bin/rector --dry-run
 
+schema-validate:
+  stage: quality
+  image: composer:latest
+  script:
+    - bin/console doctrine:schema:validate --skip-sync
+
 deploy-job:
   stage: deploy
   environment: production
