@@ -59,8 +59,8 @@ composer:
   script:
     - composer normalize --diff --dry-run
     - composer validate
-    - php8.2 vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
-    - php8.2 vendor/bin/composer-unused
+    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
+    - vendor/bin/composer-unused
     - composer audit
 
 deploy-job:
