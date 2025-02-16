@@ -16,7 +16,7 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
 
-stages:          # List of stages for jobs, and their order of execution
+stages:
   - build
   - quality
   - deploy
@@ -35,17 +35,14 @@ build-job:
     paths:
       - vendor/
 
-# Можно добавить несколько отдельных job-ов в стадии test, например, для юнит-тестов и для статического анализа кода
 phpunit:
   stage: quality
   image: php:8.2
   variables:
-    # Если нужно, указываем окружение. Для Symfony может потребоваться APP_ENV=test
     APP_ENV: test
   script:
     - ./vendor/bin/phpunit
-    # при необходимости можно запустить функциональные тесты:
-    # - ./vendor/bin/phpunit --testsuite=Functional
+
 cs:
   stage: quality
   image: php:8.2
@@ -61,8 +58,10 @@ composer:
     - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
     #- php8.2 vendor/bin/composer-unused
     - composer audit
+
 di:
   stage: quality
+  image: php:8.2
   script:
     - bin/console cache:clear --env=prod
     - bin/console lint:container --env=prod
@@ -75,7 +74,4 @@ deploy-job:
     - master   # или любая другая ветка, с которой вы деплоите (master, production и пр.)
   script:
     - echo "Deploying the application..."
-    # Пример: копирование артефактов или выполнение команд на сервере
-    # - scp -r . user@your-server.com:/var/www/your-project
-    # - ssh user@your-server.com 'cd /var/www/your-project && php bin/console cache:clear --env=prod'
     - echo "Application successfully deployed."
