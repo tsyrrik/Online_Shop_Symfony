@@ -85,6 +85,12 @@ deptrac:
     - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
     - vendor/bin/deptrac --config-file=deptrac.yaml --cache-file=var/.deptrac.cache
 
+# psalm:   #пока отключил
+#   stage: quality
+#   image: composer:latest
+#   script:
+#     - vendor/vimeo/psalm/psalm
+
 deploy-job:
   stage: deploy
   environment: production
