@@ -83,7 +83,7 @@ deptrac:
   image: composer:latest
   script:
     - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
-    - vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
+    - vendor/bin/deptrac --config-file=deptrac.yaml --cache-file=var/.deptrac.cache
 
 deploy-job:
   stage: deploy
