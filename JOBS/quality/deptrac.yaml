@@ -15,7 +15,7 @@
 
       -   raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" \
               vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache 
-              vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache 
+              vendor/bin/deptrac --config-file=deptrac.yaml --cache-file=var/.deptrac.cache
           register: deptrac_result
 
       -   name: "Вывод:"
