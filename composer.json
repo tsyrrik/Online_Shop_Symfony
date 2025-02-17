@@ -51,6 +51,7 @@
         "twig/twig": "^2.12 || ^3.20"
     },
     "require-dev": {
+        "deptrac/deptrac": "^2.0",
         "doctrine/doctrine-fixtures-bundle": "^4.0",
         "ergebnis/composer-normalize": "^2.45",
         "friendsofphp/php-cs-fixer": "^3.68.5",

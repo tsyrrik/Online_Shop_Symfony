@@ -14,9 +14,8 @@
           debug: var=build_dir_result.stdout_lines
 
       -   raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" \
-              && php8.2 vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache \
-              && php8.2 vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache \
-              && php8.2 vendor/bin/deptrac --config-file=deptrac.artifact-format.yaml --cache-file=var/.deptrac.artifact-format.cache
+              vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache 
+              vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache 
           register: deptrac_result
 
       -   name: "Вывод:"

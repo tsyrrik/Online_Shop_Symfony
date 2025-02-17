@@ -1,0 +1,39 @@
+deptrac:
+  analyser:
+    types:
+      - class
+      - class_superglobal
+      - file
+      - function
+      - function_call
+      - function_superglobal
+      - use
+
+  layers:
+    - name: Ping
+      collectors:
+        - type: directory
+          value: src/Ping/.*
+    - name: User
+      collectors:
+        - type: directory
+          value: src/User/.*
+    - name: Logger
+      collectors:
+        - type: directory
+          value: src/Logger/.*
+    - name: File
+      collectors:
+        - type: directory
+          value: src/File/.*
+    - name: Main
+      collectors:
+        - type: directory
+          value: src/Main/.*
+
+  ruleset:
+    Ping:
+    File:
+    Logger:
+    User:
+      - Main
