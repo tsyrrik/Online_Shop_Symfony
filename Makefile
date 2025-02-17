@@ -1,2 +1,10 @@
-vendor/bin/php-cs-fixer -v --config=.php-cs-fixer.dist.php fix --stop-on-violation  --diff
-vendor/bin/php-cs-fixer fix src
+bash:
+	docker compose exec app bash
+
+build:
+	docker compose down \
+	&& docker compose build \
+	&& docker compose up -d
+
+cs-fix:
+	vendor/vimeo/psalm/psalm
