@@ -16,8 +16,8 @@
       -   raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" \
             && composer normalize --diff --dry-run \
             && composer validate \
-            && php8.2 vendor/bin/composer-require-checker check --config-file=composer-require-checker.json \
-            && php8.2 vendor/bin/composer-unused \
+            && vendor/bin/composer-require-checker check --config-file=composer-require-checker.json \
+            && vendor/bin/composer-unused \
             && composer audit
           register: composer_result
 

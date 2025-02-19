@@ -13,7 +13,7 @@
       -   name: Директория для проверок
           debug: var=build_dir_result.stdout_lines
 
-      -   raw: cd "{{ build_dir_result.stdout_lines[0] }}/app" && php8.2 vendor/friendsofphp/php-cs-fixer/php-cs-fixer -v --allow-risky=yes fix --dry-run --stop-on-violation
+      -   raw:  vendor/friendsofphp/php-cs-fixer/php-cs-fixer -v --allow-risky=yes fix --dry-run --stop-on-violation
           register: php_cs_fixer_result
 
       -   name: "Вывод:"
