@@ -1,6 +1,12 @@
 bash:
 	docker compose exec app bash
 
+up:
+	docker compose up -docker
+
+down:
+	docker compose down
+
 build:
 	docker compose down \
 	&& docker compose build \
