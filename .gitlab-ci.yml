@@ -1,25 +1,17 @@
-# This file is a template, and might need editing before it works on your project.
-# This is a sample GitLab CI/CD configuration file that should run without any modifications.
-# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
-# it uses echo commands to simulate the pipeline execution.
-#
-# A pipeline is composed of independent jobs that run scripts, grouped into stages.
-# Stages run in sequential order, but jobs within stages run in parallel.
-#
-# For more information, see: https://docs.gitlab.com/ee/ci/yaml/#stages
-#
-# You can copy and paste this template into a new `.gitlab-ci.yml` file.
-# You should not add this template to an existing `.gitlab-ci.yml` file by using the `include:` keyword.
-#
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
-
 stages:
   - build
-  - quality
+  - test
   - deploy
+  # - dast
+
+include:
+  - template: Jobs/Container-Scanning.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.gitlab-ci.yml
+  # - template: Security/DAST.gitlab-ci.yml
+  # - template: Security/API-Security.gitlab-ci.yml
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -36,7 +28,7 @@ build-job:
       - vendor/
 
 phpunit:
-  stage: quality
+  stage: test
   image: php:8.2
   variables:
     APP_ENV: test
@@ -44,13 +36,13 @@ phpunit:
     - ./vendor/bin/phpunit
 
 cs:
-  stage: quality
+  stage: test
   image: php:8.2
   script:
     - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
 
 composer:
-  stage: quality
+  stage: test
   image: composer:latest
   script:
     - composer normalize --diff --dry-run
@@ -60,33 +52,33 @@ composer:
     - composer audit
 
 di:
-  stage: quality
+  stage: test
   image: php:8.2
   script:
     - bin/console cache:clear --env=prod
     - bin/console lint:container --env=prod
 
 rector:
-  stage: quality
+  stage: test
   image: composer:latest
   script:
     - vendor/rector/rector/bin/rector --dry-run
 
 schema-validate:
-  stage: quality
+  stage: test
   image: composer:latest
   script:
     - bin/console doctrine:schema:validate --skip-sync
 
 deptrac:
-  stage: quality
+  stage: test
   image: composer:latest
   script:
     - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
     - vendor/bin/deptrac --config-file=deptrac.yaml --cache-file=var/.deptrac.cache
 
 # psalm:   #пока отключил
-#   stage: quality
+#   stage: test
 #   image: composer:latest
 #   script:
 #     - vendor/vimeo/psalm/psalm
@@ -95,7 +87,7 @@ deploy-job:
   stage: deploy
   environment: production
   only:
-    - master   # или любая другая ветка, с которой вы деплоите (master, production и пр.)
+    - master
   script:
     - echo "Deploying the application..."
     - echo "Application successfully deployed."
