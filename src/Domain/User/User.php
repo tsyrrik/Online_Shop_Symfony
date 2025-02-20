@@ -6,40 +6,25 @@ namespace App\Domain\User;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="users")
- */
+#[ORM\Entity]
+#[ORM\Table(name: "users")]
 class User
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string")
-     */
-    private string $name;
+    public function __construct(
+        #[ORM\Column(type: "string")]
+        private string $name,
 
-    /**
-     * @ORM\Column(type="string")
-     */
-    private string $phone;
+        #[ORM\Column(type: "string")]
+        private string $phone,
 
-    /**
-     * @ORM\Column(type="string", unique=true)
-     */
-    private string $email;
-
-    public function __construct(string $name, string $phone, string $email)
-    {
-        $this->name  = $name;
-        $this->phone = $phone;
-        $this->email = $email;
-    }
+        #[ORM\Column(type: "string", unique: true)]
+        private string $email
+    ) {}
 
     public function getId(): ?int
     {

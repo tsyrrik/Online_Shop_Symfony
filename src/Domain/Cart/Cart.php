@@ -1,42 +1,67 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Domain\Cart;
 
-use App\Domain\Product\Product;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class Cart
 {
-    /**
-     * @var CartItem[]
-     */
-    private array $items = [];
+    private int $userId;
 
-    public function addProduct(Product $product, int $quantity = 1): void
+    /** @var Collection|CartItem[] */
+    private Collection $items;
+
+    public function __construct(int $userId)
     {
-        foreach ($this->items as $item) {
-            if ($item->getProduct()->getId() === $product->getId()) {
-                $item->increaseQuantity($quantity);
+        $this->userId = $userId;
+        $this->items = new ArrayCollection();
+    }
 
+    public function addItem(CartItem $item): void
+    {
+        if ($this->items->count() >= 20) {
+            throw new \DomainException("В заказе не может быть более 20 позиций");
+        }
+
+        // Проверяем, есть ли уже такой продукт в корзине
+        foreach ($this->items as $existingItem) {
+            if ($existingItem->getProduct()->getId() === $item->getProduct()->getId()) {
+                $existingItem->increaseQuantity($item->getQuantity());
                 return;
             }
         }
-        $this->items[] = new CartItem($product, $quantity);
+
+        // Если продукта нет, добавляем новый элемент
+        $this->items->add($item);
     }
 
-    public function removeProduct(int $productId): void
+    public function removeItem(int $productId): void
     {
-        $this->items = array_filter($this->items, static fn(CartItem $item) => $item->getProduct()->getId() !== $productId);
+        foreach ($this->items as $key => $item) {
+            if ($item->getProduct()->getId() === $productId) {
+                $this->items->remove($key);
+                return;
+            }
+        }
     }
 
-    /**
-     * Возвращает все элементы корзины.
-     *
-     * @return CartItem[]
-     */
-    public function getItems(): array
+    public function getItems(): Collection
     {
         return $this->items;
+    }
+
+    public function getTotalQuantity(): int
+    {
+        return array_reduce(
+            $this->items->toArray(),
+            static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
+            0
+        );
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
     }
 }

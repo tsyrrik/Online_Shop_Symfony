@@ -1,37 +1,47 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Domain\Product;
 
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
 class Product
 {
-    private int $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    private string $name;
+    public function __construct(
+        #[ORM\Column(type: "string")]
+        private string $name,
 
-    private ?string $description;
+        #[ORM\Column(type: "integer")]
+        private int $weight,
 
-    private string $cost;
+        #[ORM\Column(type: "integer")]
+        private int $height,
 
-    private string $tax;
+        #[ORM\Column(type: "integer")]
+        private int $width,
 
-    private int $version;
+        #[ORM\Column(type: "integer")]
+        private int $length,
 
-    private array $measurments;
+        #[ORM\Column(type: "text", nullable: true)]
+        private ?string $description = null,
 
-    public function __construct(int $id, string $name, string $description, string $cost, string $tax, int $version, array $measurments)
-    {
-        $this->id = $id;
-        $this->name = $name;
-        $this->description = $description;
-        $this->cost = $cost;
-        $this->tax = $tax;
-        $this->version = $version;
-        $this->measurments = $measurments;
-    }
+        #[ORM\Column(type: "integer")]
+        private int $cost,
 
-    public function getId(): int
+        #[ORM\Column(type: "integer")]
+        private int $tax,
+
+        #[ORM\Column(type: "integer")]
+        private int $version
+    ) {}
+
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -41,17 +51,37 @@ class Product
         return $this->name;
     }
 
-    public function getDescription(): string
+    public function getWeight(): int
+    {
+        return $this->weight;
+    }
+
+    public function getHeight(): int
+    {
+        return $this->height;
+    }
+
+    public function getWidth(): int
+    {
+        return $this->width;
+    }
+
+    public function getLength(): int
+    {
+        return $this->length;
+    }
+
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getCost(): string
+    public function getCost(): int
     {
         return $this->cost;
     }
 
-    public function getTax(): string
+    public function getTax(): int
     {
         return $this->tax;
     }
@@ -59,10 +89,5 @@ class Product
     public function getVersion(): int
     {
         return $this->version;
-    }
-
-    public function getMeasurments(): array
-    {
-        return $this->measurments;
     }
 }

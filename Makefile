@@ -1,6 +1,10 @@
 bash:
 	docker compose exec app bash
 
+cache:
+	bin/console cache:clear
+
+
 up:
 	docker compose up -docker
 

@@ -1,26 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Domain\Cart;
-
-use App\Domain\Product\Product;
 
 class CartItem
 {
-    private Product $product;
+    public function __construct(
+        private int $productId,
+        private int $quantity
+    ) {}
 
-    private int $quantity;
-
-    public function __construct(Product $product, int $quantity)
+    public function getProductId(): int
     {
-        $this->product = $product;
-        $this->quantity = $quantity;
-    }
-
-    public function getProduct(): Product
-    {
-        return $this->product;
+        return $this->productId;
     }
 
     public function getQuantity(): int
@@ -31,5 +22,13 @@ class CartItem
     public function increaseQuantity(int $amount = 1): void
     {
         $this->quantity += $amount;
+    }
+
+    public function decreaseQuantity(int $amount = 1): void
+    {
+        if ($this->quantity - $amount < 0) {
+            throw new \DomainException("Quantity cannot be less than zero.");
+        }
+        $this->quantity -= $amount;
     }
 }
