@@ -6,6 +6,7 @@ stages:
 
 variables:
   DAST_DISABLED_FOR_DEFAULT_BRANCH: false
+  REVIEW_DISABLED: false
   DAST_WEBSITE: https://example.com
 
 include:
