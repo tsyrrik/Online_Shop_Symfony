@@ -95,23 +95,7 @@ psalm: # проверка типов (и не только)
    script:
      - vendor/bin/psalm
 
-deploy: # автоматическая доставка изменений на сервер (dev/stage/prod - для каждой будет своя джоба)
-  stage: deploy
-  when: manual
-  only:
-    - master   # или main/develop/release.x.x.x
-  script:
-    - echo "Deploying the application..."
-#    здесь будет кастомная логика. в самом простом виде
-#     - ssh $HOST:$USER \
-#     && cd $PATH_TO_PROJECT \
-#     && git clone $LINK \
-#     && bin/console bin/console clear:cache \
-#     && bin/console doctrine:migration:migrate
-#  в более продвинутом варианте собираем docker image с кодом, vendor'ом, пушим в registry, и подменяем контейнер на сервере
-    - echo "Application successfully deployed."
-
-container_scanning:
+trivy_container_scan:
   image:
     name: docker.io/aquasec/trivy:latest
     entrypoint: [""]
@@ -146,7 +130,7 @@ container_scanning:
       container_scanning: gl-container-scanning-report.json
   stage: test
 
-kics-scan:
+kics-ioc-scan:
   stage: test
   image:
     name: checkmarx/kics:latest
@@ -158,7 +142,7 @@ kics-scan:
     paths:
       - kics-results.json
 
-secret_detection:
+gitleaks_secret_detection:
   stage: test
   image:
     name: zricethezav/gitleaks:latest
@@ -168,6 +152,22 @@ secret_detection:
   artifacts:
     paths:
       - gitleaks-report.json
+
+deploy: # автоматическая доставка изменений на сервер (dev/stage/prod - для каждой будет своя джоба)
+  stage: deploy
+  when: manual
+  only:
+    - master   # или main/develop/release.x.x.x
+  script:
+    - echo "Deploying the application..."
+#    здесь будет кастомная логика. в самом простом виде
+#     - ssh $HOST:$USER \
+#     && cd $PATH_TO_PROJECT \
+#     && git clone $LINK \
+#     && bin/console bin/console clear:cache \
+#     && bin/console doctrine:migration:migrate
+#  в более продвинутом варианте собираем docker image с кодом, vendor'ом, пушим в registry, и подменяем контейнер на сервере
+    - echo "Application successfully deployed."
 
 dast_nuclei:
   stage: dast1
