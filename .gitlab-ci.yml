@@ -51,7 +51,31 @@ phpunit:
   variables:
     APP_ENV: test
   script:
-    - ./vendor/bin/phpunit # https://github.com/sebastianbergmann/phpunit
+    - bin/console doctrine:database:create --if-not-exists --env=test
+    - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml # https://github.com/sebastianbergmann/phpunit
+  artifacts:
+      paths:
+        - coverage.cobertura.xml
+
+phpmd:
+  stage: test
+  image: php:8.2
+  script:
+    - vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
+  artifacts:
+      paths:
+        - phpmd_result.json
+
+doctrine_migrations_rollback:
+  stage: deploy
+  image: php:8.2
+  script:
+    - echo "Applying Doctrine migrations"
+    - bin/console doctrine:migrations:migrate --no-interaction
+    - echo "Rolling back Doctrine migrations"
+    - bin/console doctrine:migrations:migrate prev --no-interaction
+
+
 
 composer:
   stage: test
@@ -166,7 +190,7 @@ deploy: # автоматическая доставка изменений на 
 #     && git clone $LINK \
 #     && bin/console bin/console clear:cache \
 #     && bin/console doctrine:migration:migrate
-#  в более продвинутом варианте собираем docker image с кодом, vendor'ом, пушим в registry, и подменяем контейнер на сервере
+#  в более продвинутом варианте подменяем контейнер на сервере сбилженным image'м
     - echo "Application successfully deployed."
 
 dast_nuclei:
