@@ -7,16 +7,15 @@ stages:
 variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   DOCKER_IMAGE: $CONTAINER_TEST_IMAGE
-  DAST_WEBSITE: http://demoApp:8080/
-  DAST_FULL_SCAN_ENABLED: "true"
-
+  TARGET_URL: http://demoApp:8080/
+  
 include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
   - template: Jobs/SAST-IaC.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
   # - template: Security/DAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
   - template: Security/Container-Scanning.gitlab-ci.yml 
-  - template: Security/API-Security.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
+  # - template: Security/API-Security.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -129,21 +128,15 @@ secret_detection:
 kics-iac-sast:
   allow_failure: false
 
-api_security:
-  services: # use services to link your app container to the dast job
-    - name: $CONTAINER_TEST_IMAGE
-      alias: demoApp
+dast_nuclei:
   stage: dast
-  image: $SECURE_ANALYZERS_PREFIX/$APISEC_IMAGE:$APISEC_VERSION$APISEC_IMAGE_SUFFIX
-  allow_failure: true
+  image: projectdiscovery/nuclei:latest
   script:
-    - /peach/analyzer-api-security
+    - echo "Running Nuclei scan on $TARGET_URL"
+    - nuclei -u $TARGET_URL -severity critical,high -o nuclei-report.txt
   artifacts:
-    when: always
     paths:
-      - gl-assets
-      - gl-api-security-report.json
-      - gl-*.log
-    reports:
-      dast: gl-api-security-report.json
+      - nuclei-report.txt
+    when: always
+  allow_failure: true 
 
