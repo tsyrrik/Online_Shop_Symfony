@@ -101,7 +101,7 @@ psalm: # проверка типов (и не только)
 
 deploy: # автоматическая доставка изменений на сервер (dev/stage/prod - для каждой будет своя джоба)
   stage: deploy
-  when: always
+  when: manual
   only:
     - master   # или main/develop/release.x.x.x
   script:
@@ -128,6 +128,7 @@ kics-iac-sast:
 
 dast_nuclei:
   stage: dast1
+  when: always
   image: projectdiscovery/nuclei:latest
   script:
     - echo "Running Nuclei scan on $TARGET_URL"
