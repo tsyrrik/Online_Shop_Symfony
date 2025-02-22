@@ -133,4 +133,31 @@ api_security:
   services: # use services to link your app container to the dast job
     - name: $CONTAINER_TEST_IMAGE
       alias: demoApp
+  stage: dast
+  image: $SECURE_ANALYZERS_PREFIX/$APISEC_IMAGE:$APISEC_VERSION$APISEC_IMAGE_SUFFIX
+  allow_failure: true
+  rules:
+    - if: $APISEC_DISABLED == 'true' || $APISEC_DISABLED == '1'
+      when: never
+    - if: $APISEC_DISABLED_FOR_DEFAULT_BRANCH == 'true' &&
+          $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+      when: never
+    - if: $APISEC_DISABLED_FOR_DEFAULT_BRANCH == '1' &&
+          $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+      when: never
+    - if: $CI_COMMIT_BRANCH &&
+          $CI_GITLAB_FIPS_MODE == "true"
+      variables:
+        APISEC_IMAGE_SUFFIX: "-fips"
+    - if: $CI_COMMIT_BRANCH
+  script:
+    - /peach/analyzer-api-security
+  artifacts:
+    when: always
+    paths:
+      - gl-assets
+      - gl-api-security-report.json
+      - gl-*.log
+    reports:
+      dast: gl-api-security-report.json
 
