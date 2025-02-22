@@ -10,7 +10,6 @@ variables:
   
 include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
-  - template: Jobs/Container-Scanning.gitlab-ci.yml 
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -116,11 +115,6 @@ deploy: # автоматическая доставка изменений на 
     - echo "Application successfully deployed."
 
 container_scanning:
-  variables:
-    CS_IMAGE: $CONTAINER_TEST_IMAGE
-  allow_failure: false
-
-container_scanning1:
   image:
     name: docker.io/aquasec/trivy:latest
     entrypoint: [""]
@@ -171,8 +165,7 @@ secret_detection:
   stage: test
   image: zricethezav/gitleaks:latest
   script:
-    - echo "Running Gitleaks to detect secrets in the repository"
-    - gitleaks detect --source . --report-path gitleaks-report.json
+    - gitleaks dir . --report-path gitleaks-report.json
   artifacts:
     paths:
       - gitleaks-report.json
