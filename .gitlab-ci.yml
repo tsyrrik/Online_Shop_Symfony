@@ -11,8 +11,7 @@ include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
   - template: Jobs/SAST-IaC.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
-  # - template: Security/DAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/DAST.gitlab-ci.yml
-  # - template: Security/API-Security.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
+  - template: Security/API-Security.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -100,23 +99,3 @@ deploy: # автоматическая доставка изменений на 
 #  в более продвинутом варианте собираем docker image с кодом, vendor'ом, пушим в registry, и подменяем контейнер на сервере
     - echo "Application successfully deployed."
 
-dast:
-  stage: dast
-  image:
-    name: "$SECURE_ANALYZERS_PREFIX/dast:$DAST_VERSION$DAST_IMAGE_SUFFIX"
-  variables:
-    GIT_STRATEGY: none
-  allow_failure: true
-  script:
-    - /analyze
-  artifacts:
-    access: 'developer'
-    when: always
-    reports:
-      dast: gl-dast-report.json
-    paths:
-      - gl-dast-*.*
-  after_script:
-    # For DAST 4 compatibility, remove any debug.log files because they might contain secrets.
-    - rm -f /zap/wrk/**/debug.log
-    - cp -r /zap/wrk dast_artifacts
