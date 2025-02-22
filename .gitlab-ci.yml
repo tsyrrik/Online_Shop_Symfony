@@ -132,10 +132,10 @@ dast_nuclei:
   image: projectdiscovery/nuclei:latest
   script:
     - echo "Running Nuclei scan on $TARGET_URL"
-    - nuclei -u $TARGET_URL -severity critical,high -o nuclei-report.txt
+    - nuclei -u $TARGET_URL -debug -jsonl results.jsonl
   artifacts:
     paths:
-      - nuclei-report.txt
+      - results.jsonl
     when: always
   allow_failure: true 
 
