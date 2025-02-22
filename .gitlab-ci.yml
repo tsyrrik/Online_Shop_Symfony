@@ -10,7 +10,6 @@ variables:
   
 include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
-  - template: Jobs/Secret-Detection.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
   - template: Jobs/Container-Scanning.gitlab-ci.yml 
 
 cache:
@@ -156,10 +155,6 @@ container_scanning1:
       container_scanning: gl-container-scanning-report.json
   stage: test
 
-secret_detection:
-  variables:
-    SECRET_DETECTION_HISTORIC_SCAN: "true"
-
 kics-scan:
   stage: test
   image:
@@ -171,6 +166,16 @@ kics-scan:
     name: kics-results.json
     paths:
       - kics-results.json
+
+secret_detection:
+  stage: test
+  image: zricethezav/gitleaks:latest
+  script:
+    - echo "Running Gitleaks to detect secrets in the repository"
+    - gitleaks detect --source . --report-path gitleaks-report.json
+  artifacts:
+    paths:
+      - gitleaks-report.json
 
 dast_nuclei:
   stage: dast1
