@@ -7,7 +7,6 @@ stages:
 variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   DOCKER_IMAGE: $CONTAINER_TEST_IMAGE
-  TARGET_URL: http://demoApp:8080/
   
 # include:
 #   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
@@ -129,17 +128,21 @@ cache:
 dast_nuclei:
   stage: dast1
   image: golang:latest
+  services:
+    - name: $CONTAINER_TEST_IMAGE 
+      alias: demoApp
+  variables:
+    TARGET_URL: http://demoApp:8080/
   before_script:
     - go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
   script:
     - echo "Target url" $TARGET_URL
     - curl -I $TARGET_URL || echo "Target is unreachable"
-    - touch nuclei-report.json # Create an empty report file
-    - nuclei -u $TARGET_URL -json -o nuclei-report.json || true
+    - nuclei -u $TARGET_URL -jsonl nuclei-report.jsonl || true
   artifacts:
     paths:
-      - nuclei-report.json
-    when: always
+      - nuclei-report.jsonl
+  when: always
   allow_failure: true
 
 
