@@ -163,7 +163,9 @@ kics-scan:
 
 secret_detection:
   stage: test
-  image: zricethezav/gitleaks:latest
+  image:
+    name: zricethezav/gitleaks:latest
+    entrypoint: [""]
   script:
     - gitleaks dir . --report-path gitleaks-report.json
   artifacts:
