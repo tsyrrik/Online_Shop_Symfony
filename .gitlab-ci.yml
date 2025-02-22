@@ -125,6 +125,9 @@ secret_detection:
   variables:
     SECRET_DETECTION_HISTORIC_SCAN: "true"
 
+kics-iac-sast:
+  allow_failure: false
+
 dast:
   services: # use services to link your app container to the dast job
     - name: $CONTAINER_TEST_IMAGE
