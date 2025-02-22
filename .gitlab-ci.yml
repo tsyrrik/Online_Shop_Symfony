@@ -2,23 +2,21 @@ stages:
   - build
   - test
   - deploy
-  # - dast
+  - dast
 
 include:
-  - template: Jobs/Container-Scanning.gitlab-ci.yml
-  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
-  - template: Jobs/SAST.gitlab-ci.yml
-  - template: Jobs/Secret-Detection.gitlab-ci.yml
-  - template: Jobs/SAST-IaC.gitlab-ci.yml
-  # - template: Security/DAST.gitlab-ci.yml
-  # - template: Security/API-Security.gitlab-ci.yml
+  - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
+  - template: Security/DAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/DAST.gitlab-ci.yml
+  - template: Security/API-Security.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - vendor/
 
-build-job: 
+build: 
   stage: build
   image: composer:latest
   script:
@@ -27,67 +25,73 @@ build-job:
     paths:
       - vendor/
 
+cs:
+  stage: test
+  image: php:8.2
+  script:
+    - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation # https://github.com/PHP-CS-Fixer/PHP-CS-Fixer
+
 phpunit:
   stage: test
   image: php:8.2
   variables:
     APP_ENV: test
   script:
-    - ./vendor/bin/phpunit
-
-cs:
-  stage: test
-  image: php:8.2
-  script:
-    - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
+    - ./vendor/bin/phpunit # https://github.com/sebastianbergmann/phpunit
 
 composer:
   stage: test
   image: composer:latest
   script:
-    - composer normalize --diff --dry-run
-    - composer validate
-    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
-    #- php8.2 vendor/bin/composer-unused
-    - composer audit
+    - composer normalize --diff --dry-run # https://github.com/ergebnis/composer-normalize
+    - composer validate # https://getcomposer.org/doc/03-cli.md#validate
+    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json # https://github.com/maglnet/ComposerRequireChecker
+    - php8.2 vendor/bin/composer-unused # https://github.com/composer-unused/composer-unused
+    - composer audit # https://getcomposer.org/doc/03-cli.md#audit
 
-di:
+di: # чтобы проверить, что контейнер компилируется корректно в прод режиме
   stage: test
   image: php:8.2
   script:
     - bin/console cache:clear --env=prod
     - bin/console lint:container --env=prod
 
-rector:
+schema-validate: # проверить корректность маппингов доктрины, без соединения с бд
   stage: test
-  image: composer:latest
-  script:
-    - vendor/rector/rector/bin/rector --dry-run
-
-schema-validate:
-  stage: test
-  image: composer:latest
+  image: php:8.2
   script:
     - bin/console doctrine:schema:validate --skip-sync
 
-deptrac:
+rector:
   stage: test
-  image: composer:latest
+  image: php:8.2
+  script:
+    - vendor/rector/rector/bin/rector --dry-run
+
+deptrac: # валидация архитектурных правил
+  stage: test
+  image: php:8.2
   script:
     - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
-    - vendor/bin/deptrac --config-file=deptrac.yaml --cache-file=var/.deptrac.cache
+    - vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
 
-# psalm:   #пока отключил
-#   stage: test
-#   image: composer:latest
-#   script:
-#     - vendor/vimeo/psalm/psalm
+psalm: # проверка типов (и не только)
+   stage: test
+   image: php:8.2
+   script:
+     - vendor/bin/psalm
 
-deploy-job:
+deploy: # автоматическая доставка изменений на сервер (dev/stage/prod - для каждой будет своя джоба)
   stage: deploy
-  environment: production
   only:
-    - master
+    - master   # или main/develop/release.x.x.x
   script:
     - echo "Deploying the application..."
+#    здесь будет кастомная логика. в самом простом виде
+#     - ssh $HOST:$USER \
+#     && cd $PATH_TO_PROJECT \
+#     && git clone $LINK \
+#     && bin/console bin/console clear:cache \
+#     && bin/console doctrine:migration:migrate
+#  в более продвинутом варианте собираем docker image с кодом, vendor'ом, пушим в registry, и подменяем контейнер на сервере
     - echo "Application successfully deployed."
