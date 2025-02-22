@@ -86,6 +86,7 @@ psalm: # проверка типов (и не только)
 
 deploy: # автоматическая доставка изменений на сервер (dev/stage/prod - для каждой будет своя джоба)
   stage: deploy
+  when: manual
   only:
     - master   # или main/develop/release.x.x.x
   script:
