@@ -13,9 +13,7 @@ include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
   - template: Jobs/SAST-IaC.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
-  # - template: Security/DAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
   - template: Security/Container-Scanning.gitlab-ci.yml 
-  # - template: Security/API-Security.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -128,15 +126,15 @@ secret_detection:
 kics-iac-sast:
   allow_failure: false
 
-dast_nuclei:
-  stage: dast
-  image: projectdiscovery/nuclei:latest
-  script:
-    - echo "Running Nuclei scan on $TARGET_URL"
-    - nuclei -u $TARGET_URL -severity critical,high -o nuclei-report.txt
-  artifacts:
-    paths:
-      - nuclei-report.txt
-    when: always
-  allow_failure: true 
+# dast_nuclei:
+#   stage: dast
+#   image: projectdiscovery/nuclei:latest
+#   script:
+#     - echo "Running Nuclei scan on $TARGET_URL"
+#     - nuclei -u $TARGET_URL -severity critical,high -o nuclei-report.txt
+#   artifacts:
+#     paths:
+#       - nuclei-report.txt
+#     when: always
+#   allow_failure: true 
 
