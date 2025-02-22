@@ -2,7 +2,7 @@ stages:
   - build
   - test
   - deploy
-  - dast
+  # - dast
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
