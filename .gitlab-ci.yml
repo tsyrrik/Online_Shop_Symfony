@@ -2,7 +2,7 @@ stages:
   - build
   - test
   - deploy
-  - DAST1
+  - DAST
 
 variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
@@ -170,7 +170,7 @@ deploy: # автоматическая доставка изменений на 
     - echo "Application successfully deployed."
 
 dast_nuclei:
-  stage: DAST1
+  stage: DAST
   image: golang:latest
   variables:
     TARGET_URL: https://your-app/
