@@ -5,8 +5,6 @@ stages:
   - dast
 
 variables:
-  DAST_DISABLED_FOR_DEFAULT_BRANCH: false
-  REVIEW_DISABLED: false
   DAST_WEBSITE: https://example.com
 
 include:
@@ -101,3 +99,25 @@ deploy: # автоматическая доставка изменений на 
 #     && bin/console doctrine:migration:migrate
 #  в более продвинутом варианте собираем docker image с кодом, vendor'ом, пушим в registry, и подменяем контейнер на сервере
     - echo "Application successfully deployed."
+
+dast:
+  stage: dast
+  image:
+    name: "$SECURE_ANALYZERS_PREFIX/dast:$DAST_VERSION$DAST_IMAGE_SUFFIX"
+  variables:
+    GIT_STRATEGY: none
+  allow_failure: true
+  script:
+    - if [[ -f "environment_url.txt" ]]; then DAST_WEBSITE="${DAST_WEBSITE:-$(cat environment_url.txt)}"; export DAST_WEBSITE; fi
+    - /analyze
+  artifacts:
+    access: 'developer'
+    when: always
+    reports:
+      dast: gl-dast-report.json
+    paths:
+      - gl-dast-*.*
+  after_script:
+    # For DAST 4 compatibility, remove any debug.log files because they might contain secrets.
+    - rm -f /zap/wrk/**/debug.log
+    - cp -r /zap/wrk dast_artifacts
