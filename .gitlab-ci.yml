@@ -5,7 +5,10 @@ stages:
   - dast
 
 variables:
-  DAST_WEBSITE: https://example.com
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  DOCKER_IMAGE: $CONTAINER_TEST_IMAGE
+  DAST_WEBSITE: http://demoApp:8080/
+  DAST_FULL_SCAN_ENABLED: "true"
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
@@ -26,6 +29,20 @@ build:
   artifacts:
     paths:
       - vendor/
+
+build_image:
+  services:
+  - name: docker:dind
+    alias: dind
+  image: docker:20.10.16
+  stage: build
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --tag $CONTAINER_TEST_IMAGE --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CONTAINER_TEST_IMAGE
+    - docker push $CI_REGISTRY_IMAGE:latest
+  needs: [build]
 
 cs:
   stage: test
@@ -98,4 +115,17 @@ deploy: # автоматическая доставка изменений на 
 #     && bin/console doctrine:migration:migrate
 #  в более продвинутом варианте собираем docker image с кодом, vendor'ом, пушим в registry, и подменяем контейнер на сервере
     - echo "Application successfully deployed."
+
+container_scanning:
+  variables:
+    CS_IMAGE: $CONTAINER_TEST_IMAGE
+
+secret_detection:
+  variables:
+    SECRET_DETECTION_HISTORIC_SCAN: "true"
+
+dast:
+  services: # use services to link your app container to the dast job
+    - name: $CONTAINER_TEST_IMAGE
+      alias: demoApp
 
