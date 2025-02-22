@@ -48,14 +48,72 @@ cs:
 phpunit:
   stage: test
   image: php:8.2
+  services:
+    - name: postgres:14
+      alias: postgres
   variables:
     APP_ENV: test
+    DATABASE_URL: "pgsql://postgres:postgres@postgres:5432/test_db"
+    POSTGRES_DB: test_db
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
   script:
+    - apt-get update && apt-get install -y postgresql-client
+    - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
     - bin/console doctrine:database:create --if-not-exists --env=test
-    - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-text --colors=never --coverage-cobertura=coverage.cobertura.xml # https://github.com/sebastianbergmann/phpunit
+    - bin/console doctrine:migrations:migrate --no-interaction --env=test
+    - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml --coverage-clover=coverage.xml
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
-      paths:
-        - coverage.cobertura.xml
+    paths:
+      - coverage.cobertura.xml
+      - coverage.xml
+
+check_coverage:
+  image: alpine:latest
+  stage: test
+  needs: [phpunit]
+  variables:
+    JOB_NAME: phpunit
+    TARGET_BRANCH: master
+  before_script:
+    - apk add --update --no-cache curl jq
+  rules:
+    - if: '$CI_COMMIT_BRANCH != $TARGET_BRANCH'  # Only run on MRs, not on the main branch
+  script:
+    # Get the latest successful pipeline ID from the target branch
+    - TARGET_PIPELINE_ID=$(curl -s "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines?ref=${TARGET_BRANCH}&status=success&private_token=${PRIVATE_TOKEN}" | jq ".[0].id")
+
+    # Fetch the coverage percentage from the target branch's last successful pipeline
+    - TARGET_COVERAGE=$(curl -s "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${TARGET_PIPELINE_ID}/jobs?private_token=${PRIVATE_TOKEN}" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
+
+    # Fetch the current coverage from this pipeline
+    - CURRENT_COVERAGE=$(curl -s "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${CI_PIPELINE_ID}/jobs?private_token=${PRIVATE_TOKEN}" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
+
+    # Validate if coverage values are available
+    - |
+      if [ -z "$TARGET_COVERAGE" ]; then 
+        echo "No previous coverage data found. Skipping check."; 
+        exit 0;
+      fi
+
+    - |
+      if [ -z "$CURRENT_COVERAGE" ]; then 
+        echo "Failed to retrieve current coverage data."; 
+        exit 1;
+      fi
+
+    # Convert to numeric and compare
+    - |
+      TARGET_COVERAGE=$(echo "$TARGET_COVERAGE" | awk '{print int($1)}')
+      CURRENT_COVERAGE=$(echo "$CURRENT_COVERAGE" | awk '{print int($1)}')
+
+      if [ "$CURRENT_COVERAGE" -lt "$TARGET_COVERAGE" ]; then 
+        echo "Coverage decreased from ${TARGET_COVERAGE}% to ${CURRENT_COVERAGE}%! Merge request blocked.";
+        exit 1;
+      else 
+        echo "Coverage check passed: ${CURRENT_COVERAGE}% (previous: ${TARGET_COVERAGE}%)";
+      fi
 
 phpmd:
   stage: test
@@ -66,16 +124,25 @@ phpmd:
       paths:
         - phpmd_result.json
 
-doctrine_migrations_rollback:
-  stage: deploy
+migration-test:
+  stage: test
   image: php:8.2
+  services:
+    - name: postgres:15
+      alias: postgres
+  variables:
+    APP_ENV: test
+    DATABASE_URL: "pgsql://postgres:postgres@postgres:5432/test_db"
+    POSTGRES_DB: test_db
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
   script:
-    - echo "Applying Doctrine migrations"
-    - bin/console doctrine:migrations:migrate --no-interaction
-    - echo "Rolling back Doctrine migrations"
-    - bin/console doctrine:migrations:migrate prev --no-interaction
-
-
+    - apt-get update && apt-get install -y postgresql-client
+    - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
+    - bin/console doctrine:database:create --if-not-exists --env=test
+    - bin/console doctrine:migrations:migrate --no-interaction --env=test
+    - bin/console doctrine:migrations:migrate first --no-interaction --env=test
+    - bin/console doctrine:migrations:migrate --no-interaction --env=test
 
 composer:
   stage: test
