@@ -2,7 +2,7 @@ stages:
   - build
   - test
   - deploy
-  - dast
+  - dast1
 
 variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
@@ -126,15 +126,15 @@ secret_detection:
 kics-iac-sast:
   allow_failure: false
 
-# dast_nuclei:
-#   stage: dast
-#   image: projectdiscovery/nuclei:latest
-#   script:
-#     - echo "Running Nuclei scan on $TARGET_URL"
-#     - nuclei -u $TARGET_URL -severity critical,high -o nuclei-report.txt
-#   artifacts:
-#     paths:
-#       - nuclei-report.txt
-#     when: always
-#   allow_failure: true 
+dast_nuclei:
+  stage: dast1
+  image: projectdiscovery/nuclei:latest
+  script:
+    - echo "Running Nuclei scan on $TARGET_URL"
+    - nuclei -u $TARGET_URL -severity critical,high -o nuclei-report.txt
+  artifacts:
+    paths:
+      - nuclei-report.txt
+    when: always
+  allow_failure: true 
 
