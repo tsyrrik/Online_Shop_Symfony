@@ -11,7 +11,7 @@ include:
   - template: Jobs/SAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/Secret-Detection.gitlab-ci.yml
   - template: Jobs/SAST-IaC.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
-  - template: Security/DAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/DAST.gitlab-ci.yml
+  # - template: Security/DAST.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/DAST.gitlab-ci.yml
   # - template: Security/API-Security.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Security/API-Security.gitlab-ci.yml
 
 cache:
@@ -108,7 +108,6 @@ dast:
     GIT_STRATEGY: none
   allow_failure: true
   script:
-    - if [[ -f "environment_url.txt" ]]; then DAST_WEBSITE="${DAST_WEBSITE:-$(cat environment_url.txt)}"; export DAST_WEBSITE; fi
     - /analyze
   artifacts:
     access: 'developer'
