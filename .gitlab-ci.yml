@@ -116,6 +116,7 @@ deploy: # автоматическая доставка изменений на 
 container_scanning:
   variables:
     CS_IMAGE: $CONTAINER_TEST_IMAGE
+  allow_failure: false
 
 secret_detection:
   variables:
