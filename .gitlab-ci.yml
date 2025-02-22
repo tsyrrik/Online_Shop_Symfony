@@ -124,11 +124,11 @@ phpmd:
       paths:
         - phpmd_result.json
 
-migration-test:
+migrations_rollback_test:
   stage: test
   image: php:8.2
   services:
-    - name: postgres:15
+    - name: postgres:14
       alias: postgres
   variables:
     APP_ENV: test
