@@ -220,6 +220,37 @@
       <path value="$PROJECT_DIR$/vendor/phpcompatibility/phpcompatibility-paragonie 2" />
       <path value="$PROJECT_DIR$/vendor/phpcompatibility/php-compatibility 2" />
       <path value="$PROJECT_DIR$/vendor/bamarni/composer-bin-plugin" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/ondram/ci-detector" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/serializer" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/validator" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/property-access" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/type-info" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/property-info" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/webmozart/glob" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/icanhazstring/composer-unused" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/composer-unused/contracts" />
+      <path value="$PROJECT_DIR$/vendor-bin/composer-unused/vendor/composer-unused/symbol-parser" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2">

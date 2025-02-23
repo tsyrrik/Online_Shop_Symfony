@@ -3,6 +3,7 @@
 namespace App\Domain\Product;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
 class Product
@@ -13,31 +14,31 @@ class Product
     private ?int $id = null;
 
     public function __construct(
-        #[ORM\Column(type: "string")]
+        #[ORM\Column(type: Types::STRING)]
         private string $name,
 
-        #[ORM\Column(type: "integer")]
+        #[ORM\Column(type: Types::INTEGER)]
         private int $weight,
 
-        #[ORM\Column(type: "integer")]
+        #[ORM\Column(type: Types::INTEGER)]
         private int $height,
 
-        #[ORM\Column(type: "integer")]
+        #[ORM\Column(type: Types::INTEGER)]
         private int $width,
 
-        #[ORM\Column(type: "integer")]
+        #[ORM\Column(type: Types::INTEGER)]
         private int $length,
 
-        #[ORM\Column(type: "text", nullable: true)]
+        #[ORM\Column(type: Types::TEXT, nullable: true)]
         private ?string $description = null,
 
-        #[ORM\Column(type: "integer")]
+        #[ORM\Column(type: Types::INTEGER)]
         private int $cost,
 
-        #[ORM\Column(type: "integer")]
+        #[ORM\Column(type: Types::INTEGER)]
         private int $tax,
 
-        #[ORM\Column(type: "integer")]
+        #[ORM\Column(type: Types::INTEGER)]
         private int $version
     ) {}
 
