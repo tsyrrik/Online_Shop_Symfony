@@ -225,6 +225,8 @@ trivy_container_scan:
     reports:
       container_scanning: gl-container-scanning-report.json
   stage: test
+  tags:
+    - security
 
 kics-ioc-scan:
   stage: test
@@ -238,6 +240,8 @@ kics-ioc-scan:
     name: kics-results.json
     paths:
       - kics-results.json
+  tags:
+    - security
 
 gitleaks_secret_detection:
   stage: test
@@ -250,6 +254,8 @@ gitleaks_secret_detection:
     when: always
     paths:
       - gitleaks-report.json
+  tags:
+    - security
 
 deploy: # автоматическая доставка изменений на сервер (dev/stage/prod - для каждой будет своя джоба)
   stage: deploy
@@ -282,3 +288,5 @@ dast_nuclei:
     when: always
     paths:
       - nuclei-report.jsonl
+  tags:
+    - security
