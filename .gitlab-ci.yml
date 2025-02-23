@@ -241,6 +241,7 @@ gitleaks_secret_detection:
   script:
     - gitleaks dir . --report-path gitleaks-report.json
   artifacts:
+    when: always
     paths:
       - gitleaks-report.json
 
