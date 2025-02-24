@@ -5,43 +5,27 @@ stages:
   - DAST
 
 variables:
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  DOCKER_IMAGE: $CONTAINER_TEST_IMAGE
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - vendor/
-
-build: 
-  stage: build
-  image: composer:latest
-  script:
-    - composer install --prefer-dist --no-interaction
-  artifacts:
-    paths:
-      - vendor/
-
 build_image:
   services:
   - name: docker:dind
     alias: dind
-  image: docker:20.10.16
+  image: composer:latest
   stage: build
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:latest || true
-    - docker build --tag $CONTAINER_TEST_IMAGE --tag $CI_REGISTRY_IMAGE:latest ./Docker
-    - docker push $CONTAINER_TEST_IMAGE
+    - composer install --no-interaction
+    - docker build --tag $DOCKER_IMAGE --tag $CI_REGISTRY_IMAGE:latest ./Docker
+    - docker push $DOCKER_IMAGE
     - docker push $CI_REGISTRY_IMAGE:latest
-  needs: [build]
-  rules:
-    - changes:
-        - Docker/**/*
 
 cs:
   stage: test
-  image: php:8.2
+  image: $DOCKER_IMAGE
+  variables:
+    GIT_STRATEGY: none
   script:
     - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation # https://github.com/PHP-CS-Fixer/PHP-CS-Fixer
 
@@ -57,6 +41,7 @@ phpunit:
     POSTGRES_DB: test_db
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
+    GIT_STRATEGY: none
   script:
     - apt-get update && apt-get install -y postgresql-client
     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
@@ -77,6 +62,7 @@ check_coverage:
   variables:
     JOB_NAME: phpunit
     TARGET_BRANCH: master
+    GIT_STRATEGY: none
   before_script:
     - apk add --update --no-cache curl jq
   rules:
@@ -119,7 +105,9 @@ check_coverage:
 
 phpmd:
   stage: test
-  image: php:8.2
+  image: $DOCKER_IMAGE
+  variables:
+    GIT_STRATEGY: none
   script:
     - vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
   artifacts:
@@ -139,6 +127,7 @@ migrations_rollback_test:
     POSTGRES_DB: test_db
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
+    GIT_STRATEGY: none
   script:
     - apt-get update && apt-get install -y postgresql-client
     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
@@ -148,6 +137,8 @@ migrations_rollback_test:
     - bin/console doctrine:migrations:migrate --no-interaction --env=test
 
 composer:
+  variables:
+    GIT_STRATEGY: none
   stage: test
   image: $DOCKER_IMAGE
   script:
@@ -159,36 +150,46 @@ composer:
     - composer check-platform-reqs
 
 di: # чтобы проверить, что контейнер компилируется корректно в прод режиме
+  variables:
+    GIT_STRATEGY: none
   stage: test
-  image: php:8.2
+  image: $DOCKER_IMAGE
   script:
     - bin/console cache:clear --env=prod
     - bin/console lint:container --env=prod
 
 schema-validate: # проверить корректность маппингов доктрины, без соединения с бд
+  variables:
+    GIT_STRATEGY: none  
   stage: test
-  image: php:8.2
+  image: $DOCKER_IMAGE
   script:
     - bin/console doctrine:schema:validate --skip-sync
 
 rector:
+  variables:
+    GIT_STRATEGY: none
   stage: test
-  image: php:8.2
+  image: $DOCKER_IMAGE
   script:
     - vendor/rector/rector/bin/rector --dry-run
 
 deptrac: # валидация архитектурных правил
+  variables:
+    GIT_STRATEGY: none
   stage: test
-  image: php:8.2
+  image: $DOCKER_IMAGE
   script:
     - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
     - vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
 
 psalm: # проверка типов (и не только)
-   stage: test
-   image: php:8.2
-   script:
-     - vendor/bin/psalm
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DOCKER_IMAGE
+  script:
+    - vendor/bin/psalm
 
 trivy_container_scan:
   image:
