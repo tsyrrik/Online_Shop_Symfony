@@ -115,6 +115,7 @@ check_coverage:
       else 
         echo "Coverage check passed: ${CURRENT_COVERAGE}% (previous: ${TARGET_COVERAGE}%)";
       fi
+  cache: {}
 
 phpmd:
   stage: test
@@ -148,13 +149,14 @@ migrations_rollback_test:
 
 composer:
   stage: test
-  image: composer:latest
+  image: $DOCKER_IMAGE
   script:
     - composer normalize --diff --dry-run # https://github.com/ergebnis/composer-normalize
     - composer validate # https://getcomposer.org/doc/03-cli.md#validate
     - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json # https://github.com/maglnet/ComposerRequireChecker
     - php8.2 vendor/bin/composer-unused # https://github.com/composer-unused/composer-unused
     - composer audit # https://getcomposer.org/doc/03-cli.md#audit
+    - composer check-platform-reqs
 
 di: # чтобы проверить, что контейнер компилируется корректно в прод режиме
   stage: test
