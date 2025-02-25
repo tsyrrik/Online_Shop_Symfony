@@ -4,6 +4,7 @@ namespace App\Domain\Cart;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Domain\Product\Product;
 
 class Cart
 {
@@ -24,7 +25,6 @@ class Cart
             throw new \DomainException("В заказе не может быть более 20 позиций");
         }
 
-        // Проверяем, есть ли уже такой продукт в корзине
         foreach ($this->items as $existingItem) {
             if ($existingItem->getProduct()->getId() === $item->getProduct()->getId()) {
                 $existingItem->increaseQuantity($item->getQuantity());
@@ -32,7 +32,6 @@ class Cart
             }
         }
 
-        // Если продукта нет, добавляем новый элемент
         $this->items->add($item);
     }
 
@@ -63,5 +62,26 @@ class Cart
     public function getUserId(): int
     {
         return $this->userId;
+    }
+
+    public function addProduct(Product $product, int $quantity): void
+    {
+        if ($product->getId() === null) {
+            throw new \InvalidArgumentException('Product ID cannot be null');
+        }
+
+        if ($quantity <= 0) {
+            throw new \InvalidArgumentException('Quantity must be greater than zero');
+        }
+
+        foreach ($this->items as $existingItem) {
+            if ($existingItem instanceof CartItem && $existingItem->getProduct()->getId() === $product->getId()) {
+                $existingItem->increaseQuantity($quantity);
+                return;
+            }
+        }
+
+        $cartItem = new CartItem($product->getId(), $quantity);
+        $this->addItem($cartItem);
     }
 }

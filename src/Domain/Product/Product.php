@@ -29,9 +29,6 @@ class Product
         #[ORM\Column(type: Types::INTEGER)]
         private int $length,
 
-        #[ORM\Column(type: Types::TEXT, nullable: true)]
-        private ?string $description = null,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $cost,
 
@@ -39,7 +36,10 @@ class Product
         private int $tax,
 
         #[ORM\Column(type: Types::INTEGER)]
-        private int $version
+        private int $version,
+
+        #[ORM\Column(type: Types::TEXT, nullable: true)]
+        private ?string $description = null
     ) {}
 
     public function getId(): ?int

@@ -55,3 +55,6 @@ rector:
 
 schema-validate:
 	bin/console doctrine:schema:validate --skip-sync
+
+test:
+	vendor/bin/phpunit
