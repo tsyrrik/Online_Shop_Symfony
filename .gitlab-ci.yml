@@ -26,9 +26,8 @@ build_image:
   variables:
     GIT_STRATEGY: none
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-#    - docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --tag $DOCKER_IMAGE --tag $CI_REGISTRY_IMAGE:latest ./Docker
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker push $DOCKER_IMAGE
     - docker push $CI_REGISTRY_IMAGE:latest
   needs: [build]
