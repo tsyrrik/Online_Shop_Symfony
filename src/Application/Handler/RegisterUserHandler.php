@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Handler;
 
 use App\Application\Command\RegisterUserCommand;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 readonly class RegisterUserHandler

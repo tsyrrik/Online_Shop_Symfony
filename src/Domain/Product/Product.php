@@ -1,45 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Product;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     public function __construct(
         #[ORM\Column(type: Types::STRING)]
         private string $name,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $weight,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $height,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $width,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $length,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $cost,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $tax,
-
         #[ORM\Column(type: Types::INTEGER)]
         private int $version,
-
         #[ORM\Column(type: Types::TEXT, nullable: true)]
-        private ?string $description = null
+        private ?string $description = null,
     ) {}
 
     public function getId(): ?int

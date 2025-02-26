@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Cart;
+
+use DomainException;
 
 class CartItem
 {
     public function __construct(
         private int $productId,
-        private int $quantity
+        private int $quantity,
     ) {}
 
     public function getProductId(): int
@@ -27,7 +31,7 @@ class CartItem
     public function decreaseQuantity(int $amount = 1): void
     {
         if ($this->quantity - $amount < 0) {
-            throw new \DomainException("Quantity cannot be less than zero.");
+            throw new DomainException('Quantity cannot be less than zero.');
         }
         $this->quantity -= $amount;
     }

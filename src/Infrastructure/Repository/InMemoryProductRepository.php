@@ -26,7 +26,7 @@ class InMemoryProductRepository implements ProductRepositoryInterface
                 description: 'Описание велосипеда',
                 cost: 500,
                 tax: 50,
-                version: 1
+                version: 1,
             ),
             2 => new Product(
                 name: 'Скейтборд_5',
@@ -37,7 +37,7 @@ class InMemoryProductRepository implements ProductRepositoryInterface
                 description: 'Описание скейтборда',
                 cost: 200,
                 tax: 20,
-                version: 1
+                version: 1,
             ),
         ];
     }
@@ -50,5 +50,10 @@ class InMemoryProductRepository implements ProductRepositoryInterface
     public function find(int $id): ?Product
     {
         return $this->products[$id] ?? null;
+    }
+
+    public function findById(int $id): ?Product
+    {
+        return $this->find($id);
     }
 }

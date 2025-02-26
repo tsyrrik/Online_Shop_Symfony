@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Api\Controller\Admin;
 
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+
+use function in_array;
 
 class AdminOrderController extends AbstractController
 {
@@ -29,7 +34,7 @@ class AdminOrderController extends AbstractController
 
         try {
             return new JsonResponse(['status' => 'Order updated successfully'], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return new JsonResponse(['error' => 'Failed to update order status'], 500);
         }
