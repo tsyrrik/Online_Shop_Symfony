@@ -45,7 +45,7 @@ di:
 	&& bin/console lint:container --env=prod
 
 phpunit:
-	XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html coverage
+	XDEBUG_MODE=coverage php ./vendor/bin/phpunit --colors=never --coverage-text --coverage-cobertura=coverage.cobertura.xml --log-junit phpunit-report.xml --do-not-cache-result
 
 psalm:
 	vendor/vimeo/psalm/psalm
