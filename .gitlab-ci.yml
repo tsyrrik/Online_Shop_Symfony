@@ -45,6 +45,8 @@ build_prod_dependencies:
     paths:
       - vendor/
       - .
+  only:
+    - tags
 
 build_prod_image:
   services:
@@ -56,11 +58,10 @@ build_prod_image:
     GIT_STRATEGY: none
   script:
     - docker build -t $PROD_IMAGE ./.docker/prod
-#    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker push $PROD_IMAGE
     - docker push $CI_REGISTRY_IMAGE:latest
   needs: [build_prod_dependencies]
-#todo add only from tag
 
 cs:
   stage: test
