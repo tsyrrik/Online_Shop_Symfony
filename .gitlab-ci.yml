@@ -23,8 +23,9 @@ build_image:
       alias: dind
   image: docker:20.10.16
   stage: build
+  variables:
+    GIT_STRATEGY: none
   script:
-    - ls -lha
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --tag $DOCKER_IMAGE --tag $CI_REGISTRY_IMAGE:latest ./Docker
