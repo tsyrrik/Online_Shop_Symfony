@@ -160,11 +160,9 @@ check_coverage:
     - if: '$CI_COMMIT_BRANCH != $TARGET_BRANCH'
   script:
     - |
-      # Get latest successful pipeline ID from the target branch using the PAT
+      # Get latest pipeline ID from the target branch using the PAT
       TARGET_PIPELINE_JSON=$(curl -s --header "PRIVATE-TOKEN: $CHECK_COVERAGE_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines?ref=${TARGET_BRANCH}") #todo add &status=success
-      echo "Received API Response: $TARGET_PIPELINE_JSON"
       TARGET_PIPELINE_ID=$(echo "$TARGET_PIPELINE_JSON" | jq -r '.[0].id' 2>/dev/null)
-      echo "DEBUG: Selected pipeline ID: $TARGET_PIPELINE_ID"
 
     - |
       # Handle missing pipeline data
@@ -176,17 +174,13 @@ check_coverage:
     - |
       # Fetch coverage from the target branch's last successful pipeline
       TARGET_JOBS_JSON=$(curl -s --header "PRIVATE-TOKEN: $CHECK_COVERAGE_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${TARGET_PIPELINE_ID}/jobs")
-      echo "DEBUG: Target jobs JSON: $TARGET_JOBS_JSON"
       TARGET_COVERAGE=$(echo "$TARGET_JOBS_JSON" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
-      echo "DEBUG: Raw target coverage value: $TARGET_COVERAGE"
       echo "target coverage: $TARGET_COVERAGE"
 
     - |
       # Fetch current coverage from this pipeline
       CURRENT_JOBS_JSON=$(curl -s --header "PRIVATE-TOKEN: $CHECK_COVERAGE_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${CI_PIPELINE_ID}/jobs")
-      echo "DEBUG: Current jobs JSON: $CURRENT_JOBS_JSON" 
       CURRENT_COVERAGE=$(echo "$CURRENT_JOBS_JSON" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
-      echo "DEBUG: Raw current coverage value: $CURRENT_COVERAGE"
       echo "current coverage: $CURRENT_COVERAGE" 
 
     # Validate if coverage values are available
@@ -203,10 +197,6 @@ check_coverage:
       fi
 
     - |
-      # DEBUG: Print raw values before conversion
-      echo "DEBUG: Target coverage before conversion: $TARGET_COVERAGE"
-      echo "DEBUG: Current coverage before conversion: $CURRENT_COVERAGE"
-      
       # Convert to numeric but preserve decimals
       TARGET_COVERAGE_INT=$(echo "$TARGET_COVERAGE" | awk '{print int($1)}')
       CURRENT_COVERAGE_INT=$(echo "$CURRENT_COVERAGE" | awk '{print int($1)}')
@@ -215,14 +205,8 @@ check_coverage:
       TARGET_COVERAGE_FLOAT=$(echo "$TARGET_COVERAGE" | sed 's/%//')
       CURRENT_COVERAGE_FLOAT=$(echo "$CURRENT_COVERAGE" | sed 's/%//')
       
-      echo "DEBUG: TARGET_COVERAGE_INT: $TARGET_COVERAGE_INT"
-      echo "DEBUG: CURRENT_COVERAGE_INT: $CURRENT_COVERAGE_INT"
-      echo "DEBUG: TARGET_COVERAGE_FLOAT: $TARGET_COVERAGE_FLOAT"
-      echo "DEBUG: CURRENT_COVERAGE_FLOAT: $CURRENT_COVERAGE_FLOAT"
-
       # Compare with decimals if both values are below 1%
       if (( $(echo "$TARGET_COVERAGE_FLOAT < 1" | bc -l) )) && (( $(echo "$CURRENT_COVERAGE_FLOAT < 1" | bc -l) )); then
-        echo "DEBUG: Both values are below 1%, comparing with decimal precision"
         if (( $(echo "$CURRENT_COVERAGE_FLOAT < $TARGET_COVERAGE_FLOAT" | bc -l) )); then
           echo "Coverage decreased from ${TARGET_COVERAGE}% to ${CURRENT_COVERAGE}%! Merge request blocked.";
           exit 1;
