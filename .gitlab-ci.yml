@@ -241,7 +241,7 @@ trivy_container_scan:
       container_scanning: gl-container-scanning-report.json
   stage: test
 
-kics-ioc-scan:
+kics-iac-scan:
   stage: test
   image:
     name: checkmarx/kics:latest
