@@ -38,7 +38,7 @@ cs:
   variables:
     GIT_STRATEGY: none
   script:
-    - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation # https://github.com/PHP-CS-Fixer/PHP-CS-Fixer
+    - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
 
 phpunit:
   stage: test

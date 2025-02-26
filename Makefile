@@ -6,7 +6,7 @@ cache:
 
 
 up:
-	docker compose up -docker
+	docker compose up -d
 
 down:
 	docker compose down
@@ -45,7 +45,7 @@ di:
 	&& bin/console lint:container --env=prod
 
 phpunit:
-	./vendor/bin/phpunit
+	XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html coverage
 
 psalm:
 	vendor/vimeo/psalm/psalm

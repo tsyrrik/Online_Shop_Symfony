@@ -3,8 +3,7 @@ version: '3.8'
 services:
   app:
     build:
-      context: ./docker
-      dockerfile: Dockerfile
+      dockerfile: ./.docker/dev/Dockerfile
     volumes:
       - .:/var/www/html
     ports:
