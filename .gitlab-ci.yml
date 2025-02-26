@@ -67,7 +67,7 @@ build_prod_image:
 
 cs:
   stage: test
-  image: $DOCKER_IMAGE
+  image: $DEV_IMAGE
   variables:
     GIT_STRATEGY: none
   script:
@@ -75,7 +75,7 @@ cs:
 
 phpunit:
   stage: test
-  image: $DOCKER_IMAGE
+  image: $DEV_IMAGE
   services:
     - name: postgres:14
       alias: postgres
@@ -89,8 +89,8 @@ phpunit:
   script:
     - apt-get update && apt-get install -y postgresql-client
     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
-    - bin/console doctrine:database:create --if-not-exists --env=test
-    - bin/console doctrine:migrations:migrate --no-interaction --env=test
+    - bin/console doctrine:database:create --if-not-exists
+    - bin/console doctrine:migrations:migrate --no-interaction
     - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml --coverage-clover=coverage.xml
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
@@ -98,6 +98,52 @@ phpunit:
     paths:
       - coverage.cobertura.xml
       - coverage.xml
+
+composer:
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DEV_IMAGE
+  script:
+    - composer normalize --diff --dry-run # https://github.com/ergebnis/composer-normalize
+    - composer validate # https://getcomposer.org/doc/03-cli.md#validate
+    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json # https://github.com/maglnet/ComposerRequireChecker
+    - php8.2 vendor/bin/composer-unused # https://github.com/composer-unused/composer-unused
+    - composer audit # https://getcomposer.org/doc/03-cli.md#audit
+    - composer check-platform-reqs
+
+psalm:
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DEV_IMAGE
+  script:
+    - vendor/bin/psalm
+
+di: # чтобы проверить, что контейнер компилируется корректно в прод режиме
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DEV_IMAGE
+  script:
+    - bin/console cache:clear --env=prod
+    - bin/console lint:container --env=prod
+
+schema-validate: # проверить корректность маппингов доктрины, без соединения с бд
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DEV_IMAGE
+  script:
+    - bin/console doctrine:schema:validate --skip-sync
+
+rector:
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DEV_IMAGE
+  script:
+    - vendor/rector/rector/bin/rector --dry-run
 
 check_coverage:
   image: alpine:latest
@@ -147,21 +193,9 @@ check_coverage:
       fi
   cache: {}
 
-phpmd:
-  stage: test
-  image: $DOCKER_IMAGE
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
-  artifacts:
-      when: always
-      paths:
-        - phpmd_result.json
-
 migrations_rollback_test:
   stage: test
-  image: $DOCKER_IMAGE
+  image: $DEV_IMAGE
   services:
     - name: postgres:14
       alias: postgres
@@ -180,60 +214,39 @@ migrations_rollback_test:
     - bin/console doctrine:migrations:migrate first --no-interaction --env=test
     - bin/console doctrine:migrations:migrate --no-interaction --env=test
 
-composer:
+phpmd:
+  stage: test
+  image: $DEV_IMAGE
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
+  artifacts:
+    when: always
+    paths:
+      - phpmd_result.json
+
+deptrac:
   variables:
     GIT_STRATEGY: none
   stage: test
-  image: $DOCKER_IMAGE
-  script:
-    - composer normalize --diff --dry-run # https://github.com/ergebnis/composer-normalize
-    - composer validate # https://getcomposer.org/doc/03-cli.md#validate
-    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json # https://github.com/maglnet/ComposerRequireChecker
-    - php8.2 vendor/bin/composer-unused # https://github.com/composer-unused/composer-unused
-    - composer audit # https://getcomposer.org/doc/03-cli.md#audit
-    - composer check-platform-reqs
-
-di: # чтобы проверить, что контейнер компилируется корректно в прод режиме
-  variables:
-    GIT_STRATEGY: none
-  stage: test
-  image: $DOCKER_IMAGE
-  script:
-    - bin/console cache:clear --env=prod
-    - bin/console lint:container --env=prod
-
-schema-validate: # проверить корректность маппингов доктрины, без соединения с бд
-  variables:
-    GIT_STRATEGY: none  
-  stage: test
-  image: $DOCKER_IMAGE
-  script:
-    - bin/console doctrine:schema:validate --skip-sync
-
-rector:
-  variables:
-    GIT_STRATEGY: none
-  stage: test
-  image: $DOCKER_IMAGE
-  script:
-    - vendor/rector/rector/bin/rector --dry-run
-
-deptrac: # валидация архитектурных правил
-  variables:
-    GIT_STRATEGY: none
-  stage: test
-  image: $DOCKER_IMAGE
+  image: $DEV_IMAGE
   script:
     - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
     - vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
 
-psalm: # проверка типов (и не только)
-  variables:
-    GIT_STRATEGY: none
+kics-iac-scan:
   stage: test
-  image: $DOCKER_IMAGE
+  image:
+    name: checkmarx/kics:latest
+    entrypoint: [""]
   script:
-    - vendor/bin/psalm
+    - kics scan --no-progress -p ${PWD} -o ${PWD} --report-formats json --output-name kics-results
+  artifacts:
+    when: always
+    name: kics-results.json
+    paths:
+      - kics-results.json
 
 trivy_container_scan:
   image:
@@ -273,19 +286,6 @@ trivy_container_scan:
       container_scanning: gl-container-scanning-report.json
   stage: test
 
-kics-iac-scan:
-  stage: test
-  image:
-    name: checkmarx/kics:latest
-    entrypoint: [""]
-  script:
-    - kics scan --no-progress -p ${PWD} -o ${PWD} --report-formats json --output-name kics-results
-  artifacts:
-    when: always
-    name: kics-results.json
-    paths:
-      - kics-results.json
-
 gitleaks_secret_detection:
   stage: test
   image:
@@ -298,20 +298,34 @@ gitleaks_secret_detection:
     paths:
       - gitleaks-report.json
 
-deploy: # автоматическая доставка изменений на сервер (dev/stage/prod - для каждой будет своя джоба)
+deploy_dev:
   stage: deploy
   when: manual
-  only:
-    - master   # или main/develop/release.x.x.x
   script:
     - echo "Deploying the application..."
 #    здесь будет кастомная логика. в самом простом виде
 #     - ssh $HOST:$USER \
 #     && cd $PATH_TO_PROJECT \
-#     && git clone $LINK \
+#     && git pull \
 #     && bin/console bin/console clear:cache \
 #     && bin/console doctrine:migration:migrate
 #  в более продвинутом варианте подменяем контейнер на сервере сбилженным image'м
+    - echo "Application successfully deployed."
+
+deploy_prod:
+  stage: deploy
+  when: manual
+  only:
+    - tags
+  script:
+    - echo "Deploying the application..."
+    #    здесь будет кастомная логика. в самом простом виде
+    #     - ssh $HOST:$USER \
+    #     && cd $PATH_TO_PROJECT \
+    #     && git pull \
+    #     && bin/console bin/console clear:cache \
+    #     && bin/console doctrine:migration:migrate
+    #  в более продвинутом варианте подменяем контейнер на сервере сбилженным image'м
     - echo "Application successfully deployed."
 
 dast_nuclei:
