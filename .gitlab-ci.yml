@@ -160,8 +160,7 @@ check_coverage:
   script:
     - |
       # Get latest successful pipeline ID from the target branch
-      echo "url is ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines?ref=${TARGET_BRANCH}&status=success"
-      TARGET_PIPELINE_JSON=$(curl -s --header "JOB-TOKEN: $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines?ref=${TARGET_BRANCH}&status=success")
+      TARGET_PIPELINE_JSON=$(curl -s --header "JOB-TOKEN: $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines?ref=${TARGET_BRANCH}")
       echo "Received API Response: $TARGET_PIPELINE_JSON"
       TARGET_PIPELINE_ID=$(echo "$TARGET_PIPELINE_JSON" | jq -r '.[0].id' 2>/dev/null)
 
