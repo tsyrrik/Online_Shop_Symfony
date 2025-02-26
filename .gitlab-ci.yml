@@ -5,9 +5,10 @@ stages:
   - DAST
 
 variables:
-  DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  DEV_IMAGE: $CI_REGISTRY_IMAGE:dev
+  PROD_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
 
-build:
+build_dev_dependencies:
   stage: build
   image: composer:latest
   script:
@@ -17,7 +18,7 @@ build:
       - vendor/
       - .
 
-build_image:
+build_dev_image:
   services:
     - name: docker:dind
       alias: dind
@@ -26,11 +27,38 @@ build_image:
   variables:
     GIT_STRATEGY: none
   script:
-    - docker build --tag $DOCKER_IMAGE --tag $CI_REGISTRY_IMAGE:latest ./Docker
+    - docker build -t $DEV_IMAGE ./.docker/dev
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - docker push $DOCKER_IMAGE
+    - docker push $DEV_IMAGE
+  needs: [build_dev_dependencies]
+
+build_prod_dependencies:
+  stage: build
+  image: composer:latest
+  script:
+    - composer install --no-dev --optimize-autoloader --no-interaction
+    - composer dump-env prod
+    - APP_ENV=prod APP_DEBUG=0 php bin/console cache:clear
+  artifacts:
+    paths:
+      - vendor/
+      - .
+
+build_prod_image:
+  services:
+    - name: docker:dind
+      alias: dind
+  image: docker:20.10.16
+  stage: build
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker build -t $PROD_IMAGE ./.docker/prod
+#    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker push $PROD_IMAGE
     - docker push $CI_REGISTRY_IMAGE:latest
-  needs: [build]
+  needs: [build_prod_dependencies]
+#todo add only from tag
 
 cs:
   stage: test
