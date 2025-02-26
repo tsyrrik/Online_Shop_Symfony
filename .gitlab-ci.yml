@@ -160,7 +160,7 @@ check_coverage:
   script:
     - |
       # Get latest successful pipeline ID from the target branch
-      TARGET_PIPELINE_JSON=$(curl -s --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines?ref=${TARGET_BRANCH}&status=success")
+      TARGET_PIPELINE_JSON=$(curl -s --header "Authorization: Bearer $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines?ref=${TARGET_BRANCH}&status=success")
       echo "Received API Response: $TARGET_PIPELINE_JSON"
       TARGET_PIPELINE_ID=$(echo "$TARGET_PIPELINE_JSON" | jq -r '.[0].id' 2>/dev/null)
 
@@ -173,11 +173,11 @@ check_coverage:
 
     - |
       # Fetch coverage from the target branch's last successful pipeline
-      TARGET_COVERAGE=$(curl -s --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${TARGET_PIPELINE_ID}/jobs" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
+      TARGET_COVERAGE=$(curl -s --header "Authorization: Bearer $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${TARGET_PIPELINE_ID}/jobs" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
 
     - |
       # Fetch current coverage from this pipeline
-      CURRENT_COVERAGE=$(curl -s --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${CI_PIPELINE_ID}/jobs" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
+      CURRENT_COVERAGE=$(curl -s --header "Authorization: Bearer $CI_JOB_TOKEN" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/pipelines/${CI_PIPELINE_ID}/jobs" | jq --arg JOB_NAME "$JOB_NAME" '.[] | select(.name==$JOB_NAME) | .coverage' | tr -d '"')
 
     - |
       # Validate if coverage values are available
