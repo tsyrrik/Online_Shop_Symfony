@@ -95,8 +95,10 @@ phpunit:
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
     when: always
-    paths:
-      - coverage.cobertura.xml
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.cobertura.xml
 
 #composer:
 #  variables:
