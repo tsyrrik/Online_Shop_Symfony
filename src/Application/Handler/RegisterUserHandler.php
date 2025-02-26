@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Application\Handler;
 
 use App\Application\Command\RegisterUserCommand;
@@ -16,7 +14,7 @@ readonly class RegisterUserHandler
 
     public function __invoke(RegisterUserCommand $command): void
     {
-        $user = new User($command->getName(), $command->getEmail(), $command->getPhone());
+        $user = new User($command->getName(), $command->getPhone(), $command->getEmail());
         $this->userRepository->save($user);
     }
 }

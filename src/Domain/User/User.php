@@ -25,7 +25,11 @@ class User
 
         #[ORM\Column(type: Types::STRING, unique: true)]
         private string $email
-    ) {}
+    ) {
+        $this->validateName($name);
+        $this->validatePhone($phone);
+        $this->validateEmail($email);
+    }
 
     public function getId(): ?int
     {
@@ -46,4 +50,29 @@ class User
     {
         return $this->email;
     }
+
+    private function validateName(string $name): void
+    {
+        if (empty($name) || !preg_match('/^[a-zA-Zа-яА-Я\s]+$/u', $name)) {
+            throw new \InvalidArgumentException('Invalid name provided');
+        }
+    }
+
+
+    private function validatePhone(string $phone): void
+    {
+        $pattern = '/^\+7\d{10}$/';
+        if (!preg_match($pattern, $phone)) {
+            throw new \InvalidArgumentException('Invalid phone number provided');
+        }
+    }
+
+
+    private function validateEmail(string $email): void
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('Invalid email address provided');
+        }
+    }
+
 }

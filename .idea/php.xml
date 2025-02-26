@@ -18,6 +18,7 @@
   <component name="PhpCSFixer">
     <phpcsfixer_settings>
       <PhpCSFixerConfiguration tool_path="$PROJECT_DIR$/vendor/bin/php-cs-fixer" />
+      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="84c7352a-b4db-4522-b22d-2ec7f1367623" tool_path="/Users/tsyren/Desktop/Lesson/testTaskOnlineShopSymfony/Online_Shop_Symfony/vendor/bin/php-cs-fixer" timeout="30000" />
     </phpcsfixer_settings>
   </component>
   <component name="PhpCodeSniffer">
