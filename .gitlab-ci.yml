@@ -92,7 +92,7 @@ phpunit:
     - bin/console doctrine:database:create --if-not-exists
     - bin/console doctrine:migrations:migrate --no-interaction
     - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --colors=never --coverage-text --coverage-cobertura=coverage.cobertura.xml
-  coverage: '/"  Lines:\s*\d+.\d+\%/'
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
     when: always
     paths:
