@@ -91,14 +91,13 @@ phpunit:
     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
     - bin/console doctrine:database:create --if-not-exists
     - bin/console doctrine:migrations:migrate --no-interaction
-    - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-text --coverage-cobertura=coverage.cobertura.xml --coverage-clover=coverage.xml
-  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
+    - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --colors=never --coverage-text --coverage-cobertura=coverage.cobertura.xml
+  coverage: '/"  Lines:\s*\d+.\d+\%/'
   artifacts:
     when: always
     paths:
       - coverage.cobertura.xml
-      - coverage.xml
-#
+
 #composer:
 #  variables:
 #    GIT_STRATEGY: none
