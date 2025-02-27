@@ -22,12 +22,12 @@ class RegisterUserHandlerTest extends TestCase
 
     public function testHandle()
     {
-        $command = new RegisterUserCommand('Johny Depp', '+7999123121', 'capitaneSparow@gmail.com');
+        $command = new RegisterUserCommand('Johny Depp', '+79991231234', 'capitaneSparow@gmail.com');
 
         $this->userRepository->expects($this->once())->method('save')->with(
             $this->callback(function (User $user) {
                 return $user->getName() === 'Johny Depp' &&
-                    $user->getPhone() === '+7999123121' &&
+                    $user->getPhone() === '+79991231234' &&
                     $user->getEmail() === 'capitaneSparow@gmail.com';
             })
         );

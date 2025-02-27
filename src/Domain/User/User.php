@@ -25,6 +25,7 @@ class User
         #[ORM\Column(type: Types::STRING, unique: true)]
         private string $email,
     ) {
+        //        dd($name, $phone, $email);
         $this->validateName($name);
         $this->validatePhone($phone);
         $this->validateEmail($email);
@@ -59,7 +60,7 @@ class User
 
     private function validatePhone(string $phone): void
     {
-        $pattern = '/^\+7\d{10}$/';
+        $pattern = '/^\+7\d{9,10}$/';
         if (!preg_match($pattern, $phone)) {
             throw new InvalidArgumentException('Invalid phone number provided');
         }
