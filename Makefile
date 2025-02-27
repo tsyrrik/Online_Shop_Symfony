@@ -34,7 +34,7 @@ composer:
 	&& composer audit
 
 cs-fix:
-	./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
+	./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation -v
 
 deptrac:
 	vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
@@ -45,7 +45,7 @@ di:
 	&& bin/console lint:container --env=prod
 
 phpunit:
-	XDEBUG_MODE=coverage php ./vendor/bin/phpunit --coverage-html coverage
+	XDEBUG_MODE=coverage php ./vendor/bin/phpunit --colors=never --coverage-text --coverage-cobertura=coverage.cobertura.xml --log-junit phpunit-report.xml --do-not-cache-result
 
 psalm:
 	vendor/vimeo/psalm/psalm
