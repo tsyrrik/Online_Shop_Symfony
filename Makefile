@@ -34,7 +34,7 @@ composer:
 	&& composer audit
 
 cs-fix:
-	./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
+	./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation -v
 
 deptrac:
 	vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
