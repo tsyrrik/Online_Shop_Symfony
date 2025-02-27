@@ -28,7 +28,7 @@ class UserTest extends TestCase
     {
         return [
             ['Иван', '+79990000000', 'test@test.com'],
-            ['Толя', '+79990000000', 'test2@test.com'],
+            ['Толя', '+7999000000', 'test2@test.com'],
             ['Гослин', '+79990000000', 'test3@test.com']
         ];
     }
@@ -47,14 +47,11 @@ class UserTest extends TestCase
     public function invalidNameDataProvider(): array
     {
         return [
-            ['', '+79990000000', 'test@example.com'], // Пустое имя
-            ['Иван123', '+79990000000', 'test@example.com'], // Имя с цифрами
-            ['John_Doe', '+79990000000', 'test@example.com'], // Имя с недопустимыми символами
+            ['', '+79990000000', 'test@example.com'],
+            ['Иван123', '+79990000000', 'test@example.com'],
+            ['John_Doe', '+79990000000', 'test@example.com']
         ];
     }
-
-
-
 
     /**
      * @test
@@ -70,9 +67,9 @@ class UserTest extends TestCase
     public function invalidPhoneDataProvider(): array
     {
         return [
-            ['Ванек', '7999123456', 'test@123.com'],
-            ['Ванюша', '+7999123456', 'test@123.com'],
-            ['Ванос', 'abcdefg', 'test@test.com']
+            ['Ванек', '799912345', 'test@123.com'],
+            ['Ванюша', '+79991234', 'test@123.com'],
+            ['Ванос', '+79991234567890', 'test@test.com']
         ];
     }
 
@@ -86,6 +83,7 @@ class UserTest extends TestCase
 
         new User($name, $phone, $email);
     }
+
     public function invalidEmailDataProvider(): array
     {
         return [

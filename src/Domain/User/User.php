@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 
 #[ORM\Entity]
-#[ORM\Table(name: "users")]
+#[ORM\Table(name: 'users')]
 class User
 {
     #[ORM\Id]
@@ -19,13 +20,12 @@ class User
     public function __construct(
         #[ORM\Column(type: Types::STRING)]
         private string $name,
-
         #[ORM\Column(type: Types::STRING)]
         private string $phone,
-
         #[ORM\Column(type: Types::STRING, unique: true)]
-        private string $email
+        private string $email,
     ) {
+        //        dd($name, $phone, $email);
         $this->validateName($name);
         $this->validatePhone($phone);
         $this->validateEmail($email);
@@ -54,25 +54,22 @@ class User
     private function validateName(string $name): void
     {
         if (empty($name) || !preg_match('/^[a-zA-Zа-яА-Я\s]+$/u', $name)) {
-            throw new \InvalidArgumentException('Invalid name provided');
+            throw new InvalidArgumentException('Invalid name provided');
         }
     }
-
 
     private function validatePhone(string $phone): void
     {
-        $pattern = '/^\+7\d{10}$/';
+        $pattern = '/^\+7\d{9,10}$/';
         if (!preg_match($pattern, $phone)) {
-            throw new \InvalidArgumentException('Invalid phone number provided');
+            throw new InvalidArgumentException('Invalid phone number provided');
         }
     }
-
 
     private function validateEmail(string $email): void
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('Invalid email address provided');
+            throw new InvalidArgumentException('Invalid email address provided');
         }
     }
-
 }

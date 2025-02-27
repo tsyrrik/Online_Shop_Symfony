@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Cart;
 
+use App\Domain\Product\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Domain\Product\Product;
+use DomainException;
+use InvalidArgumentException;
 
 class Cart
 {
@@ -22,12 +26,13 @@ class Cart
     public function addItem(CartItem $item): void
     {
         if ($this->items->count() >= 20) {
-            throw new \DomainException("В заказе не может быть более 20 позиций");
+            throw new DomainException('В заказе не может быть более 20 позиций');
         }
 
         foreach ($this->items as $existingItem) {
             if ($existingItem->getProduct()->getId() === $item->getProduct()->getId()) {
                 $existingItem->increaseQuantity($item->getQuantity());
+
                 return;
             }
         }
@@ -40,6 +45,7 @@ class Cart
         foreach ($this->items as $key => $item) {
             if ($item->getProduct()->getId() === $productId) {
                 $this->items->remove($key);
+
                 return;
             }
         }
@@ -55,7 +61,7 @@ class Cart
         return array_reduce(
             $this->items->toArray(),
             static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
-            0
+            0,
         );
     }
 
@@ -67,16 +73,17 @@ class Cart
     public function addProduct(Product $product, int $quantity): void
     {
         if ($product->getId() === null) {
-            throw new \InvalidArgumentException('Product ID cannot be null');
+            throw new InvalidArgumentException('Product ID cannot be null');
         }
 
         if ($quantity <= 0) {
-            throw new \InvalidArgumentException('Quantity must be greater than zero');
+            throw new InvalidArgumentException('Quantity must be greater than zero');
         }
 
         foreach ($this->items as $existingItem) {
             if ($existingItem instanceof CartItem && $existingItem->getProduct()->getId() === $product->getId()) {
                 $existingItem->increaseQuantity($quantity);
+
                 return;
             }
         }

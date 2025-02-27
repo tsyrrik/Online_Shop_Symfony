@@ -18,7 +18,7 @@ readonly class AddToCartHandler
     {
         $product = $this->productRepository->findById($command->getProductId());
         if (!$product) {
-            throw new \Exception('Товар не найден');
+            throw new Exception('Товар не найден');
         }
 
         $cart = $this->cartRepository->getCartForUser($command->getUserId()) ?? new Cart($command->getUserId());
@@ -26,5 +26,4 @@ readonly class AddToCartHandler
 
         $this->cartRepository->saveCart($command->getUserId(), $cart);
     }
-
 }
