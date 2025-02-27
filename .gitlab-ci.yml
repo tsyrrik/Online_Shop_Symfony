@@ -26,9 +26,10 @@ build_dev_image:
   stage: build
   variables:
     GIT_STRATEGY: none
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker build -t $DEV_IMAGE ./.docker/dev
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker push $DEV_IMAGE
   needs: [build_dev_dependencies]
 
@@ -56,9 +57,10 @@ build_prod_image:
   stage: build
   variables:
     GIT_STRATEGY: none
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker build -t $PROD_IMAGE ./.docker/prod
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker push $PROD_IMAGE
     - docker push $CI_REGISTRY_IMAGE:latest
   needs: [build_prod_dependencies]
@@ -71,7 +73,7 @@ cs:
   variables:
     GIT_STRATEGY: none
   script:
-    - ./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation
+    - ./vendor/bin/php-cs-fixer -v --config=.php-cs-fixer.dist.php fix --dry-run --stop-on-violation --diff
 
 phpunit:
   stage: test
