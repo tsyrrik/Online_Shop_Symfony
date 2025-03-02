@@ -8,14 +8,23 @@ use PHPUnit\Framework\TestCase;
 
 class InMemoryCartRepositoryTest extends TestCase
 {
-    public function testSaveAndGetCart()
+    /**
+     * @test
+     */
+    public function testSaveAndGetCartSucceeds(): void
     {
+        // Arrange
         $repository = new InMemoryCartRepository();
         $cart = new Cart(userId: 1);
-        $repository->saveCart(userId: 1, cart: $cart);
+        $nonExistentUserId = 2;
 
+        // Act
+        $repository->saveCart(userId: 1, cart: $cart);
         $retrievedCart = $repository->getCartForUser(userId: 1);
+        $cartForNonExistentUser = $repository->getCartForUser(userId: $nonExistentUserId);
+
+        // Assert
         $this->assertSame(expected: $cart, actual: $retrievedCart);
-        $this->assertNull(actual: $repository->getCartForUser(userId: 2));
+        $this->assertNull(actual: $cartForNonExistentUser);
     }
 }

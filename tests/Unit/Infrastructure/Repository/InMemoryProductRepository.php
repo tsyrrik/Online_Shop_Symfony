@@ -7,13 +7,23 @@ use PHPUnit\Framework\TestCase;
 
 class InMemoryProductRepositoryTest extends TestCase
 {
-    public function testFindProduct()
+    /**
+     * @test
+     */
+    public function testFindProductReturnsCorrectResult(): void
     {
+        // Arrange
         $repository = new InMemoryProductRepository();
-        $product = $repository->find(id: 1);
+        $existingProductId = 1;
+        $nonExistentProductId = 999;
 
+        // Act
+        $product = $repository->find(id: $existingProductId);
+        $nonExistentProduct = $repository->find(id: $nonExistentProductId);
+
+        // Assert
         $this->assertNotNull(actual: $product);
         $this->assertEquals(expected: 'Велосипед_10', actual: $product->getName());
-        $this->assertNull(actual: $repository->find(id: 999));
+        $this->assertNull(actual: $nonExistentProduct);
     }
 }

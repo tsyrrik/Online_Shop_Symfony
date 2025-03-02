@@ -13,10 +13,15 @@ class UserTest extends TestCase
      * @test
      * @dataProvider validDataProvider
      */
-    public function createUserValidData(string $name, string $phone, string $email): void
+    public function testCreateUserWithValidDataSucceeds(string $name, string $phone, string $email): void
     {
+        // Arrange
+        $expectedId = null;
+
+        // Act
         $user = new User(name: $name, phone: $phone, email: $email);
 
+        // Assert
         $this->assertInstanceOf(expected: User::class, actual: $user);
         $this->assertEquals(expected: $name, actual: $user->getName());
         $this->assertEquals(expected: $phone, actual: $user->getPhone());
@@ -29,7 +34,7 @@ class UserTest extends TestCase
         return [
             ['Иван', '+79990000000', 'test@test.com'],
             ['Толя', '+7999000000', 'test2@test.com'],
-            ['Гослин', '+79990000000', 'test3@test.com']
+            ['Гослин', '+79990000000', 'test3@test.com'],
         ];
     }
 
@@ -37,11 +42,15 @@ class UserTest extends TestCase
      * @test
      * @dataProvider invalidNameDataProvider
      */
-    public function ThrowExceptionInvalidName(string $name, string $phone, string $email): void
+    public function testCreateUserWithInvalidNameThrowsException(string $name, string $phone, string $email): void
     {
+        // Arrange
         $this->expectException(exception: \InvalidArgumentException::class);
 
+        // Act
         new User(name: $name, phone: $phone, email: $email);
+
+        // Assert
     }
 
     public function invalidNameDataProvider(): array
@@ -49,7 +58,7 @@ class UserTest extends TestCase
         return [
             ['', '+79990000000', 'test@example.com'],
             ['Иван123', '+79990000000', 'test@example.com'],
-            ['John_Doe', '+79990000000', 'test@example.com']
+            ['John_Doe', '+79990000000', 'test@example.com'],
         ];
     }
 
@@ -57,11 +66,15 @@ class UserTest extends TestCase
      * @test
      * @dataProvider invalidPhoneDataProvider
      */
-    public function throwExceptionInvalidPhone(string $name, string $phone, string $email): void
+    public function testCreateUserWithInvalidPhoneThrowsException(string $name, string $phone, string $email): void
     {
+        // Arrange
         $this->expectException(exception: \InvalidArgumentException::class);
 
+        // Act
         new User(name: $name, phone: $phone, email: $email);
+
+        // Assert
     }
 
     public function invalidPhoneDataProvider(): array
@@ -69,7 +82,7 @@ class UserTest extends TestCase
         return [
             ['Ванек', '799912345', 'test@123.com'],
             ['Ванюша', '+79991234', 'test@123.com'],
-            ['Ванос', '+79991234567890', 'test@test.com']
+            ['Ванос', '+79991234567890', 'test@test.com'],
         ];
     }
 
@@ -77,11 +90,15 @@ class UserTest extends TestCase
      * @test
      * @dataProvider invalidEmailDataProvider
      */
-    public function throwExceptionInvalidEmail(string $name, string $phone, string $email): void
+    public function testCreateUserWithInvalidEmailThrowsException(string $name, string $phone, string $email): void
     {
+        // Arrange
         $this->expectException(exception: \InvalidArgumentException::class);
 
+        // Act
         new User(name: $name, phone: $phone, email: $email);
+
+        // Assert
     }
 
     public function invalidEmailDataProvider(): array
@@ -89,21 +106,25 @@ class UserTest extends TestCase
         return [
             ['Иван', '+79991234567', 'test'],
             ['Иван', '+79991234567', 'test@'],
-            ['Иван', '+79991234567', 'test@example']
+            ['Иван', '+79991234567', 'test@example'],
         ];
     }
 
     /**
      * @test
      */
-    public function testGettersReturnCorrectValues(): void
+    public function testGetUserPropertiesReturnsCorrectValues(): void
     {
+        // Arrange
         $name = 'Иван';
         $phone = '+79991234567';
         $email = 'test@example.com';
+        $expectedId = null;
 
+        // Act
         $user = new User(name: $name, phone: $phone, email: $email);
 
+        // Assert
         $this->assertEquals(expected: $name, actual: $user->getName());
         $this->assertEquals(expected: $phone, actual: $user->getPhone());
         $this->assertEquals(expected: $email, actual: $user->getEmail());

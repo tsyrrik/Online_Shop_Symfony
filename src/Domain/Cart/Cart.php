@@ -26,7 +26,7 @@ class Cart
     public function addItem(CartItem $item): void
     {
         if ($this->items->count() >= 20) {
-            throw new DomainException(message: 'В заказе не может быть более 20 позиций');
+            throw new DomainException(message: 'There cannot be more than 20 items in an order');
         }
 
         foreach ($this->items as $existingItem) {

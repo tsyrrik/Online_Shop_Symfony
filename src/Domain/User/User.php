@@ -7,6 +7,7 @@ namespace App\Domain\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
@@ -18,14 +19,17 @@ class User
     private ?int $id = null;
 
     public function __construct(
+        #[Assert\NotBlank(message: 'Name cannot be empty')]
+        #[Assert\Regex(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', message: 'Invalid name provided')]
         #[ORM\Column(type: Types::STRING)]
         private string $name,
+        #[Assert\Regex(pattern: '/^\+7\d{9,10}$/', message: 'Invalid phone number provided')]
         #[ORM\Column(type: Types::STRING)]
         private string $phone,
+        #[Assert\Email(message: 'Invalid email address provided')]
         #[ORM\Column(type: Types::STRING, unique: true)]
         private string $email,
     ) {
-        //        dd($name, $phone, $email);
         $this->validateName(name: $name);
         $this->validatePhone(phone: $phone);
         $this->validateEmail(email: $email);
