@@ -13,7 +13,7 @@ class UserTest extends TestCase
      * @test
      * @dataProvider validDataProvider
      */
-    public function CreateUserValidData(string $name, string $phone, string $email): void
+    public function createUserValidData(string $name, string $phone, string $email): void
     {
         $user = new User($name, $phone, $email);
 
@@ -57,7 +57,7 @@ class UserTest extends TestCase
      * @test
      * @dataProvider invalidPhoneDataProvider
      */
-    public function ThrowExceptionInvalidPhone(string $name, string $phone, string $email): void
+    public function throwExceptionInvalidPhone(string $name, string $phone, string $email): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -77,7 +77,7 @@ class UserTest extends TestCase
      * @test
      * @dataProvider invalidEmailDataProvider
      */
-    public function ThrowExceptionInvalidEmail(string $name, string $phone, string $email): void
+    public function throwExceptionInvalidEmail(string $name, string $phone, string $email): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
