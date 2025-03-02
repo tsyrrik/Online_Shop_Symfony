@@ -16,7 +16,7 @@ readonly class RegisterUserHandler
 
     public function __invoke(RegisterUserCommand $command): void
     {
-        $user = new User($command->getName(), $command->getPhone(), $command->getEmail());
+        $user = new User(name: $command->getName(), phone: $command->getPhone(), email: $command->getEmail());
         $this->userRepository->save($user);
     }
 }

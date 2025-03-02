@@ -25,6 +25,6 @@ class UserRepository implements UserRepositoryInterface
 
     public function findByEmail(string $email): ?User
     {
-        return $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        return $this->entityManager->getRepository(User::class)->findOneBy(criteria: ['email' => $email]);
     }
 }

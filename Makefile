@@ -23,7 +23,7 @@ cicd:
 	make deptrac
 	make di
 #	make psalm
-#	make rector
+	make rector
 	make schema-validate
 
 cs-fix:

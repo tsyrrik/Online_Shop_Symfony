@@ -15,13 +15,13 @@ class UserTest extends TestCase
      */
     public function createUserValidData(string $name, string $phone, string $email): void
     {
-        $user = new User($name, $phone, $email);
+        $user = new User(name: $name, phone: $phone, email: $email);
 
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($name, $user->getName());
-        $this->assertEquals($phone, $user->getPhone());
-        $this->assertEquals($email, $user->getEmail());
-        $this->assertNull($user->getId());
+        $this->assertInstanceOf(expected: User::class, actual: $user);
+        $this->assertEquals(expected: $name, actual: $user->getName());
+        $this->assertEquals(expected: $phone, actual: $user->getPhone());
+        $this->assertEquals(expected: $email, actual: $user->getEmail());
+        $this->assertNull(actual: $user->getId());
     }
 
     public function validDataProvider(): array
@@ -39,9 +39,9 @@ class UserTest extends TestCase
      */
     public function ThrowExceptionInvalidName(string $name, string $phone, string $email): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(exception: \InvalidArgumentException::class);
 
-        new User($name, $phone, $email);
+        new User(name: $name, phone: $phone, email: $email);
     }
 
     public function invalidNameDataProvider(): array
@@ -59,9 +59,9 @@ class UserTest extends TestCase
      */
     public function throwExceptionInvalidPhone(string $name, string $phone, string $email): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(exception: \InvalidArgumentException::class);
 
-        new User($name, $phone, $email);
+        new User(name: $name, phone: $phone, email: $email);
     }
 
     public function invalidPhoneDataProvider(): array
@@ -79,9 +79,9 @@ class UserTest extends TestCase
      */
     public function throwExceptionInvalidEmail(string $name, string $phone, string $email): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(exception: \InvalidArgumentException::class);
 
-        new User($name, $phone, $email);
+        new User(name: $name, phone: $phone, email: $email);
     }
 
     public function invalidEmailDataProvider(): array
@@ -102,11 +102,11 @@ class UserTest extends TestCase
         $phone = '+79991234567';
         $email = 'test@example.com';
 
-        $user = new User($name, $phone, $email);
+        $user = new User(name: $name, phone: $phone, email: $email);
 
-        $this->assertEquals($name, $user->getName());
-        $this->assertEquals($phone, $user->getPhone());
-        $this->assertEquals($email, $user->getEmail());
-        $this->assertNull($user->getId());
+        $this->assertEquals(expected: $name, actual: $user->getName());
+        $this->assertEquals(expected: $phone, actual: $user->getPhone());
+        $this->assertEquals(expected: $email, actual: $user->getEmail());
+        $this->assertNull(actual: $user->getId());
     }
 }

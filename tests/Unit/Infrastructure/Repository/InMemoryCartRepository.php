@@ -11,11 +11,11 @@ class InMemoryCartRepositoryTest extends TestCase
     public function testSaveAndGetCart()
     {
         $repository = new InMemoryCartRepository();
-        $cart = new Cart(1);
-        $repository->saveCart(1, $cart);
+        $cart = new Cart(userId: 1);
+        $repository->saveCart(userId: 1, cart: $cart);
 
-        $retrievedCart = $repository->getCartForUser(1);
-        $this->assertSame($cart, $retrievedCart);
-        $this->assertNull($repository->getCartForUser(2));
+        $retrievedCart = $repository->getCartForUser(userId: 1);
+        $this->assertSame(expected: $cart, actual: $retrievedCart);
+        $this->assertNull(actual: $repository->getCartForUser(userId: 2));
     }
 }

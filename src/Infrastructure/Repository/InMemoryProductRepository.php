@@ -54,6 +54,6 @@ class InMemoryProductRepository implements ProductRepositoryInterface
 
     public function findById(int $id): ?Product
     {
-        return $this->find($id);
+        return $this->find(id: $id);
     }
 }

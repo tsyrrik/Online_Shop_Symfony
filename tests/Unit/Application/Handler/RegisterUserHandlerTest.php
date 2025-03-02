@@ -16,22 +16,22 @@ class RegisterUserHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->userRepository = $this->createMock(UserRepositoryInterface::class);
-        $this->handler = new RegisterUserHandler($this->userRepository);
+        $this->userRepository = $this->createMock(originalClassName: UserRepositoryInterface::class);
+        $this->handler = new RegisterUserHandler(userRepository: $this->userRepository);
     }
 
     public function testHandle()
     {
-        $command = new RegisterUserCommand('Johny Depp', '+79991231234', 'capitaneSparow@gmail.com');
+        $command = new RegisterUserCommand(name: 'Johny Depp', phone: '+79991231234', email: 'capitaneSparow@gmail.com');
 
         $this->userRepository->expects($this->once())->method('save')->with(
-            $this->callback(function (User $user) {
+            $this->callback(callback: function (User $user) {
                 return $user->getName() === 'Johny Depp' &&
                     $user->getPhone() === '+79991231234' &&
                     $user->getEmail() === 'capitaneSparow@gmail.com';
             })
         );
 
-        $this->handler->__invoke($command);
+        $this->handler->__invoke(command: $command);
     }
 }

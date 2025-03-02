@@ -17,28 +17,28 @@ class AdminOrderController extends AbstractController
     #[Route(
         path: '/admin/orders/{orderId}/status',
         name: 'admin_order_update_status',
-        methods: ['POST']
+        methods: ['POST'],
     )]
     public function updateStatus(Request $request, int $orderId): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $data = json_decode(json: $request->getContent(), associative: true);
 
         if (!isset($data['status'])) {
-            return new JsonResponse(['error' => 'Missing required parameter: status'], 400);
+            return new JsonResponse(data: ['error' => 'Missing required parameter: status'], status: 400);
         }
 
         $status = $data['status'];
 
         $allowedStatuses = ['pending', 'processing', 'completed', 'cancelled'];
-        if (!in_array($status, $allowedStatuses, true)) {
-            return new JsonResponse(['error' => 'Invalid status provided'], 400);
+        if (!in_array(needle: $status, haystack: $allowedStatuses, strict: true)) {
+            return new JsonResponse(data: ['error' => 'Invalid status provided'], status: 400);
         }
 
         try {
-            return new JsonResponse(['status' => 'Order updated successfully'], 200);
+            return new JsonResponse(data: ['status' => 'Order updated successfully'], status: 200);
         } catch (Exception $e) {
 
-            return new JsonResponse(['error' => 'Failed to update order status'], 500);
+            return new JsonResponse(data: ['error' => 'Failed to update order status'], status: 500);
         }
     }
 }

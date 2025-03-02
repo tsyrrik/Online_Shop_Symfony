@@ -20,44 +20,44 @@ class AddToCartHandlerTest extends TestCase
     {
         $this->productRepository = new InMemoryProductRepository();
         $this->cartRepository = new InMemoryCartRepository();
-        $this->handler = new AddToCartHandler($this->productRepository, $this->cartRepository);
+        $this->handler = new AddToCartHandler(productRepository: $this->productRepository, cartRepository: $this->cartRepository);
     }
 
     public function testHandleWithExistingCart(): void
     {
         // Arrange
-        $product = new Product('Test Product', 100, 20, 30, 40, 500, 50, 1, 'Description');
-        $reflection = new \ReflectionClass($product);
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($product, 2);
+        $product = new Product(name: 'Test Product', weight: 100, height: 20, width: 30, length: 40, cost: 500, tax: 50, version: 1, description: 'Description');
+        $reflection = new \ReflectionClass(objectOrClass: $product);
+        $property = $reflection->getProperty(name: 'id');
+        $property->setAccessible(accessible: true);
+        $property->setValue(objectOrValue: $product, value: 2);
 
-        $this->productRepository->save($product);
+        $this->productRepository->save(product: $product);
 
-        $cart = new Cart(1);
-        $this->cartRepository->saveCart(1, $cart);
+        $cart = new Cart(userId: 1);
+        $this->cartRepository->saveCart(userId: 1, cart: $cart);
 
-        $command = new AddToCartCommand(1, 2, 3);
+        $command = new AddToCartCommand(userId: 1, productId: 2, quantity: 3);
 
         // Act
-        $this->handler->handle($command);
+        $this->handler->handle(command: $command);
 
         // Assert
-        $updatedCart = $this->cartRepository->getCartForUser(1);
-        $this->assertCount(1, $updatedCart->getItems());
-        $this->assertEquals(3, $updatedCart->getTotalQuantity());
+        $updatedCart = $this->cartRepository->getCartForUser(userId: 1);
+        $this->assertCount(expectedCount: 1, haystack: $updatedCart->getItems());
+        $this->assertEquals(expected: 3, actual: $updatedCart->getTotalQuantity());
     }
 
     public function testHandleProductNotFound(): void
     {
         // Arrange
-        $command = new AddToCartCommand(1, 999, 3); //
+        $command = new AddToCartCommand(userId: 1, productId: 999, quantity: 3); //
 
         // Assert
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Товар не найден');
+        $this->expectException(exception: \Exception::class);
+        $this->expectExceptionMessage(message: 'Товар не найден');
 
         // Act
-        $this->handler->handle($command);
+        $this->handler->handle(command: $command);
     }
 }

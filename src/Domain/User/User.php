@@ -26,9 +26,9 @@ class User
         private string $email,
     ) {
         //        dd($name, $phone, $email);
-        $this->validateName($name);
-        $this->validatePhone($phone);
-        $this->validateEmail($email);
+        $this->validateName(name: $name);
+        $this->validatePhone(phone: $phone);
+        $this->validateEmail(email: $email);
     }
 
     public function getId(): ?int
@@ -53,23 +53,23 @@ class User
 
     private function validateName(string $name): void
     {
-        if (empty($name) || !preg_match('/^[a-zA-Zа-яА-Я\s]+$/u', $name)) {
-            throw new InvalidArgumentException('Invalid name provided');
+        if (empty($name) || !preg_match(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', subject: $name)) {
+            throw new InvalidArgumentException(message: 'Invalid name provided');
         }
     }
 
     private function validatePhone(string $phone): void
     {
         $pattern = '/^\+7\d{9,10}$/';
-        if (!preg_match($pattern, $phone)) {
-            throw new InvalidArgumentException('Invalid phone number provided');
+        if (!preg_match(pattern: $pattern, subject: $phone)) {
+            throw new InvalidArgumentException(message: 'Invalid phone number provided');
         }
     }
 
     private function validateEmail(string $email): void
     {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('Invalid email address provided');
+        if (!filter_var(value: $email, filter: FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException(message: 'Invalid email address provided');
         }
     }
 }

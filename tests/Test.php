@@ -17,15 +17,15 @@ class Test extends KernelTestCase
     public function testProduct(): void
     {
         $product = new Product(
-            'name',
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            'description',
+            name: 'name',
+            weight: 1,
+            height: 1,
+            width: 1,
+            length: 1,
+            cost: 1,
+            tax: 1,
+            version: 1,
+            description: 'description',
         );
         self::assertInstanceOf(Product::class, $product);
     }

@@ -21,12 +21,12 @@ class RegistrationController extends AbstractController
         RegisterUserRequest $request,
     ): JsonResponse {
         $command = new RegisterUserCommand(
-            $request->name,
-            $request->email,
-            $request->phone,
+            name: $request->name,
+            phone: $request->email,
+            email: $request->phone,
         );
         $this->commandBus->dispatch($command);
 
-        return new JsonResponse(['status' => 'User registration initiated'], Response::HTTP_ACCEPTED);
+        return new JsonResponse(data: ['status' => 'User registration initiated'], status: Response::HTTP_ACCEPTED);
     }
 }

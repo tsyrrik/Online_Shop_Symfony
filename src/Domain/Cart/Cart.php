@@ -26,12 +26,12 @@ class Cart
     public function addItem(CartItem $item): void
     {
         if ($this->items->count() >= 20) {
-            throw new DomainException('В заказе не может быть более 20 позиций');
+            throw new DomainException(message: 'В заказе не может быть более 20 позиций');
         }
 
         foreach ($this->items as $existingItem) {
             if ($existingItem->getProduct()->getId() === $item->getProduct()->getId()) {
-                $existingItem->increaseQuantity($item->getQuantity());
+                $existingItem->increaseQuantity(amount: $item->getQuantity());
 
                 return;
             }
@@ -59,9 +59,9 @@ class Cart
     public function getTotalQuantity(): int
     {
         return array_reduce(
-            $this->items->toArray(),
-            static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
-            0,
+            array: $this->items->toArray(),
+            callback: static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
+            initial: 0,
         );
     }
 
@@ -73,22 +73,22 @@ class Cart
     public function addProduct(Product $product, int $quantity): void
     {
         if ($product->getId() === null) {
-            throw new InvalidArgumentException('Product ID cannot be null');
+            throw new InvalidArgumentException(message: 'Product ID cannot be null');
         }
 
         if ($quantity <= 0) {
-            throw new InvalidArgumentException('Quantity must be greater than zero');
+            throw new InvalidArgumentException(message: 'Quantity must be greater than zero');
         }
 
         foreach ($this->items as $existingItem) {
             if ($existingItem instanceof CartItem && $existingItem->getProduct()->getId() === $product->getId()) {
-                $existingItem->increaseQuantity($quantity);
+                $existingItem->increaseQuantity(amount: $quantity);
 
                 return;
             }
         }
 
-        $cartItem = new CartItem($product->getId(), $quantity);
-        $this->addItem($cartItem);
+        $cartItem = new CartItem(productId: $product->getId(), quantity: $quantity);
+        $this->addItem(item: $cartItem);
     }
 }

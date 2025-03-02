@@ -16,7 +16,7 @@ class ProductController extends AbstractController
     #[Route(
         path: '/api/products',
         name: 'api_products',
-        methods: ['GET']
+        methods: ['GET'],
     )]
     public function list(): JsonResponse
     {
@@ -34,6 +34,6 @@ class ProductController extends AbstractController
             ];
         }
 
-        return new JsonResponse($data);
+        return new JsonResponse(data: $data);
     }
 }

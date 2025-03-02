@@ -21,19 +21,19 @@ class CartController extends AbstractController
     #[Route(
         path: '/api/cart/add',
         name: 'api_cart_add',
-        methods: ['POST']
+        methods: ['POST'],
     )]
     public function add(
         #[MapRequestPayload]
         AddToCartRequest $request,
     ): JsonResponse {
         try {
-            $command = new AddToCartCommand($request->userId, $request->productId, $request->quantity);
+            $command = new AddToCartCommand(userId: $request->userId, productId: $request->productId, quantity: $request->quantity);
             $this->commandBus->dispatch($command);
         } catch (Throwable $e) {
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(data: ['error' => $e->getMessage()], status: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new JsonResponse(['status' => 'Product added to cart'], Response::HTTP_ACCEPTED);
+        return new JsonResponse(data: ['status' => 'Product added to cart'], status: Response::HTTP_ACCEPTED);
     }
 }

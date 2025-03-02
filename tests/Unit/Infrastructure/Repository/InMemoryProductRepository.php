@@ -10,10 +10,10 @@ class InMemoryProductRepositoryTest extends TestCase
     public function testFindProduct()
     {
         $repository = new InMemoryProductRepository();
-        $product = $repository->find(1);
+        $product = $repository->find(id: 1);
 
-        $this->assertNotNull($product);
-        $this->assertEquals('Велосипед_10', $product->getName());
-        $this->assertNull($repository->find(999));
+        $this->assertNotNull(actual: $product);
+        $this->assertEquals(expected: 'Велосипед_10', actual: $product->getName());
+        $this->assertNull(actual: $repository->find(id: 999));
     }
 }
