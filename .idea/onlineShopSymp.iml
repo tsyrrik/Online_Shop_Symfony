@@ -5,7 +5,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="App\Tests\" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/collections" />
@@ -165,15 +164,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/felixfbecker/language-server-protocol" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fidry/cpu-core-counter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/friendsofphp/php-cs-fixer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/icecave/parity" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/icecave/repr" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/justinrainbow/json-schema" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/kelunik/certificate" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri-interfaces" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/localheinz/diff" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maglnet/composer-require-checker" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/marc-mabe/php-enum" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/netresearch/jsonmapper" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpstan" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-factory" />
@@ -191,6 +187,15 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php84" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/vimeo/psalm" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/glob" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/pdepend/pdepend" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpmd/phpmd" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/savinmikhail/add_named_arguments_rector" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/savinmikhail/comments-density" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/savinmikhail/primitive_wrappers" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/seld/jsonlint" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/seld/phar-utils" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/seld/signal-handler" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symplify/rule-doc-generator-contracts" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

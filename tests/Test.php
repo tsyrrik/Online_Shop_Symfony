@@ -22,10 +22,10 @@ class Test extends KernelTestCase
             1,
             1,
             1,
+            1,
+            1,
+            1,
             'description',
-            1,
-            1,
-            1,
         );
         self::assertInstanceOf(Product::class, $product);
     }

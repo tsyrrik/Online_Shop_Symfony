@@ -5,70 +5,59 @@ namespace Tests\Unit\Application\Handler;
 use App\Application\Command\AddToCartCommand;
 use App\Application\Handler\AddToCartHandler;
 use App\Domain\Cart\Cart;
-use App\Domain\Cart\Repository\CartRepositoryInterface;
 use App\Domain\Product\Product;
-use App\Domain\Product\Repository\ProductRepositoryInterface;
+use App\Infrastructure\Repository\InMemoryCartRepository;
+use App\Infrastructure\Repository\InMemoryProductRepository;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class AddToCartHandlerTest extends TestCase
 {
-    private ProductRepositoryInterface|MockObject $productRepository;
-    private CartRepositoryInterface|MockObject $cartRepository;
     private AddToCartHandler $handler;
+    private InMemoryProductRepository $productRepository;
+    private InMemoryCartRepository $cartRepository;
 
     protected function setUp(): void
     {
-        $this->productRepository = $this->createMock(ProductRepositoryInterface::class);
-        $this->cartRepository = $this->createMock(CartRepositoryInterface::class);
+        $this->productRepository = new InMemoryProductRepository();
+        $this->cartRepository = new InMemoryCartRepository();
         $this->handler = new AddToCartHandler($this->productRepository, $this->cartRepository);
     }
 
-    public function testHandleWithExistingCart()
+    public function testHandleWithExistingCart(): void
     {
+        // Arrange
         $product = new Product('Test Product', 100, 20, 30, 40, 500, 50, 1, 'Description');
         $reflection = new \ReflectionClass($product);
         $property = $reflection->getProperty('id');
         $property->setAccessible(true);
         $property->setValue($product, 2);
 
-        $this->productRepository
-            ->method('findById')
-            ->with(2)
-            ->willReturn($product);
+        $this->productRepository->save($product);
 
         $cart = new Cart(1);
-
-        $this->cartRepository
-            ->method('getCartForUser')
-            ->with(1)
-            ->willReturn($cart);
-
-        $this->cartRepository
-            ->expects($this->once())
-            ->method('saveCart')
-            ->with(1, $this->callback(function (Cart $savedCart) use ($cart) {
-                return $savedCart === $cart && $savedCart->getTotalQuantity() === 3;
-            }));
+        $this->cartRepository->saveCart(1, $cart);
 
         $command = new AddToCartCommand(1, 2, 3);
+
+        // Act
         $this->handler->handle($command);
 
-        $this->assertCount(1, $cart->getItems());
-        $this->assertEquals(3, $cart->getTotalQuantity());
+        // Assert
+        $updatedCart = $this->cartRepository->getCartForUser(1);
+        $this->assertCount(1, $updatedCart->getItems());
+        $this->assertEquals(3, $updatedCart->getTotalQuantity());
     }
 
-    public function testHandleProductNotFound()
+    public function testHandleProductNotFound(): void
     {
-        $this->productRepository
-            ->method('findById')
-            ->with(2)
-            ->willReturn(null);
+        // Arrange
+        $command = new AddToCartCommand(1, 999, 3); //
 
+        // Assert
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Товар не найден');
 
-        $command = new AddToCartCommand(1, 2, 3);
+        // Act
         $this->handler->handle($command);
     }
 }
