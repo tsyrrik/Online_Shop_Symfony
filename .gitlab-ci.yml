@@ -88,11 +88,12 @@ phpunit:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
     GIT_STRATEGY: none
-  script:
+  before_script:
     - apt-get update && apt-get install -y postgresql-client
     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
     - bin/console doctrine:database:create --if-not-exists
     - bin/console doctrine:migrations:migrate --no-interaction
+  script:
     - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --colors=never --coverage-text --coverage-cobertura=coverage.cobertura.xml --log-junit phpunit-report.xml --do-not-cache-result
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
@@ -109,11 +110,11 @@ composer:
   stage: test
   image: $DEV_IMAGE
   script:
-    - composer normalize --diff --dry-run # https://github.com/ergebnis/composer-normalize
-    - composer validate # https://getcomposer.org/doc/03-cli.md#validate
-    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json # https://github.com/maglnet/ComposerRequireChecker
-    - php8.2 vendor/bin/composer-unused # https://github.com/composer-unused/composer-unused
-    - composer audit # https://getcomposer.org/doc/03-cli.md#audit
+    - composer normalize --diff --dry-run 
+    - composer validate 
+    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
+    - php8.2 vendor/bin/composer-unused 
+    - composer audit 
     - composer check-platform-reqs
 
 psalm:
@@ -124,7 +125,7 @@ psalm:
   script:
     - vendor/bin/psalm
 
-di: # чтобы проверить, что контейнер компилируется корректно в прод режиме
+di_lint:
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -133,7 +134,7 @@ di: # чтобы проверить, что контейнер компилир�
     - bin/console cache:clear --env=prod
     - bin/console lint:container --env=prod
 
-schema-validate: # проверить корректность маппингов доктрины, без соединения с бд
+schema_validate:
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -141,18 +142,10 @@ schema-validate: # проверить корректность маппинго�
   script:
     - bin/console doctrine:schema:validate --skip-sync
 
-rector:
-  variables:
-    GIT_STRATEGY: none
-  stage: test
-  image: $DEV_IMAGE
-  script:
-    - vendor/rector/rector/bin/rector --dry-run
-
 check_coverage:
-  image: alpine:latest # you should use PAT cuz JOB_TOKEN doesnt have sufficient permissions
+  image: alpine:latest
   stage: test
-  needs: [phpunit] #why use before_script and after_script?
+  needs: [phpunit] 
   variables:
     JOB_NAME: phpunit
     TARGET_BRANCH: master
@@ -226,6 +219,15 @@ check_coverage:
         fi
       fi
 
+deptrac:
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DEV_IMAGE
+  script:
+    - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
+    - vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
+
 migrations_rollback_test:
   stage: test
   image: $DEV_IMAGE
@@ -239,34 +241,13 @@ migrations_rollback_test:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgres
     GIT_STRATEGY: none
+  before_script:
+     - apt-get update && apt-get install -y postgresql-client
+     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
+     - bin/console doctrine:database:create --if-not-exists --env=test
+     - bin/console doctrine:migrations:migrate --no-interaction --env=test
   script:
-    - apt-get update && apt-get install -y postgresql-client
-    - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
-    - bin/console doctrine:database:create --if-not-exists --env=test
-    - bin/console doctrine:migrations:migrate --no-interaction --env=test
     - bin/console doctrine:migrations:migrate first --no-interaction --env=test
-    - bin/console doctrine:migrations:migrate --no-interaction --env=test
-
-phpmd:
-  stage: test
-  image: $DEV_IMAGE
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
-  artifacts:
-    when: always
-    paths:
-      - phpmd_result.json
-
-deptrac:
-  variables:
-    GIT_STRATEGY: none
-  stage: test
-  image: $DEV_IMAGE
-  script:
-    - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
-    - vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
 
 kics-iac-scan:
   stage: test
@@ -281,13 +262,49 @@ kics-iac-scan:
     paths:
       - kics-results.json
 
+composer_outdated_check:
+  stage: test
+  image: composer:latest
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - composer outdated --strict --major-only --sort-by-age
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+
+phpmd:
+  stage: test
+  image: $DEV_IMAGE
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
+  artifacts:
+    when: always
+    paths:
+      - phpmd_result.json
+
+comments_density:
+  stage: test
+  image: $DEV_IMAGE
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - vendor/bin/comments_density analyze
+
+rector:
+  variables:
+    GIT_STRATEGY: none
+  stage: test
+  image: $DEV_IMAGE
+  script:
+    - vendor/rector/rector/bin/rector --dry-run
+
 trivy_container_scan:
   image:
     name: docker.io/aquasec/trivy:latest
     entrypoint: [""]
   variables:
-    # No need to clone the repo, we exclusively work on artifacts. See
-    # https://docs.gitlab.com/ee/ci/runners/configure_runners.html#git-strategy
     GIT_STRATEGY: none
     TRIVY_USERNAME: "$CI_REGISTRY_USER"
     TRIVY_PASSWORD: "$CI_REGISTRY_PASSWORD"
@@ -297,19 +314,14 @@ trivy_container_scan:
     FULL_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
     - trivy --version
-    # update vulnerabilities db
     - time trivy image --download-db-only
-    # Builds report and puts it in the default workdir $CI_PROJECT_DIR, so `artifacts:` can take it from there
     - time trivy image --exit-code 0 --format template --template "@/contrib/gitlab.tpl"
         --output "$CI_PROJECT_DIR/gl-container-scanning-report.json" "$FULL_IMAGE_NAME"
-    # Prints full report
     - time trivy image --exit-code 0 "$FULL_IMAGE_NAME"
-    # Fail on critical vulnerabilities
     - time trivy image --exit-code 1 --severity CRITICAL "$FULL_IMAGE_NAME"
   cache:
     paths:
       - .trivycache/
-  # Enables https://docs.gitlab.com/ee/user/application_security/container_scanning/ (Container Scanning report is available on GitLab EE Ultimate or GitLab.com Gold)
   artifacts:
     when: always
     name: gl-container-scanning-report.json
@@ -361,16 +373,15 @@ deploy_prod:
     #  в более продвинутом варианте подменяем контейнер на сервере сбилженным image'м
     - echo "Application successfully deployed."
 
-dast_nuclei:
+nuclei:
   stage: DAST
   image: golang:latest
   variables:
     TARGET_URL: https://your-app/
   before_script:
     - go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-  script:
-    - echo "Target url" $TARGET_URL
     - curl -I $TARGET_URL || echo "Target is unreachable"
+  script:
     - nuclei -u $TARGET_URL -jsonl nuclei-report.jsonl || true
   artifacts:
     when: always
