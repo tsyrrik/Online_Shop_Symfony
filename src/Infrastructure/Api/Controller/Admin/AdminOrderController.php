@@ -14,9 +14,11 @@ use function in_array;
 
 class AdminOrderController extends AbstractController
 {
-    /**
-     * @Route("/admin/orders/{orderId}/status", name="admin_order_update_status", methods={"POST"})
-     */
+    #[Route(
+        path: '/admin/orders/{orderId}/status',
+        name: 'admin_order_update_status',
+        methods: ['POST']
+    )]
     public function updateStatus(Request $request, int $orderId): JsonResponse
     {
         $data = json_decode($request->getContent(), true);

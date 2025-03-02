@@ -7,14 +7,17 @@ namespace App\Infrastructure\Api\Controller;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
     public function __construct(private ProductRepositoryInterface $productRepository) {}
 
-    /**
-     * @Route("/api/products", name="api_products", methods={"GET"})
-     */
+    #[Route(
+        path: '/api/products',
+        name: 'api_products',
+        methods: ['GET']
+    )]
     public function list(): JsonResponse
     {
         $products = $this->productRepository->findAll();
@@ -22,11 +25,11 @@ class ProductController extends AbstractController
         $data = [];
         foreach ($products as $product) {
             $data[] = [
-                'id'          => $product->getId(),
-                'name'        => $product->getName(),
+                'id' => $product->getId(),
+                'name' => $product->getName(),
                 'description' => $product->getDescription(),
-                'cost'        => $product->getCost(),
-                'tax'         => $product->getTax(),
+                'cost' => $product->getCost(),
+                'tax' => $product->getTax(),
                 'measurements' => $product->getMeasurements(),
             ];
         }

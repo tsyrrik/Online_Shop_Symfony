@@ -18,9 +18,11 @@ class CartController extends AbstractController
 {
     public function __construct(private MessageBusInterface $commandBus) {}
 
-    /**
-     * @Route("/api/cart/add", name="api_cart_add", methods={"POST"})
-     */
+    #[Route(
+        path: '/api/cart/add',
+        name: 'api_cart_add',
+        methods: ['POST']
+    )]
     public function add(
         #[MapRequestPayload]
         AddToCartRequest $request,
