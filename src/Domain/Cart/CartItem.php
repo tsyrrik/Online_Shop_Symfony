@@ -8,10 +8,15 @@ use DomainException;
 
 class CartItem
 {
-    public function __construct(
-        private int $productId,
-        private int $quantity,
-    ) {}
+    private int $productId;
+
+    private int $quantity;
+
+    public function __construct(int $productId, int $quantity)
+    {
+        $this->productId = $productId;
+        $this->quantity = $quantity;
+    }
 
     public function getProductId(): int
     {
@@ -23,7 +28,7 @@ class CartItem
         return $this->quantity;
     }
 
-    public function increaseQuantity(int $amount = 1): void
+    public function increaseQuantity(int $amount): void
     {
         $this->quantity += $amount;
     }

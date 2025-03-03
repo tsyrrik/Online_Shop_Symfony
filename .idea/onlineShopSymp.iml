@@ -195,6 +195,31 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/seld/phar-utils" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/seld/signal-handler" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symplify/rule-doc-generator-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/composer-unused/contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/composer-unused/symbol-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/icanhazstring/composer-unused" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/nikic/php-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/ondram/ci-detector" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/phpstan/phpdoc-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/psr/log" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/config" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/console" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/dependency-injection" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/filesystem" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-ctype" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-intl-grapheme" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-intl-normalizer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/polyfill-php83" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/property-access" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/property-info" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/serializer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/service-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/string" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/validator" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor-bin/composer-unused/vendor/symfony/var-exporter" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

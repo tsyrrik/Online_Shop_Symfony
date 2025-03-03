@@ -30,7 +30,7 @@ class Cart
         }
 
         foreach ($this->items as $existingItem) {
-            if ($existingItem->getProduct()->getId() === $item->getProduct()->getId()) {
+            if ($existingItem->getProductId() === $item->getProductId()) {
                 $existingItem->increaseQuantity(amount: $item->getQuantity());
 
                 return;
@@ -43,7 +43,7 @@ class Cart
     public function removeItem(int $productId): void
     {
         foreach ($this->items as $key => $item) {
-            if ($item->getProduct()->getId() === $productId) {
+            if ($item->getProductId() === $productId) {
                 $this->items->remove($key);
 
                 return;
@@ -81,7 +81,7 @@ class Cart
         }
 
         foreach ($this->items as $existingItem) {
-            if ($existingItem instanceof CartItem && $existingItem->getProduct()->getId() === $product->getId()) {
+            if ($existingItem->getProductId() === $product->getId()) {
                 $existingItem->increaseQuantity(amount: $quantity);
 
                 return;
