@@ -36,10 +36,10 @@ composer:
 	composer normalize --diff --dry-run \
 	&& composer validate \
 	&& vendor/bin/composer-require-checker check --config-file=composer-require-checker.json \
+	&& composer audit
 #	&& vendor/bin/composer-unused \
 						#composer require --dev bamarni/composer-bin-plugin   #для установки unesed
 						#composer bin composer-unused require --dev icanhazstring/composer-unused
-	&& composer audit
 
 deptrac:
 	vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
