@@ -13,11 +13,7 @@ class ProductController extends AbstractController
 {
     public function __construct(private ProductRepositoryInterface $productRepository) {}
 
-    #[Route(
-        path: '/api/products',
-        name: 'api_products',
-        methods: ['GET'],
-    )]
+    #[Route(path: '/api/products', name: 'api_products', methods: ['GET'])]
     public function list(): JsonResponse
     {
         $products = $this->productRepository->findAll();
@@ -30,7 +26,12 @@ class ProductController extends AbstractController
                 'description' => $product->getDescription(),
                 'cost' => $product->getCost(),
                 'tax' => $product->getTax(),
-                'measurements' => $product->getMeasurements(),
+                'measurements' => [
+                    'weight' => $product->getWeight(),
+                    'height' => $product->getHeight(),
+                    'width' => $product->getWidth(),
+                    'length' => $product->getLength(),
+                ],
             ];
         }
 

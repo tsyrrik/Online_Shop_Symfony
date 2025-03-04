@@ -6,54 +6,39 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Product\Product;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
+use InvalidArgumentException;
+use Override;
 
 class InMemoryProductRepository implements ProductRepositoryInterface
 {
-    /**
-     * @var Product[]
-     */
+    /** @var array<int, Product> */
     private array $products = [];
 
-    public function __construct()
-    {
-        $this->products = [
-            1 => new Product(
-                name: 'Велосипед_10',
-                weight: 15,
-                height: 100,
-                width: 50,
-                length: 180,
-                description: 'Описание велосипеда',
-                cost: 500,
-                tax: 50,
-                version: 1,
-            ),
-            2 => new Product(
-                name: 'Скейтборд_5',
-                weight: 5,
-                height: 30,
-                width: 20,
-                length: 80,
-                description: 'Описание скейтборда',
-                cost: 200,
-                tax: 20,
-                version: 1,
-            ),
-        ];
-    }
-
+    #[Override]
     public function save(Product $product): void
     {
-        $this->products[$product->getId()] = $product;
+        $id = $product->getId();
+        if ($id === null) {
+            throw new InvalidArgumentException(message: 'Product ID cannot be null');
+        }
+        $this->products[$id] = $product;
     }
 
+    #[Override]
     public function find(int $id): ?Product
     {
         return $this->products[$id] ?? null;
     }
 
+    #[Override]
     public function findById(int $id): ?Product
     {
-        return $this->find(id: $id);
+        return $this->products[$id] ?? null;
+    }
+
+    #[Override]
+    public function findAll(): array
+    {
+        return array_values(array: $this->products);
     }
 }

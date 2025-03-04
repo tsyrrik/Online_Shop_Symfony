@@ -22,7 +22,7 @@ cicd:
 	make composer
 	make deptrac
 	make di
-#	make psalm
+	make psalm
 	make rector
 	make schema-validate
 
