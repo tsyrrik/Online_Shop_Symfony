@@ -13,10 +13,10 @@ final readonly class RegisterUserRequest
         #[Assert\Email(message: 'Invalid email address')]
         public readonly string $email,
         #[Assert\NotBlank(message: 'Name cannot be empty')]
-        #[Assert\Regex(pattern: '/^[a-zA-Zа-яА-Я\\s]+$/u', message: 'Name must contain only letters and spaces')]
+        #[Assert\Regex(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', message: 'Name must contain only letters and spaces')]
         public readonly string $name,
         #[Assert\NotBlank(message: 'Phone cannot be empty')]
-        #[Assert\Regex(pattern: '/^\\+7\\d{9,10}$/', message: 'Phone must start with +7 followed by 9-10 digits')]
+        #[Assert\Regex(pattern: '/^\+7\d{9,10}$/', message: 'Phone must start with +7 followed by 9-10 digits')]
         public readonly string $phone,
     ) {}
 }

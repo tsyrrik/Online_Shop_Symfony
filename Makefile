@@ -37,6 +37,8 @@ composer:
 	&& composer validate \
 	&& vendor/bin/composer-require-checker check --config-file=composer-require-checker.json \
 #	&& vendor/bin/composer-unused \
+						#composer require --dev bamarni/composer-bin-plugin   #для установки unesed
+						#composer bin composer-unused require --dev icanhazstring/composer-unused
 	&& composer audit
 
 deptrac:
