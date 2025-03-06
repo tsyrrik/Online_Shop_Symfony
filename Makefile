@@ -2,9 +2,7 @@ bash:
 	docker compose exec app bash
 
 cache:
-	bin/console cache:clear
-
-
+	app/bin/console cache:clear
 up:
 	docker compose up -docker
 
@@ -29,23 +27,27 @@ cicd:
 
 cs-fix:
 #	./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation   #папка src
-	./vendor/bin/php-cs-fixer -v --config=.php-cs-fixer.dist.php fix --dry-run --stop-on-violation --diff   #проверяет весь проект
+	./app/vendor/bin/php-cs-fixer -v --config=app/.php-cs-fixer.dist.php fix --dry-run --stop-on-violation --diff   #проверяет весь проект
 
 phpunit:
-	./vendor/bin/phpunit
+	./app/vendor/bin/phpunit --configuration app/phpunit.xml.dist
 
 composer:
-	composer normalize --diff --dry-run \
-	&& composer validate \
-	&& vendor/bin/composer-require-checker check --config-file=composer-require-checker.json \
-	&& composer audit \
-#	&& vendor/bin/composer-unused \ #выдает много пакетов позже пофикшу
+	cd app && ( \
+		composer normalize --diff --dry-run && \
+		composer validate && \
+		vendor/bin/composer-require-checker check --config-file=composer-require-checker.json && \
+		composer audit && \
+		composer check-platform-reqs \
+	)
+#	vendor/bin/composer-unused && \ #выдает много пакетов позже пофикшу
 						#composer require --dev bamarni/composer-bin-plugin   #для установки unesed
 						#composer bin composer-unused require --dev icanhazstring/composer-unused
-	composer check-platform-reqs
+
 
 psalm:
-	vendor/bin/psalm
+	./app/vendor/bin/psalm --config=app/psalm.xml
+
 
 di_lint:
 	bin/console cache:clear --env=prod

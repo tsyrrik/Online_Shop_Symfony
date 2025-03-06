@@ -21,7 +21,7 @@
         "symfony/doctrine-messenger": "~7.2.3",
         "symfony/dotenv": "~7.2.0",
         "symfony/expression-language": "~7.2.0",
-        "symfony/flex": "^2.4.7",
+        "symfony/flex": "^2.5.0",
         "symfony/form": "~7.2.4",
         "symfony/framework-bundle": "~7.2.4",
         "symfony/http-client": "~7.2.4",
@@ -54,16 +54,16 @@
         "twig/twig": "^2.12 || ^3.20"
     },
     "require-dev": {
-        "bamarni/composer-bin-plugin": "^1.8",
         "deptrac/deptrac": "^2.0.6",
         "doctrine/doctrine-fixtures-bundle": "^4.0",
+        "doctrine/persistence": "^3.4",
         "ergebnis/composer-normalize": "^2.45",
-        "friendsofphp/php-cs-fixer": "^3.70.0",
+        "friendsofphp/php-cs-fixer": "^3.70.2",
         "maglnet/composer-require-checker": "^4.16.1",
         "phpmd/phpmd": "^2.15",
-        "phpstan/phpstan": "^2.1.6",
+        "phpstan/phpstan": "^2.1.7",
         "phpunit/phpunit": "^9.6.22",
-        "rector/rector": "^2.0.9",
+        "rector/rector": "^2.0.10",
         "savinmikhail/add_named_arguments_rector": "^0.1.11",
         "savinmikhail/comments-density": "0.5.9",
         "symfony/browser-kit": "~7.2.4",
@@ -102,7 +102,6 @@
     },
     "config": {
         "allow-plugins": {
-            "bamarni/composer-bin-plugin": true,
             "ergebnis/composer-normalize": true,
             "php-http/discovery": true,
             "savinmikhail/comments-density": true,
