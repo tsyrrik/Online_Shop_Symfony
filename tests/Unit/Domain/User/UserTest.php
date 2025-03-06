@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Domain\User;
 
 use App\Domain\User\User;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase
 {
     /**
-     * @test
-     * @dataProvider validDataProvider
+     * @dataProvider provideCreateUserWithValidDataSucceedsCases
      */
     public function testCreateUserWithValidDataSucceeds(string $name, string $phone, string $email): void
     {
@@ -22,14 +22,14 @@ class UserTest extends TestCase
         $user = new User(name: $name, phone: $phone, email: $email);
 
         // Assert
-        $this->assertInstanceOf(expected: User::class, actual: $user);
-        $this->assertEquals(expected: $name, actual: $user->getName());
-        $this->assertEquals(expected: $phone, actual: $user->getPhone());
-        $this->assertEquals(expected: $email, actual: $user->getEmail());
-        $this->assertNull(actual: $user->getId());
+        self::assertInstanceOf(expected: User::class, actual: $user);
+        self::assertEquals(expected: $name, actual: $user->getName());
+        self::assertEquals(expected: $phone, actual: $user->getPhone());
+        self::assertEquals(expected: $email, actual: $user->getEmail());
+        self::assertNull(actual: $user->getId());
     }
 
-    public function validDataProvider(): array
+    public function provideCreateUserWithValidDataSucceedsCases(): iterable
     {
         return [
             ['Иван', '+79990000000', 'test@test.com'],
@@ -39,13 +39,12 @@ class UserTest extends TestCase
     }
 
     /**
-     * @test
-     * @dataProvider invalidNameDataProvider
+     * @dataProvider provideCreateUserWithInvalidNameThrowsExceptionCases
      */
     public function testCreateUserWithInvalidNameThrowsException(string $name, string $phone, string $email): void
     {
         // Arrange
-        $this->expectException(exception: \InvalidArgumentException::class);
+        $this->expectException(exception: InvalidArgumentException::class);
 
         // Act
         new User(name: $name, phone: $phone, email: $email);
@@ -53,7 +52,7 @@ class UserTest extends TestCase
         // Assert
     }
 
-    public function invalidNameDataProvider(): array
+    public function provideCreateUserWithInvalidNameThrowsExceptionCases(): iterable
     {
         return [
             ['', '+79990000000', 'test@example.com'],
@@ -63,13 +62,12 @@ class UserTest extends TestCase
     }
 
     /**
-     * @test
-     * @dataProvider invalidPhoneDataProvider
+     * @dataProvider provideCreateUserWithInvalidPhoneThrowsExceptionCases
      */
     public function testCreateUserWithInvalidPhoneThrowsException(string $name, string $phone, string $email): void
     {
         // Arrange
-        $this->expectException(exception: \InvalidArgumentException::class);
+        $this->expectException(exception: InvalidArgumentException::class);
 
         // Act
         new User(name: $name, phone: $phone, email: $email);
@@ -77,7 +75,7 @@ class UserTest extends TestCase
         // Assert
     }
 
-    public function invalidPhoneDataProvider(): array
+    public function provideCreateUserWithInvalidPhoneThrowsExceptionCases(): iterable
     {
         return [
             ['Ванек', '799912345', 'test@123.com'],
@@ -87,13 +85,12 @@ class UserTest extends TestCase
     }
 
     /**
-     * @test
-     * @dataProvider invalidEmailDataProvider
+     * @dataProvider provideCreateUserWithInvalidEmailThrowsExceptionCases
      */
     public function testCreateUserWithInvalidEmailThrowsException(string $name, string $phone, string $email): void
     {
         // Arrange
-        $this->expectException(exception: \InvalidArgumentException::class);
+        $this->expectException(exception: InvalidArgumentException::class);
 
         // Act
         new User(name: $name, phone: $phone, email: $email);
@@ -101,7 +98,7 @@ class UserTest extends TestCase
         // Assert
     }
 
-    public function invalidEmailDataProvider(): array
+    public function provideCreateUserWithInvalidEmailThrowsExceptionCases(): iterable
     {
         return [
             ['Иван', '+79991234567', 'test'],
@@ -110,9 +107,6 @@ class UserTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
     public function testGetUserPropertiesReturnsCorrectValues(): void
     {
         // Arrange
@@ -125,9 +119,9 @@ class UserTest extends TestCase
         $user = new User(name: $name, phone: $phone, email: $email);
 
         // Assert
-        $this->assertEquals(expected: $name, actual: $user->getName());
-        $this->assertEquals(expected: $phone, actual: $user->getPhone());
-        $this->assertEquals(expected: $email, actual: $user->getEmail());
-        $this->assertNull(actual: $user->getId());
+        self::assertEquals(expected: $name, actual: $user->getName());
+        self::assertEquals(expected: $phone, actual: $user->getPhone());
+        self::assertEquals(expected: $email, actual: $user->getEmail());
+        self::assertNull(actual: $user->getId());
     }
 }

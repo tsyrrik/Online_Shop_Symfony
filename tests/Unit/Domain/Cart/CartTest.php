@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use DomainException;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class CartTest extends TestCase
 {
@@ -22,33 +23,12 @@ class CartTest extends TestCase
         $this->cart = new Cart(userId: 1);
     }
 
-    private function createProductWithId(int $id): Product
-    {
-        $product = new Product(
-            name: 'Test Product',
-            weight: 100,
-            height: 10,
-            width: 20,
-            length: 30,
-            cost: 1000,
-            tax: 10,
-            version: 1
-        );
-
-        $reflection = new \ReflectionClass(objectOrClass: $product);
-        $property = $reflection->getProperty(name: 'id');
-        $property->setAccessible(accessible: true);
-        $property->setValue(objectOrValue: $product, value: $id);
-
-        return $product;
-    }
-
     public function testCartIsInitiallyEmpty(): void
     {
         // Assert
-        $this->assertInstanceOf(expected: Collection::class, actual: $this->cart->getItems());
-        $this->assertCount(expectedCount: 0, haystack: $this->cart->getItems());
-        $this->assertSame(expected: 0, actual: $this->cart->getTotalQuantity());
+        self::assertInstanceOf(expected: Collection::class, actual: $this->cart->getItems());
+        self::assertCount(expectedCount: 0, haystack: $this->cart->getItems());
+        self::assertSame(expected: 0, actual: $this->cart->getTotalQuantity());
     }
 
     public function testCanAddItemToCart(): void
@@ -59,9 +39,9 @@ class CartTest extends TestCase
         $this->cart->addItem(item: $item);
         $items = $this->cart->getItems();
         // Assert
-        $this->assertCount(expectedCount: 1, haystack: $items);
-        $this->assertSame(expected: $item, actual: $items->first());
-        $this->assertSame(expected: 2, actual: $this->cart->getTotalQuantity());
+        self::assertCount(expectedCount: 1, haystack: $items);
+        self::assertSame(expected: $item, actual: $items->first());
+        self::assertSame(expected: 2, actual: $this->cart->getTotalQuantity());
     }
 
     public function testAddingItemWithSameProductIdIncreasesQuantity(): void
@@ -74,19 +54,19 @@ class CartTest extends TestCase
         $this->cart->addItem(item: $item2);
         $items = $this->cart->getItems();
         // Assert
-        $this->assertCount(expectedCount: 1, haystack: $items);
-        $this->assertSame(expected: 5, actual: $items->first()->getQuantity());
-        $this->assertSame(expected: 5, actual: $this->cart->getTotalQuantity());
+        self::assertCount(expectedCount: 1, haystack: $items);
+        self::assertSame(expected: 5, actual: $items->first()->getQuantity());
+        self::assertSame(expected: 5, actual: $this->cart->getTotalQuantity());
     }
 
     public function testCannotAddMoreThan20Items(): void
     {
         // Arrange
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 20; ++$i) {
             $this->cart->addItem(item: new CartItem(productId: $i, quantity: 1));
         }
         // Act
-        $this->assertCount(expectedCount: 20, haystack: $this->cart->getItems());
+        self::assertCount(expectedCount: 20, haystack: $this->cart->getItems());
         $this->expectException(exception: DomainException::class);
         $this->expectExceptionMessage(message: 'There cannot be more than 20 items in an order');
         $this->cart->addItem(item: new CartItem(productId: 21, quantity: 1));
@@ -103,10 +83,10 @@ class CartTest extends TestCase
         // Act
         $items = $this->cart->getItems();
         // Assert
-        $this->assertCount(expectedCount: 1, haystack: $items);
-        $this->assertFalse(condition: $items->contains($item1));
-        $this->assertTrue(condition: $items->contains($item2));
-        $this->assertSame(expected: 3, actual: $this->cart->getTotalQuantity());
+        self::assertCount(expectedCount: 1, haystack: $items);
+        self::assertFalse(condition: $items->contains($item1));
+        self::assertTrue(condition: $items->contains($item2));
+        self::assertSame(expected: 3, actual: $this->cart->getTotalQuantity());
     }
 
     public function testRemovingNonExistentItemDoesNothing(): void
@@ -118,9 +98,9 @@ class CartTest extends TestCase
         $this->cart->removeItem(productId: 999);
         $items = $this->cart->getItems();
         // Assert
-        $this->assertCount(expectedCount: 1, haystack: $items);
-        $this->assertTrue(condition: $items->contains($item));
-        $this->assertSame(expected: 2, actual: $this->cart->getTotalQuantity());
+        self::assertCount(expectedCount: 1, haystack: $items);
+        self::assertTrue(condition: $items->contains($item));
+        self::assertSame(expected: 2, actual: $this->cart->getTotalQuantity());
     }
 
     public function testAnAddProductToCart(): void
@@ -131,11 +111,11 @@ class CartTest extends TestCase
         $this->cart->addProduct(product: $product, quantity: 2);
         $items = $this->cart->getItems();
         // Assert
-        $this->assertCount(expectedCount: 1, haystack: $items);
+        self::assertCount(expectedCount: 1, haystack: $items);
         $item = $items->first();
-        $this->assertSame(expected: 1, actual: $item->getProductId());
-        $this->assertSame(expected: 2, actual: $item->getQuantity());
-        $this->assertSame(expected: 2, actual: $this->cart->getTotalQuantity());
+        self::assertSame(expected: 1, actual: $item->getProductId());
+        self::assertSame(expected: 2, actual: $item->getQuantity());
+        self::assertSame(expected: 2, actual: $this->cart->getTotalQuantity());
     }
 
     public function testAddingProductWithExistingProductIncreasesQuantity(): void
@@ -147,9 +127,9 @@ class CartTest extends TestCase
         $this->cart->addProduct(product: $product, quantity: 3);
         $items = $this->cart->getItems();
         // Assert
-        $this->assertCount(expectedCount: 1, haystack: $items);
-        $this->assertSame(expected: 5, actual: $items->first()->getQuantity());
-        $this->assertSame(expected: 5, actual: $this->cart->getTotalQuantity());
+        self::assertCount(expectedCount: 1, haystack: $items);
+        self::assertSame(expected: 5, actual: $items->first()->getQuantity());
+        self::assertSame(expected: 5, actual: $this->cart->getTotalQuantity());
     }
 
     public function testAddProductWithNullIdThrowsException(): void
@@ -163,7 +143,7 @@ class CartTest extends TestCase
             length: 30,
             cost: 1000,
             tax: 10,
-            version: 1
+            version: 1,
         );
         // Act
         $this->expectException(exception: InvalidArgumentException::class);
@@ -184,6 +164,27 @@ class CartTest extends TestCase
     public function testUserIdIsSetCorrectly(): void
     {
         // Assert
-        $this->assertSame(expected: 1, actual: $this->cart->getUserId());
+        self::assertSame(expected: 1, actual: $this->cart->getUserId());
+    }
+
+    private function createProductWithId(int $id): Product
+    {
+        $product = new Product(
+            name: 'Test Product',
+            weight: 100,
+            height: 10,
+            width: 20,
+            length: 30,
+            cost: 1000,
+            tax: 10,
+            version: 1,
+        );
+
+        $reflection = new ReflectionClass(objectOrClass: $product);
+        $property = $reflection->getProperty(name: 'id');
+        $property->setAccessible(accessible: true);
+        $property->setValue(objectOrValue: $product, value: $id);
+
+        return $product;
     }
 }

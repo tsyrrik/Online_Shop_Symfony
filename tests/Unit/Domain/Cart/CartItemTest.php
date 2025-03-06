@@ -16,8 +16,8 @@ class CartItemTest extends TestCase
         // Arrange
         $item = new CartItem(productId: 1, quantity: 5);
         // Assert
-        $this->assertSame(expected: 1, actual: $item->getProductId());
-        $this->assertSame(expected: 5, actual: $item->getQuantity());
+        self::assertSame(expected: 1, actual: $item->getProductId());
+        self::assertSame(expected: 5, actual: $item->getQuantity());
     }
 
     public function testCanIncreaseQuantity(): void
@@ -27,7 +27,7 @@ class CartItemTest extends TestCase
         // Act
         $item->increaseQuantity(amount: 3);
         // Assert
-        $this->assertSame(expected: 8, actual: $item->getQuantity());
+        self::assertSame(expected: 8, actual: $item->getQuantity());
     }
 
     public function testCanDecreaseQuantity(): void
@@ -37,7 +37,7 @@ class CartItemTest extends TestCase
         // Act
         $item->decreaseQuantity(amount: 2);
         // Assert
-        $this->assertSame(expected: 3, actual: $item->getQuantity());
+        self::assertSame(expected: 3, actual: $item->getQuantity());
     }
 
     public function testDecreasingQuantityBelowZeroThrowsException(): void

@@ -15,7 +15,7 @@ return RectorConfig::configure()
     ->withParallel()
     ->withCache(__DIR__ . '/var/rector')
     ->withRules([
-        AddNamedArgumentsRector::class
+        AddNamedArgumentsRector::class,
     ])
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)

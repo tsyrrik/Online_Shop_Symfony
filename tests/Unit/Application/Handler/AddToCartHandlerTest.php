@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Application\Handler;
 
 use App\Application\Command\AddToCartCommand;
@@ -8,12 +10,16 @@ use App\Domain\Cart\Cart;
 use App\Domain\Product\Product;
 use App\Infrastructure\Repository\InMemoryCartRepository;
 use App\Infrastructure\Repository\InMemoryProductRepository;
+use Exception;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class AddToCartHandlerTest extends TestCase
 {
     private AddToCartHandler $handler;
+
     private InMemoryProductRepository $productRepository;
+
     private InMemoryCartRepository $cartRepository;
 
     protected function setUp(): void
@@ -27,7 +33,7 @@ class AddToCartHandlerTest extends TestCase
     {
         // Arrange
         $product = new Product(name: 'Test Product', weight: 100, height: 20, width: 30, length: 40, cost: 500, tax: 50, version: 1, description: 'Description');
-        $reflection = new \ReflectionClass(objectOrClass: $product);
+        $reflection = new ReflectionClass(objectOrClass: $product);
         $property = $reflection->getProperty(name: 'id');
         $property->setAccessible(accessible: true);
         $property->setValue(objectOrValue: $product, value: 2);
@@ -44,17 +50,17 @@ class AddToCartHandlerTest extends TestCase
 
         // Assert
         $updatedCart = $this->cartRepository->getCartForUser(userId: 1);
-        $this->assertCount(expectedCount: 1, haystack: $updatedCart->getItems());
-        $this->assertEquals(expected: 3, actual: $updatedCart->getTotalQuantity());
+        self::assertCount(expectedCount: 1, haystack: $updatedCart->getItems());
+        self::assertEquals(expected: 3, actual: $updatedCart->getTotalQuantity());
     }
 
     public function testHandleProductNotFound(): void
     {
         // Arrange
-        $command = new AddToCartCommand(userId: 1, productId: 999, quantity: 3); //
+        $command = new AddToCartCommand(userId: 1, productId: 999, quantity: 3);
 
         // Assert
-        $this->expectException(exception: \Exception::class);
+        $this->expectException(exception: Exception::class);
         $this->expectExceptionMessage(message: 'Товар не найден');
 
         // Act

@@ -1,19 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Infrastructure\Repository;
 
 use App\Infrastructure\Repository\InMemoryProductRepository;
 use PHPUnit\Framework\TestCase;
 
-class InMemoryProductRepositoryTest extends TestCase
+class InMemoryProductRepository extends TestCase
 {
-    /**
-     * @test
-     */
     public function testFindProductReturnsCorrectResult(): void
     {
         // Arrange
-        $repository = new InMemoryProductRepository();
+        $repository = new self();
         $existingProductId = 1;
         $nonExistentProductId = 999;
 
@@ -22,8 +21,8 @@ class InMemoryProductRepositoryTest extends TestCase
         $nonExistentProduct = $repository->find(id: $nonExistentProductId);
 
         // Assert
-        $this->assertNotNull(actual: $product);
-        $this->assertEquals(expected: 'Велосипед_10', actual: $product->getName());
-        $this->assertNull(actual: $nonExistentProduct);
+        self::assertNotNull(actual: $product);
+        self::assertEquals(expected: 'Велосипед_10', actual: $product->getName());
+        self::assertNull(actual: $nonExistentProduct);
     }
 }

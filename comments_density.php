@@ -24,5 +24,5 @@ return new Config(
         RegularComment::NAME,
         LicenseComment::NAME,
         MissingDocBlock::NAME,
-    ]
+    ],
 );
