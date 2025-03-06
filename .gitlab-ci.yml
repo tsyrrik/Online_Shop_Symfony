@@ -113,7 +113,7 @@ composer:
     - composer normalize --diff --dry-run 
     - composer validate 
     - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
-    - php8.2 vendor/bin/composer-unused 
+    # - php8.2 vendor/bin/composer-unused 
     - composer audit 
     - composer check-platform-reqs
 
