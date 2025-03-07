@@ -67,6 +67,6 @@ comments_density:
 	cd app && ./vendor/bin/comments_density analyze
 
 rector:
-	cd app && ./vendor/rector/rector/bin/rector --dry-run
+	docker compose exec app bash -c 'cd app && vendor/rector/rector/bin/rector --dry-run'
 
 
