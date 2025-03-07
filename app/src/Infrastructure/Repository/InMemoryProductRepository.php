@@ -9,7 +9,7 @@ use App\Domain\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 use Override;
 
-class InMemoryProductRepository implements ProductRepositoryInterface
+final class InMemoryProductRepository implements ProductRepositoryInterface
 {
     /** @var array<int, Product> */
     private array $products = [];

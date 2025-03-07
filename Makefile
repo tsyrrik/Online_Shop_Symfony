@@ -4,7 +4,7 @@ bash:
 cache:
 	app/bin/console cache:clear
 up:
-	docker compose up -docker
+	docker compose up -d
 
 down:
 	docker compose down
@@ -26,8 +26,11 @@ cicd:
 	make rector
 
 cs-fix:
-#	./vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation   #папка src
 	./app/vendor/bin/php-cs-fixer -v --config=app/.php-cs-fixer.dist.php fix --dry-run --stop-on-violation --diff   #проверяет весь проект
+
+cs-fix-apply: #автоисправление
+	./app/vendor/bin/php-cs-fixer -v --config=app/.php-cs-fixer.dist.php fix
+
 
 phpunit:
 	./app/vendor/bin/phpunit --configuration app/phpunit.xml.dist
@@ -36,7 +39,7 @@ composer:
 	cd app && ( \
 		composer normalize --diff --dry-run && \
 		composer validate && \
-		vendor/bin/composer-require-checker check --config-file=composer-require-checker.json && \
+        ./vendor/bin/composer-require-checker check --config-file=composer-require-checker.json && \
 		composer audit && \
 		composer check-platform-reqs \
 	)
@@ -50,19 +53,20 @@ psalm:
 
 
 di_lint:
-	bin/console cache:clear --env=prod
-	bin/console lint:container --env=prod
+	app/bin/console cache:clear --env=prod
+	app/bin/console lint:container --env=prod
 
 schema-validate:
-	bin/console doctrine:schema:validate --skip-sync
+	app/bin/console doctrine:schema:validate --skip-sync
 
 deptrac:
-	vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
-	vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
+	app/vendor/bin/deptrac --config-file=app/deptrac.modules.yaml --cache-file=app/var/.deptrac.modules.cache
+	app/vendor/bin/deptrac --config-file=app/deptrac.directories.yaml --cache-file=app/var/.deptrac.directories.cache
 
 comments_density:
-	vendor/bin/comments_density analyze
+	cd app && ./vendor/bin/comments_density analyze
 
 rector:
-	vendor/rector/rector/bin/rector --dry-run
+	cd app && ./vendor/rector/rector/bin/rector --dry-run
+
 

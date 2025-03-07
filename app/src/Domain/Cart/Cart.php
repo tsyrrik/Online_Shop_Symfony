@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use DomainException;
 use InvalidArgumentException;
 
-class Cart
+final class Cart
 {
     private int $userId;
 

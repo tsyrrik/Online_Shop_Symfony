@@ -9,7 +9,7 @@ use App\Domain\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Override;
 
-class UserRepository implements UserRepositoryInterface
+final class UserRepository implements UserRepositoryInterface
 {
     private EntityManagerInterface $entityManager;
 

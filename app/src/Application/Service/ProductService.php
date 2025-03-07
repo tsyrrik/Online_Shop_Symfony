@@ -6,7 +6,7 @@ namespace App\Application\Service;
 
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 
-class ProductService
+final class ProductService
 {
     public function __construct(private ProductRepositoryInterface $productRepository) {}
 

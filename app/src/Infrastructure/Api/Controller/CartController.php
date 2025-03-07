@@ -14,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Throwable;
 
-class CartController extends AbstractController
+final class CartController extends AbstractController
 {
     public function __construct(private MessageBusInterface $commandBus) {}
 

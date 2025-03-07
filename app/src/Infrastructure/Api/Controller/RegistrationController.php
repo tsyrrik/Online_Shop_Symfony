@@ -12,21 +12,24 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class RegistrationController extends AbstractController
+final class RegistrationController extends AbstractController
 {
     public function __construct(private MessageBusInterface $commandBus) {}
 
     public function register(
         #[MapRequestPayload]
-        RegisterUserRequest $request,
+        RegisterUserRequest $registerRequest,
     ): JsonResponse {
-        $command = new RegisterUserCommand(
-            name: $request->name,
-            phone: $request->email,
-            email: $request->phone,
+        $registerCommand = new RegisterUserCommand(
+            name: $registerRequest->name,
+            phone: $registerRequest->phone,
+            email: $registerRequest->email,
         );
-        $this->commandBus->dispatch($command);
+        $this->commandBus->dispatch($registerCommand);
 
-        return new JsonResponse(data: ['status' => 'User registration initiated'], status: Response::HTTP_ACCEPTED);
+        return new JsonResponse(
+            data: ['status' => 'User registration initiated'],
+            status: Response::HTTP_ACCEPTED,
+        );
     }
 }

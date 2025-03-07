@@ -10,7 +10,7 @@ use App\Domain\User\User;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-readonly class RegisterUserHandler
+final readonly class RegisterUserHandler
 {
     public function __construct(private UserRepositoryInterface $userRepository) {}
 

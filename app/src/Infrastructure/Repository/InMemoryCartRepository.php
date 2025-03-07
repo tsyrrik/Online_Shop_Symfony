@@ -8,7 +8,7 @@ use App\Domain\Cart\Cart;
 use App\Domain\Cart\Repository\CartRepositoryInterface;
 use Override;
 
-class InMemoryCartRepository implements CartRepositoryInterface
+final class InMemoryCartRepository implements CartRepositoryInterface
 {
     /** @var array<int, Cart> */
     private array $carts = [];

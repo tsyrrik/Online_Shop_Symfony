@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Command;
 
-readonly class AddToCartCommand
+final readonly class AddToCartCommand
 {
     public function __construct(private int $userId, private int $productId, private int $quantity = 1) {}
 

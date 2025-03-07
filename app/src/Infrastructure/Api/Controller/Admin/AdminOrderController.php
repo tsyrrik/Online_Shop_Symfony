@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use function in_array;
 
-class AdminOrderController extends AbstractController
+final class AdminOrderController extends AbstractController
 {
     #[Route(
         path: '/admin/orders/{orderId}/status',

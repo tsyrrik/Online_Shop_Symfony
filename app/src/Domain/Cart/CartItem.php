@@ -6,7 +6,7 @@ namespace App\Domain\Cart;
 
 use DomainException;
 
-class CartItem
+final class CartItem
 {
     private int $productId;
 

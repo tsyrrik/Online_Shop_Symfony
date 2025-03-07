@@ -18,7 +18,7 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 use function is_string;
 
-class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
+final class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
@@ -44,7 +44,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     #[Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if ($targetPath = $this->getTargetPath(session: $request->getSession(), firewallName: $firewallName)) {
+        $targetPath = $this->getTargetPath(session: $request->getSession(), firewallName: $firewallName);
+
+        if ($targetPath !== null) {
             return new RedirectResponse(url: $targetPath);
         }
 
