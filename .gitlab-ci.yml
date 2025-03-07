@@ -15,8 +15,8 @@ build_dev_dependencies:
     - cd app && composer install --no-interaction
   artifacts:
     paths:
-      - vendor/
-      - .
+      - .docker/
+      - app/
 
 build_dev_image:
   services:
@@ -110,11 +110,13 @@ composer:
   stage: test
   image: $DEV_IMAGE
   script:
-    - cd app && composer normalize --diff --dry-run
-    - cd app && composer validate
-    - cd app && ./vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
-    - cd app && composer audit
-    - cd app && composer check-platform-reqs
+    - cd app && ( \
+      composer normalize --diff --dry-run && \
+      composer validate && \
+      ./vendor/bin/composer-require-checker check --config-file=composer-require-checker.json && \
+      composer audit && \
+      composer check-platform-reqs \
+      )
 
 psalm:
   variables:
