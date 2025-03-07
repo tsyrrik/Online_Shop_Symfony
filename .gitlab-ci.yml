@@ -12,11 +12,11 @@ build_dev_dependencies:
   stage: build
   image: composer:latest
   script:
-    - composer install --no-interaction
+    - cd app && composer install --no-interaction
   artifacts:
     paths:
-      - vendor/
-      - .
+      - app/vendor/
+      - app/.
 
 build_dev_image:
   services:
@@ -40,12 +40,12 @@ build_prod_dependencies:
     APP_ENV: prod
     APP_DEBUG: 0
   script:
-    - composer install --no-dev --optimize-autoloader --no-interaction
-    - composer dump-env prod
+    - cd app && composer install --no-dev --optimize-autoloader --no-interaction
+    - cd app && composer dump-env prod
   artifacts:
     paths:
-      - vendor/
-      - .
+      - app/vendor/
+      - app/.
   only:
     - tags
 
@@ -73,7 +73,7 @@ cs:
   variables:
     GIT_STRATEGY: none
   script:
-    - ./vendor/bin/php-cs-fixer -v --config=.php-cs-fixer.dist.php fix --dry-run --stop-on-violation --diff
+    - cd app && ./vendor/bin/php-cs-fixer -v --config=.php-cs-fixer.dist.php fix --dry-run --stop-on-violation --diff
 
 phpunit:
   stage: test
@@ -91,18 +91,18 @@ phpunit:
   before_script:
     - apt-get update && apt-get install -y postgresql-client
     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
-    - bin/console doctrine:database:create --if-not-exists
-    - bin/console doctrine:migrations:migrate --no-interaction
+    - app/bin/console doctrine:database:create --if-not-exists
+    - app/bin/console doctrine:migrations:migrate --no-interaction
   script:
-    - XDEBUG_MODE=coverage php ./vendor/bin/phpunit --colors=never --coverage-text --coverage-cobertura=coverage.cobertura.xml --log-junit phpunit-report.xml --do-not-cache-result
+    - cd app && XDEBUG_MODE=coverage php ./vendor/bin/phpunit --colors=never --coverage-text --coverage-cobertura=coverage.cobertura.xml --log-junit phpunit-report.xml --do-not-cache-result
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
     when: always
     reports:
-      junit: phpunit-report.xml
+      junit: app/phpunit-report.xml
       coverage_report:
         coverage_format: cobertura
-        path: coverage.cobertura.xml
+        path: app/coverage.cobertura.xml
 
 composer:
   variables:
@@ -110,12 +110,11 @@ composer:
   stage: test
   image: $DEV_IMAGE
   script:
-    - composer normalize --diff --dry-run 
-    - composer validate 
-    - vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
-    # - php8.2 vendor/bin/composer-unused 
-    - composer audit 
-    - composer check-platform-reqs
+    - cd app && composer normalize --diff --dry-run
+    - cd app && composer validate
+    - cd app && ./vendor/bin/composer-require-checker check --config-file=composer-require-checker.json
+    - cd app && composer audit
+    - cd app && composer check-platform-reqs
 
 psalm:
   variables:
@@ -123,7 +122,7 @@ psalm:
   stage: test
   image: $DEV_IMAGE
   script:
-    - vendor/bin/psalm
+    - cd app && ./vendor/bin/psalm --config=psalm.xml
 
 di_lint:
   variables:
@@ -131,8 +130,8 @@ di_lint:
   stage: test
   image: $DEV_IMAGE
   script:
-    - bin/console cache:clear --env=prod
-    - bin/console lint:container --env=prod
+    - app/bin/console cache:clear --env=prod
+    - app/bin/console lint:container --env=prod
 
 schema_validate:
   variables:
@@ -140,7 +139,7 @@ schema_validate:
   stage: test
   image: $DEV_IMAGE
   script:
-    - bin/console doctrine:schema:validate --skip-sync
+    - app/bin/console doctrine:schema:validate --skip-sync
 
 check_coverage:
   image: alpine:latest
@@ -225,8 +224,8 @@ deptrac:
   stage: test
   image: $DEV_IMAGE
   script:
-    - vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
-    - vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
+    - cd app && ./vendor/bin/deptrac --config-file=deptrac.modules.yaml --cache-file=var/.deptrac.modules.cache
+    - cd app && ./vendor/bin/deptrac --config-file=deptrac.directories.yaml --cache-file=var/.deptrac.directories.cache
 
 migrations_rollback_test:
   stage: test
@@ -242,12 +241,12 @@ migrations_rollback_test:
     POSTGRES_PASSWORD: postgres
     GIT_STRATEGY: none
   before_script:
-     - apt-get update && apt-get install -y postgresql-client
-     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
-     - bin/console doctrine:database:create --if-not-exists --env=test
-     - bin/console doctrine:migrations:migrate --no-interaction --env=test
+    - apt-get update && apt-get install -y postgresql-client
+    - until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done
+    - app/bin/console doctrine:database:create --if-not-exists --env=test
+    - app/bin/console doctrine:migrations:migrate --no-interaction --env=test
   script:
-    - bin/console doctrine:migrations:migrate first --no-interaction --env=test
+    - app/bin/console doctrine:migrations:migrate first --no-interaction --env=test
 
 kics-iac-scan:
   stage: test
@@ -268,7 +267,7 @@ composer_outdated_check:
   variables:
     GIT_STRATEGY: none
   script:
-    - composer outdated --strict --major-only --sort-by-age
+    - cd app && composer outdated --strict --major-only --sort-by-age
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
 
@@ -278,11 +277,11 @@ phpmd:
   variables:
     GIT_STRATEGY: none
   script:
-    - vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
+    - cd app && ./vendor/bin/phpmd src json phpmd.xml --reportfile phpmd_result.json
   artifacts:
     when: always
     paths:
-      - phpmd_result.json
+      - app/phpmd_result.json
 
 comments_density:
   stage: test
@@ -290,7 +289,7 @@ comments_density:
   variables:
     GIT_STRATEGY: none
   script:
-    - vendor/bin/comments_density analyze
+    - cd app && ./vendor/bin/comments_density analyze
 
 rector:
   variables:
@@ -298,7 +297,7 @@ rector:
   stage: test
   image: $DEV_IMAGE
   script:
-    - vendor/rector/rector/bin/rector --dry-run
+    - cd app && ./vendor/rector/rector/bin/rector --dry-run
 
 trivy_container_scan:
   image:

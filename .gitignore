@@ -1,12 +1,11 @@
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php
 /.env.*.local
 /app/config/secrets/prod/prod.decrypt.private.php
 /app/public/bundles/
-/var/
-/vendor/
+/app/var/
+/app/vendor/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
@@ -30,3 +29,29 @@ app/.phpunit.result.cache
 ###< friendsofphp/php-cs-fixer ###
 /coverage
 .idea/
+
+# Composer files
+/composer.lock
+/autoload.php
+/autoload_namespaces.php
+/autoload_psr4.php
+
+# Docker files
+/compose.override.yaml
+/compose.yaml
+
+# Symfony 3 lock file
+/symfony3.lock
+
+# Symfony media and uploads
+/public/uploads/
+/public/media/
+
+# Logs and temporary files
+*.log
+*.sql
+
+/bin/
+!.gitignore
+!.htaccess
+!.env.example
