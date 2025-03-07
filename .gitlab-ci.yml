@@ -12,11 +12,11 @@ build_dev_dependencies:
   stage: build
   image: composer:latest
   script:
-    - cd app && composer install --no-interaction
+    - composer install --no-interaction
   artifacts:
     paths:
-      - app/vendor/
-      - app/.
+      - vendor/
+      - .
 
 build_dev_image:
   services:
