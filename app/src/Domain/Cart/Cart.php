@@ -9,18 +9,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use DomainException;
 use InvalidArgumentException;
+use App\Enum\OrderStatus;
+use Ramsey\Uuid\UuidInterface;
 
 final class Cart
 {
-    private int $userId;
+    private UuidInterface $userId;
 
     /** @var Collection<int, CartItem> */
     private Collection $items;
+    private OrderStatus $status;
 
-    public function __construct(int $userId)
+    public function __construct(UuidInterface $userId)
     {
         $this->userId = $userId;
         $this->items = new ArrayCollection();
+        $this->status = OrderStatus::PAID;
     }
 
     public function addItem(CartItem $item): void
@@ -66,7 +70,7 @@ final class Cart
         );
     }
 
-    public function getUserId(): int
+    public function getUserId(): UuidInterface
     {
         return $this->userId;
     }
@@ -92,5 +96,20 @@ final class Cart
 
         $cartItem = new CartItem(productId: $productId, quantity: $quantity);
         $this->addItem(item: $cartItem);
+    }
+
+    public function setStatus(OrderStatus $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === OrderStatus::DELIVERED || $this->status === OrderStatus::CANCELLED;
+    }
+
+    public function getStatus(): OrderStatus
+    {
+        return $this->status;
     }
 }

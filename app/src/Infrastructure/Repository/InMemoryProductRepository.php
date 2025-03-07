@@ -8,6 +8,7 @@ use App\Domain\Product\Product;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
 use Override;
+use Ramsey\Uuid\UuidInterface;
 
 final class InMemoryProductRepository implements ProductRepositoryInterface
 {
@@ -21,19 +22,19 @@ final class InMemoryProductRepository implements ProductRepositoryInterface
         if ($id === null) {
             throw new InvalidArgumentException(message: 'Product ID cannot be null');
         }
-        $this->products[$id] = $product;
+        $this->products[$id->toString()] = $product;
     }
 
     #[Override]
-    public function find(int $id): ?Product
+    public function find(UuidInterface $id): ?Product
     {
-        return $this->products[$id] ?? null;
+        return $this->products[$id->toString()] ?? null;
     }
 
     #[Override]
-    public function findById(int $id): ?Product
+    public function findById(UuidInterface $id): ?Product
     {
-        return $this->products[$id] ?? null;
+        return $this->products[$id->toString()] ?? null;
     }
 
     #[Override]

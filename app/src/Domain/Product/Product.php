@@ -6,14 +6,16 @@ namespace App\Domain\Product;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 class Product
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'Ramsey\Uuid\Doctrine\UuidGenerator')]
+    private UuidInterface $id;
 
     public function __construct(
         #[ORM\Column(type: Types::STRING)]
@@ -36,7 +38,7 @@ class Product
         private ?string $description = null,
     ) {}
 
-    public function getId(): ?int
+    public function getId(): UuidInterface
     {
         return $this->id;
     }

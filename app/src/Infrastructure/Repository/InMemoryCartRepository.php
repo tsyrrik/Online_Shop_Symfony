@@ -7,6 +7,7 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Cart\Cart;
 use App\Domain\Cart\Repository\CartRepositoryInterface;
 use Override;
+use Ramsey\Uuid\UuidInterface;
 
 final class InMemoryCartRepository implements CartRepositoryInterface
 {
@@ -14,14 +15,14 @@ final class InMemoryCartRepository implements CartRepositoryInterface
     private array $carts = [];
 
     #[Override]
-    public function getCartForUser(int $userId): ?Cart
+    public function getCartForUser(UuidInterface $userId): ?Cart
     {
-        return $this->carts[$userId] ?? null;
+        return $this->carts[$userId->toString()] ?? null;
     }
 
     #[Override]
-    public function saveCart(int $userId, Cart $cart): void
+    public function saveCart(UuidInterface $userId, Cart $cart): void
     {
-        $this->carts[$userId] = $cart;
+        $this->carts[$userId->toString()] = $cart;
     }
 }

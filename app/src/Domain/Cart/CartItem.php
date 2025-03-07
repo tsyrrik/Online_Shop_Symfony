@@ -5,20 +5,13 @@ declare(strict_types=1);
 namespace App\Domain\Cart;
 
 use DomainException;
+use Ramsey\Uuid\UuidInterface;
 
 final class CartItem
 {
-    private int $productId;
+    public function __construct(private UuidInterface $productId, private int $quantity) {}
 
-    private int $quantity;
-
-    public function __construct(int $productId, int $quantity)
-    {
-        $this->productId = $productId;
-        $this->quantity = $quantity;
-    }
-
-    public function getProductId(): int
+    public function getProductId(): UuidInterface
     {
         return $this->productId;
     }
