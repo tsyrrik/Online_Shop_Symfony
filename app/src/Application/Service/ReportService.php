@@ -24,7 +24,7 @@ class ReportService
 
         foreach ($carts as $cart) {
             foreach ($cart->getItems() as $item) {
-                $reportLines[] = json_encode([
+                $reportLines[] = json_encode(value: [
                     'product_id' => $item->getProductId(),
                     'quantity' => $item->getQuantity(),
                     'user_id' => $cart->getUserId(),
@@ -32,15 +32,15 @@ class ReportService
             }
         }
 
-        $reportContent = implode("\n", $reportLines);
+        $reportContent = implode(separator: "\n", array: $reportLines);
         $filePath = sprintf('var/reports/report_%s.jsonl', $reportId);
 
         try {
-            $this->filesystem->dumpFile($filePath, $reportContent);
+            $this->filesystem->dumpFile(filename: $filePath, content: $reportContent);
 
             return $reportId;
         } catch (Exception $e) {
-            throw new RuntimeException('Unable to write report file: ' . $e->getMessage());
+            throw new RuntimeException(message: 'Unable to write report file: ' . $e->getMessage());
         }
     }
 }

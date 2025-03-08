@@ -25,6 +25,9 @@ services:
     App\Domain\Cart\Repository\CartRepositoryInterface:
         alias: App\Infrastructure\Repository\InMemoryCartRepository
 
+    App\Domain\User\Repository\UserRepositoryInterface:
+        alias: App\Infrastructure\Repository\UserRepository
+
     App\Application\Handler\AddToCartHandler:
         arguments:
             $productRepository: '@App\Domain\Product\Repository\ProductRepositoryInterface'

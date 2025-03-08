@@ -19,14 +19,14 @@ class RegisterUserHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->userRepository = new InMemoryUserRepository();
-        $this->handler = new RegisterUserHandler($this->userRepository);
+        $this->handler = new RegisterUserHandler(userRepository: $this->userRepository);
     }
 
     public function testHandle(): void
     {
-        $command = new RegisterUserCommand('Johny Depp', '+79991231234', 'capitaneSparow@gmail.com');
+        $command = new RegisterUserCommand(name: 'Johny Depp', phone: '+79991231234', email: 'capitaneSparow@gmail.com');
 
-        $this->handler->__invoke($command);
+        $this->handler->__invoke(command: $command);
 
         $savedUser = $this->userRepository->findByEmail('capitaneSparow@gmail.com');
 

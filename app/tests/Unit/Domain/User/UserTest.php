@@ -16,13 +16,13 @@ class UserTest extends TestCase
     public function testCreateUserWithValidDataSucceeds(string $name, string $phone, string $email): void
     {
         // Act
-        $user = new User($name, $phone, $email);
+        $user = new User(name: $name, phone: $phone, email: $email);
         // Assert
         self::assertInstanceOf(User::class, $user);
         self::assertEquals($name, $user->getName());
         self::assertEquals($phone, $user->getPhone());
         self::assertEquals($email, $user->getEmail());
-        self::assertNull($user->getId());
+        self::assertNotNull($user->getId());
     }
 
     public function provideCreateUserWithValidDataSucceedsCases(): iterable
@@ -40,9 +40,9 @@ class UserTest extends TestCase
     public function testCreateUserWithInvalidNameThrowsException(string $name, string $phone, string $email): void
     {
         // Arrange
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(exception: InvalidArgumentException::class);
         // Act
-        new User($name, $phone, $email);
+        new User(name: $name, phone: $phone, email: $email);
     }
 
     public function provideCreateUserWithInvalidNameThrowsExceptionCases(): iterable
@@ -60,9 +60,9 @@ class UserTest extends TestCase
     public function testCreateUserWithInvalidPhoneThrowsException(string $name, string $phone, string $email): void
     {
         // Arrange
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(exception: InvalidArgumentException::class);
         // Act
-        new User($name, $phone, $email);
+        new User(name: $name, phone: $phone, email: $email);
     }
 
     public function provideCreateUserWithInvalidPhoneThrowsExceptionCases(): iterable
@@ -80,9 +80,9 @@ class UserTest extends TestCase
     public function testCreateUserWithInvalidEmailThrowsException(string $name, string $phone, string $email): void
     {
         // Arrange
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(exception: InvalidArgumentException::class);
         // Act
-        new User($name, $phone, $email);
+        new User(name: $name, phone: $phone, email: $email);
     }
 
     public function provideCreateUserWithInvalidEmailThrowsExceptionCases(): iterable
@@ -101,11 +101,11 @@ class UserTest extends TestCase
         $phone = '+79991234567';
         $email = 'test@example.com';
         // Act
-        $user = new User($name, $phone, $email);
+        $user = new User(name: $name, phone: $phone, email: $email);
         // Assert
         self::assertEquals($name, $user->getName());
         self::assertEquals($phone, $user->getPhone());
         self::assertEquals($email, $user->getEmail());
-        self::assertNull($user->getId());
+        self::assertNotNull($user->getId());
     }
 }

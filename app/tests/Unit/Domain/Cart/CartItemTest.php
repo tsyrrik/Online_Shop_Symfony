@@ -15,7 +15,7 @@ class CartItemTest extends TestCase
     {
         // Arrange
         $productId = Uuid::uuid4();
-        $item = new CartItem($productId, 5);
+        $item = new CartItem(productId: $productId, quantity: 5);
         // Assert
         self::assertSame($productId, $item->getProductId());
         self::assertSame(5, $item->getQuantity());
@@ -25,9 +25,9 @@ class CartItemTest extends TestCase
     {
         // Arrange
         $productId = Uuid::uuid4();
-        $item = new CartItem($productId, 5);
+        $item = new CartItem(productId: $productId, quantity: 5);
         // Act
-        $item->increaseQuantity(3);
+        $item->increaseQuantity(amount: 3);
         // Assert
         self::assertSame(8, $item->getQuantity());
     }
@@ -37,9 +37,9 @@ class CartItemTest extends TestCase
         // Arrange
         $productId = Uuid::uuid4();
         // Act
-        $item = new CartItem($productId, 5);
+        $item = new CartItem(productId: $productId, quantity: 5);
         // Assert
-        $item->decreaseQuantity(2);
+        $item->decreaseQuantity(amount: 2);
         self::assertSame(3, $item->getQuantity());
     }
 
@@ -48,10 +48,10 @@ class CartItemTest extends TestCase
         // Arrange
         $productId = Uuid::uuid4();
         // Act
-        $item = new CartItem($productId, 1);
+        $item = new CartItem(productId: $productId, quantity: 1);
         // Assert
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('Quantity cannot be less than zero.');
-        $item->decreaseQuantity(2);
+        $this->expectException(exception: DomainException::class);
+        $this->expectExceptionMessage(message: 'Quantity cannot be less than zero.');
+        $item->decreaseQuantity(amount: 2);
     }
 }

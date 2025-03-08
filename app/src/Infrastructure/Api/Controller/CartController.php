@@ -30,8 +30,8 @@ final class CartController extends AbstractController
     ): JsonResponse {
         try {
             $command = new AddToCartCommand(
-                userId: Uuid::fromString($request->userId),
-                productId: Uuid::fromString($request->productId),
+                userId: Uuid::fromString(uuid: $request->userId),
+                productId: Uuid::fromString(uuid: $request->productId),
                 quantity: $request->quantity,
             );
             $this->commandBus->dispatch($command);

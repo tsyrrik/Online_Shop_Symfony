@@ -15,27 +15,34 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'users')]
 class User
 {
-
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'Ramsey\Uuid\Doctrine\UuidGenerator')]
     private UuidInterface $id;
 
+    #[Assert\NotBlank(message: 'Name cannot be empty')]
+    #[Assert\Regex(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', message: 'Invalid name provided')]
+    #[ORM\Column(type: Types::STRING)]
+    private string $name;
+
+    #[Assert\Regex(pattern: '/^\+7\d{9,10}$/', message: 'Invalid phone number provided')]
+    #[ORM\Column(type: Types::STRING)]
+    private string $phone;
+
+    #[Assert\Email(message: 'Invalid email address provided')]
+    #[ORM\Column(type: Types::STRING, unique: true)]
+    private string $email;
+
     public function __construct(
-        ?UuidInterface $id = null,
-        #[Assert\NotBlank(message: 'Name cannot be empty')]
-        #[Assert\Regex(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', message: 'Invalid name provided')]
-        #[ORM\Column(type: Types::STRING)]
-        private string $name,
-        #[Assert\Regex(pattern: '/^\+7\d{9,10}$/', message: 'Invalid phone number provided')]
-        #[ORM\Column(type: Types::STRING)]
-        private string $phone,
-        #[Assert\Email(message: 'Invalid email address provided')]
-        #[ORM\Column(type: Types::STRING, unique: true)]
-        private string $email,
+        string $name,
+        string $phone,
+        string $email,
     ) {
-        $this->id = $id ?? Uuid::uuid4();
+        $this->id = Uuid::uuid4();
+        $this->name = $name;
+        $this->phone = $phone;
+        $this->email = $email;
         $this->validateName(name: $name);
         $this->validatePhone(phone: $phone);
         $this->validateEmail(email: $email);
@@ -70,8 +77,7 @@ class User
 
     private function validatePhone(string $phone): void
     {
-        $pattern = '/^\+7\d{9,10}$/';
-        if (!preg_match(pattern: $pattern, subject: $phone)) {
+        if (!preg_match(pattern: '/^\+7\d{9,10}$/', subject: $phone)) {
             throw new InvalidArgumentException(message: 'Invalid phone number provided');
         }
     }

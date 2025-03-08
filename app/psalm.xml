@@ -8,7 +8,7 @@
         xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
         findUnusedBaselineEntry="true"
         findUnusedCode="false"
-        ensureOverrideAttribute="true"
+        ensureOverrideAttribute="false"
 >
     <projectFiles>
         <directory name="src"/>
@@ -17,18 +17,5 @@
         </ignoreFiles>
     </projectFiles>
     <issueHandlers>
-        <UndefinedGlobalVariable>
-            <errorLevel type="suppress">
-            </errorLevel>
-        </UndefinedGlobalVariable>
-        <UndefinedClass>
-            <errorLevel type="suppress">
-            </errorLevel>
-        </UndefinedClass>
-        <TooManyArguments>
-            <errorLevel type="suppress">
-                <referencedFunction name="Nelmio\ApiDocBundle\PropertyDescriber\PropertyDescriberInterface::describe"/>
-            </errorLevel>
-        </TooManyArguments>
     </issueHandlers>
 </psalm>

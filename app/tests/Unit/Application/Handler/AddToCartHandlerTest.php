@@ -26,7 +26,7 @@ class AddToCartHandlerTest extends TestCase
     {
         $this->productRepository = new InMemoryProductRepository();
         $this->cartRepository = new InMemoryCartRepository();
-        $this->handler = new AddToCartHandler($this->productRepository, $this->cartRepository);
+        $this->handler = new AddToCartHandler(productRepository: $this->productRepository, cartRepository: $this->cartRepository);
     }
 
     public function testHandleWithExistingCart(): void
@@ -34,19 +34,19 @@ class AddToCartHandlerTest extends TestCase
         // Arrange
         $userId = Uuid::uuid4();
         $productId = Uuid::uuid4();
-        $product = new Product('Test Product', 100, 20, 30, 40, 500, 50, 1, 'Description', $productId);
-        $this->productRepository->save($product);
+        $product = new Product(name: 'Test Product', weight: 100, height: 20, width: 30, length: 40, cost: 500, tax: 50, version: 1, description: 'Description', id: $productId);
+        $this->productRepository->save(product: $product);
 
-        $cart = new Cart($userId);
-        $this->cartRepository->saveCart($userId, $cart);
+        $cart = new Cart(userId: $userId);
+        $this->cartRepository->saveCart(userId: $userId, cart: $cart);
 
-        $command = new AddToCartCommand($userId, $productId, 3);
+        $command = new AddToCartCommand(userId: $userId, productId: $productId, quantity: 3);
 
         // Act
-        $this->handler->handle($command);
+        $this->handler->handle(command: $command);
 
         // Assert
-        $updatedCart = $this->cartRepository->getCartForUser($userId);
+        $updatedCart = $this->cartRepository->getCartForUser(userId: $userId);
         self::assertCount(1, $updatedCart->getItems());
         self::assertEquals(3, $updatedCart->getTotalQuantity());
     }
@@ -56,13 +56,13 @@ class AddToCartHandlerTest extends TestCase
         // Arrange
         $userId = Uuid::uuid4();
         $productId = Uuid::uuid4();
-        $command = new AddToCartCommand($userId, $productId, 3);
+        $command = new AddToCartCommand(userId: $userId, productId: $productId, quantity: 3);
 
         // Assert
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Товар не найден');
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Товар не найден');
 
         // Act
-        $this->handler->handle($command);
+        $this->handler->handle(command: $command);
     }
 }
