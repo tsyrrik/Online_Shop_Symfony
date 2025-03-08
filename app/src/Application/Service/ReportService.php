@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Service;
 
-use App\Domain\Cart\Cart;
 use App\Domain\Cart\Repository\CartRepositoryInterface;
-use Symfony\Component\Filesystem\Filesystem;
+use Exception;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
+
+use function sprintf;
 
 class ReportService
 {
@@ -32,9 +37,10 @@ class ReportService
 
         try {
             $this->filesystem->dumpFile($filePath, $reportContent);
+
             return $reportId;
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Unable to write report file: ' . $e->getMessage());
+        } catch (Exception $e) {
+            throw new RuntimeException('Unable to write report file: ' . $e->getMessage());
         }
     }
 }

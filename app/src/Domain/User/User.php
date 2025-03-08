@@ -7,8 +7,9 @@ namespace App\Domain\User;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
-use Symfony\Component\Validator\Constraints as Assert;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
@@ -22,6 +23,7 @@ class User
     private UuidInterface $id;
 
     public function __construct(
+        ?UuidInterface $id = null,
         #[Assert\NotBlank(message: 'Name cannot be empty')]
         #[Assert\Regex(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', message: 'Invalid name provided')]
         #[ORM\Column(type: Types::STRING)]
@@ -33,6 +35,7 @@ class User
         #[ORM\Column(type: Types::STRING, unique: true)]
         private string $email,
     ) {
+        $this->id = $id ?? Uuid::uuid4();
         $this->validateName(name: $name);
         $this->validatePhone(phone: $phone);
         $this->validateEmail(email: $email);

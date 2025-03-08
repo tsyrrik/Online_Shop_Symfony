@@ -6,6 +6,7 @@ namespace App\Domain\Product;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
@@ -18,6 +19,7 @@ class Product
     private UuidInterface $id;
 
     public function __construct(
+        ?UuidInterface $id = null,
         #[ORM\Column(type: Types::STRING)]
         private string $name,
         #[ORM\Column(type: Types::INTEGER)]
@@ -36,7 +38,9 @@ class Product
         private int $version,
         #[ORM\Column(type: Types::TEXT, nullable: true)]
         private ?string $description = null,
-    ) {}
+    ) {
+        $this->id = $id ?? Uuid::uuid4();
+    }
 
     public function getId(): UuidInterface
     {

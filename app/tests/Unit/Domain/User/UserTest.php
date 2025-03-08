@@ -7,6 +7,7 @@ namespace App\Tests\Domain\User;
 use App\Domain\User\User;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
 class UserTest extends TestCase
 {
@@ -15,18 +16,16 @@ class UserTest extends TestCase
      */
     public function testCreateUserWithValidDataSucceeds(string $name, string $phone, string $email): void
     {
-        // Arrange
-        $expectedId = null;
-
         // Act
-        $user = new User(name: $name, phone: $phone, email: $email);
+        $id = Uuid::uuid4();
+        $user = new User($id, $name, $phone, $email);
 
         // Assert
-        self::assertInstanceOf(expected: User::class, actual: $user);
-        self::assertEquals(expected: $name, actual: $user->getName());
-        self::assertEquals(expected: $phone, actual: $user->getPhone());
-        self::assertEquals(expected: $email, actual: $user->getEmail());
-        self::assertNull(actual: $user->getId());
+        self::assertInstanceOf(User::class, $user);
+        self::assertEquals($id, $user->getId());
+        self::assertEquals($name, $user->getName());
+        self::assertEquals($phone, $user->getPhone());
+        self::assertEquals($email, $user->getEmail());
     }
 
     public function provideCreateUserWithValidDataSucceedsCases(): iterable

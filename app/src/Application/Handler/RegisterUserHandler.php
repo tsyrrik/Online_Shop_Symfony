@@ -19,7 +19,7 @@ final readonly class RegisterUserHandler
         $user = new User(
             name: $command->getName(),
             phone: $command->getPhone(),
-            email: $command->getEmail()
+            email: $command->getEmail(),
         );
         $this->userRepository->save($user);
     }

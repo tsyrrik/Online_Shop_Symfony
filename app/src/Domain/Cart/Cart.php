@@ -64,9 +64,9 @@ final class Cart
     public function getTotalQuantity(): int
     {
         return array_reduce(
-            array: $this->items->toArray(), // @var CartItem[]
-            callback: static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
-            initial: 0,
+            $this->items->toArray(), // @var CartItem[]
+            static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
+            0
         );
     }
 
