@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Cart;
 
 use App\Domain\Product\Product;
+use App\Enum\OrderStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use DomainException;
 use InvalidArgumentException;
-use App\Enum\OrderStatus;
 use Ramsey\Uuid\UuidInterface;
 
 final class Cart
@@ -18,6 +18,7 @@ final class Cart
 
     /** @var Collection<int, CartItem> */
     private Collection $items;
+
     private OrderStatus $status;
 
     public function __construct(UuidInterface $userId)
@@ -44,10 +45,10 @@ final class Cart
         $this->items->add($item);
     }
 
-    public function removeItem(int $productId): void
+    public function removeItem(UuidInterface $productId): void
     {
         foreach ($this->items as $key => $item) {
-            if ($item->getProductId() === $productId) {
+            if ($item->getProductId()->equals($productId)) {
                 $this->items->remove($key);
 
                 return;
@@ -64,9 +65,10 @@ final class Cart
     public function getTotalQuantity(): int
     {
         return array_reduce(
-            $this->items->toArray(), // @var CartItem[]
+            $this->items->toArray(),
+            /** @param int $carry @param CartItem $item */
             static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
-            0
+            0,
         );
     }
 
@@ -79,7 +81,7 @@ final class Cart
     {
         $productId = $product->getId();
         if ($productId === null) {
-            throw new InvalidArgumentException(message: 'Product ID cannot be null');
+            throw new InvalidArgumentException('Product ID cannot be null');
         }
 
         if ($quantity <= 0) {

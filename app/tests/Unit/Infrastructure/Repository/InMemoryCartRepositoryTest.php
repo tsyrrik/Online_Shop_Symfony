@@ -7,19 +7,21 @@ namespace Tests\Unit\Infrastructure\Repository;
 use App\Domain\Cart\Cart;
 use App\Infrastructure\Repository\InMemoryCartRepository;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 
-class InMemoryCartRepository extends TestCase
+class InMemoryCartRepositoryTest extends TestCase
 {
     public function testSaveAndGetCartSucceeds(): void
     {
         // Arrange
-        $repository = new self();
-        $cart = new Cart(userId: 1);
-        $nonExistentUserId = 2;
+        $repository = new InMemoryCartRepository();
+        $userId = Uuid::uuid4();
+        $cart = new Cart(userId: $userId);
+        $nonExistentUserId = Uuid::uuid4();
 
         // Act
-        $repository->saveCart(userId: 1, cart: $cart);
-        $retrievedCart = $repository->getCartForUser(userId: 1);
+        $repository->saveCart(userId: $userId, cart: $cart);
+        $retrievedCart = $repository->getCartForUser(userId: $userId);
         $cartForNonExistentUser = $repository->getCartForUser(userId: $nonExistentUserId);
 
         // Assert

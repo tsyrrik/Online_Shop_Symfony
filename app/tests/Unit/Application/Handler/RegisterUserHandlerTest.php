@@ -7,32 +7,32 @@ namespace Tests\Unit\Application\Handler;
 use App\Application\Command\RegisterUserCommand;
 use App\Application\Handler\RegisterUserHandler;
 use App\Domain\User\Repository\UserRepositoryInterface;
-use App\Domain\User\User;
-use PHPUnit\Framework\MockObject\MockObject;
+use App\Infrastructure\Repository\InMemoryUserRepository;
 use PHPUnit\Framework\TestCase;
 
 class RegisterUserHandlerTest extends TestCase
 {
-    private UserRepositoryInterface|MockObject $userRepository;
+    private UserRepositoryInterface $userRepository;
 
     private RegisterUserHandler $handler;
 
     protected function setUp(): void
     {
-        $this->userRepository = $this->createMock(originalClassName: UserRepositoryInterface::class);
-        $this->handler = new RegisterUserHandler(userRepository: $this->userRepository);
+        $this->userRepository = new InMemoryUserRepository();
+        $this->handler = new RegisterUserHandler($this->userRepository);
     }
 
     public function testHandle(): void
     {
-        $command = new RegisterUserCommand(name: 'Johny Depp', phone: '+79991231234', email: 'capitaneSparow@gmail.com');
+        $command = new RegisterUserCommand('Johny Depp', '+79991231234', 'capitaneSparow@gmail.com');
 
-        $this->userRepository->expects(self::once())->method('save')->with(
-            self::callback(callback: static fn(User $user) => $user->getName() === 'Johny Depp'
-                    && $user->getPhone() === '+79991231234'
-                    && $user->getEmail() === 'capitaneSparow@gmail.com'),
-        );
+        $this->handler->__invoke($command);
 
-        $this->handler->__invoke(command: $command);
+        $savedUser = $this->userRepository->findByEmail('capitaneSparow@gmail.com');
+
+        self::assertNotNull($savedUser);
+        self::assertSame('Johny Depp', $savedUser->getName());
+        self::assertSame('+79991231234', $savedUser->getPhone());
+        self::assertSame('capitaneSparow@gmail.com', $savedUser->getEmail());
     }
 }

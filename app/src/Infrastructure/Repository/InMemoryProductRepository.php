@@ -12,7 +12,7 @@ use Ramsey\Uuid\UuidInterface;
 
 final class InMemoryProductRepository implements ProductRepositoryInterface
 {
-    /** @var array<int, Product> */
+    /** @var array<string, Product> */
     private array $products = [];
 
     #[Override]

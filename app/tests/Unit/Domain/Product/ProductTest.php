@@ -14,18 +14,7 @@ class ProductTest extends TestCase
     {
         // Arrange
         $id = Uuid::uuid4();
-        $product = new Product(
-            $id,
-            'Test Product',
-            100,
-            10,
-            20,
-            30,
-            500,
-            50,
-            1,
-            'A test product'
-        );
+        $product = new Product('Test Product', 100, 10, 20, 30, 500, 50, 1, 'A test product', $id);
 
         // Assert
         self::assertSame($id, $product->getId());
@@ -44,18 +33,7 @@ class ProductTest extends TestCase
     {
         // Arrange
         $id = Uuid::uuid4();
-        $product = new Product(
-            $id,
-            'No Desc Product',
-            200,
-            15,
-            25,
-            35,
-            1000,
-            100,
-            1,
-            null
-        );
+        $product = new Product('No Desc Product', 200, 15, 25, 35, 1000, 100, 1, null, $id);
 
         // Assert
         self::assertSame($id, $product->getId());

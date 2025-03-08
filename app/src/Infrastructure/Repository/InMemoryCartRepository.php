@@ -11,7 +11,7 @@ use Ramsey\Uuid\UuidInterface;
 
 final class InMemoryCartRepository implements CartRepositoryInterface
 {
-    /** @var array<int, Cart> */
+    /** @var array<string, Cart> */
     private array $carts = [];
 
     #[Override]
@@ -24,5 +24,11 @@ final class InMemoryCartRepository implements CartRepositoryInterface
     public function saveCart(UuidInterface $userId, Cart $cart): void
     {
         $this->carts[$userId->toString()] = $cart;
+    }
+
+    #[Override]
+    public function findCompletedCarts(): array
+    {
+        return array_filter($this->carts, static fn(Cart $cart) => $cart->isCompleted());
     }
 }

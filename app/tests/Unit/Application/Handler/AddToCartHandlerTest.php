@@ -34,7 +34,7 @@ class AddToCartHandlerTest extends TestCase
         // Arrange
         $userId = Uuid::uuid4();
         $productId = Uuid::uuid4();
-        $product = new Product($productId, 'Test Product', 100, 20, 30, 40, 500, 50, 1, 'Description');
+        $product = new Product('Test Product', 100, 20, 30, 40, 500, 50, 1, 'Description', $productId);
         $this->productRepository->save($product);
 
         $cart = new Cart($userId);
