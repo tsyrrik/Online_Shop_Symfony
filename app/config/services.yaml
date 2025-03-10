@@ -28,6 +28,24 @@ services:
     App\Domain\User\Repository\UserRepositoryInterface:
         alias: App\Infrastructure\Repository\UserRepository
 
+    RdKafka\Conf:
+        calls:
+            - [set, ['metadata.broker.list', 'kafka:9092']]
+
+    RdKafka\Producer:
+        arguments:
+            - '@RdKafka\Conf'
+
+    App\Application\Service\ReportService:
+        arguments:
+            - '@App\Domain\Cart\Repository\CartRepositoryInterface'
+            - '@Symfony\Component\Filesystem\Filesystem'
+            - '@RdKafka\Producer'
+
+    App\Infrastructure\Api\Controller\ReportController:
+        arguments:
+            - '@RdKafka\Producer'
+
     App\Application\Handler\AddToCartHandler:
         arguments:
             $productRepository: '@App\Domain\Product\Repository\ProductRepositoryInterface'
