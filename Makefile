@@ -36,13 +36,13 @@ phpunit:
 	./app/vendor/bin/phpunit --configuration app/phpunit.xml.dist
 
 composer:
-	cd app && ( \
+	docker-compose exec app bash -c 'cd app && ( \
 		composer normalize --diff --dry-run && \
 		composer validate && \
         ./vendor/bin/composer-require-checker check --config-file=composer-require-checker.json && \
 		composer audit && \
 		composer check-platform-reqs \
-	)
+	)'
 #	vendor/bin/composer-unused && \ #выдает много пакетов позже пофикшу
 						#composer require --dev bamarni/composer-bin-plugin   #для установки unesed
 						#composer bin composer-unused require --dev icanhazstring/composer-unused

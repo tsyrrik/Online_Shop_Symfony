@@ -22,11 +22,21 @@ class ReportController
     public function generateReport(): JsonResponse
     {
         $reportId = Uuid::uuid4()->toString();
-        $topic = $this->kafkaProducer->newTopic('report_generation');
-        $topic->produce(RD_KAFKA_PARTITION_UA, 0, json_encode(['reportId' => $reportId]));
-        $this->kafkaProducer->flush(10000); // Ждем отправки сообщения
+        $topic = $this->kafkaProducer->newTopic(topic_name: 'report_generation');
 
-        return new JsonResponse([
+        $messageData = ['reportId' => $reportId];
+
+        $jsonPayload = json_encode(value: $messageData);
+
+        if ($jsonPayload === false) {
+            return new JsonResponse(data: ['error' => 'Failed to encode data as JSON'], status: 500);
+        }
+
+        // Отправляем сообщение в Kafka
+        $topic->produce(partition: RD_KAFKA_PARTITION_UA, msgflags: 0, payload: $jsonPayload);
+        $this->kafkaProducer->flush(timeout_ms: 10000); // Ждем отправки сообщения
+
+        return new JsonResponse(data: [
             'reportId' => $reportId,
             'result' => 'success',
         ]);

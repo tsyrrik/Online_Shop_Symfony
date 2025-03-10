@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     git \
     && docker-php-ext-install pdo_pgsql zip \
     && pecl install rdkafka \
+
+RUN pecl install rdkafka \
     && docker-php-ext-enable rdkafka
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
