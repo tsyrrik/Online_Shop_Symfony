@@ -14,16 +14,13 @@ use Ramsey\Uuid\UuidInterface;
 
 final class Cart
 {
-    private UuidInterface $userId;
-
     /** @var Collection<int, CartItem> */
     private Collection $items;
 
     private OrderStatus $status;
 
-    public function __construct(UuidInterface $userId)
+    public function __construct(private UuidInterface $userId)
     {
-        $this->userId = $userId;
         $this->items = new ArrayCollection();
         $this->status = OrderStatus::PAID;
     }
@@ -65,10 +62,9 @@ final class Cart
     public function getTotalQuantity(): int
     {
         return array_reduce(
-            array: $this->items->toArray(),
-            /** @param int $carry @param CartItem $item */
-            callback: static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
-            initial: 0,
+            $this->items->toArray(),
+            static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
+            0,
         );
     }
 

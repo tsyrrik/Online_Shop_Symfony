@@ -4,41 +4,50 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Api\Controller\Admin;
 
-use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Domain\Order\Repository\OrderRepositoryInterface;
+use App\Enum\OrderStatus;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-use function in_array;
-
-final class AdminOrderController extends AbstractController
+final class AdminOrderController
 {
-    #[Route(
-        path: '/admin/orders/{orderId}/status',
-        name: 'admin_order_update_status',
-        methods: ['POST'],
-    )]
-    public function updateStatus(Request $request, int $orderId): JsonResponse
+    public function __construct(private OrderRepositoryInterface $orderRepository) {}
+
+    #[Route('/admin/orders', name: 'admin_orders_list', methods: ['GET'])]
+    public function list(): JsonResponse
     {
-        $data = json_decode(json: $request->getContent(), associative: true);
+        $orders = $this->orderRepository->findAll();
+        $data = array_map(static fn($order) => [
+            'id' => $order->getId()->toString(),
+            'userId' => $order->getUserId()->toString(),
+            'status' => $order->getStatus()->value,
+            'deliveryMethod' => $order->getDeliveryMethod(),
+            'orderPhone' => $order->getOrderPhone(),
+            'createdAt' => $order->getCreatedAt()->format('Y-m-d H:i:s'),
+        ], $orders);
 
+        return new JsonResponse($data);
+    }
+
+    #[Route('/admin/orders/{orderId}/status', name: 'admin_order_update_status', methods: ['POST'])]
+    public function updateStatus(Request $request, string $orderId): JsonResponse
+    {
+        $order = $this->orderRepository->findById(Uuid::fromString($orderId));
+        if (!$order) {
+            return new JsonResponse(['error' => 'Order not found'], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
         if (!isset($data['status'])) {
-            return new JsonResponse(data: ['error' => 'Missing required parameter: status'], status: 400);
+            return new JsonResponse(['error' => 'Status is required'], 400);
         }
 
-        $status = $data['status'];
+        $newStatus = OrderStatus::from($data['status']);
+        $order->setStatus($newStatus);
+        $this->orderRepository->save($order);
 
-        $allowedStatuses = ['pending', 'processing', 'completed', 'cancelled'];
-        if (!in_array(needle: $status, haystack: $allowedStatuses, strict: true)) {
-            return new JsonResponse(data: ['error' => 'Invalid status provided'], status: 400);
-        }
-
-        try {
-            return new JsonResponse(data: ['status' => 'Order updated successfully'], status: 200);
-        } catch (Exception $e) {
-
-            return new JsonResponse(data: ['error' => 'Failed to update order status'], status: 500);
-        }
+        return new JsonResponse(['status' => 'Order status updated']);
     }
 }

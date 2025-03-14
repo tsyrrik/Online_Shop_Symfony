@@ -11,6 +11,8 @@ interface CartRepositoryInterface
 {
     public function getCartForUser(UuidInterface $userId): ?Cart;
 
+    public function getOpenCartForUser(UuidInterface $userId): ?Cart; // Add this
+
     public function saveCart(UuidInterface $userId, Cart $cart): void;
 
     public function findCompletedCarts(): array;

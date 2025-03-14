@@ -27,4 +27,12 @@ class InMemoryUserRepository implements UserRepositoryInterface
 
         return null;
     }
+
+    /**
+     * @return User[]
+     */
+    public function findAll(): array
+    {
+        return $this->users;
+    }
 }

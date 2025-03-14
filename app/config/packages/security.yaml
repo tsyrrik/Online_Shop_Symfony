@@ -40,8 +40,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # Публичный доступ для просмотра товаров
+        - { path: ^/api/products, roles: PUBLIC_ACCESS }
+        # Доступ только для авторизованных пользователей
+        - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/cart, roles: ROLE_USER }
+        - { path: ^/api/orders, roles: ROLE_USER }
+        # Доступ только для администраторов
+        - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:
     security:

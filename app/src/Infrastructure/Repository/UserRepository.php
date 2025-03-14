@@ -30,4 +30,13 @@ final class UserRepository implements UserRepositoryInterface
     {
         return $this->entityManager->getRepository(User::class)->findOneBy(criteria: ['email' => $email]);
     }
+
+    #[Override]
+    /**
+     * @return User[]
+     */
+    public function findAll(): array
+    {
+        return $this->entityManager->getRepository(User::class)->findAll();
+    }
 }
