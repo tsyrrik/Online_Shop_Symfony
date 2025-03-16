@@ -8,6 +8,7 @@ use App\Application\Command\AddToCartCommand;
 use App\Application\Handler\AddToCartHandler;
 use App\Domain\Cart\Cart;
 use App\Domain\Product\Product;
+use App\Domain\ValueObject\UuidV7;
 use App\Infrastructure\Repository\InMemoryCartRepository;
 use App\Infrastructure\Repository\InMemoryProductRepository;
 use Exception;
@@ -32,13 +33,27 @@ class AddToCartHandlerTest extends TestCase
     public function testHandleWithExistingCart(): void
     {
         // Arrange
-        $userId = Uuid::uuid4();
-        $productId = Uuid::uuid4();
-        $product = new Product(name: 'Test Product', weight: 100, height: 20, width: 30, length: 40, cost: 500, tax: 50, version: 1, description: 'Description', id: $productId);
+        $userIdUuid = Uuid::uuid7();
+        $productIdUuid = Uuid::uuid7();
+        $userId = new UuidV7($userIdUuid);
+        $productId = new UuidV7($productIdUuid);
+
+        $product = new Product(
+            name: 'Test Product',
+            weight: 100,
+            height: 20,
+            width: 30,
+            length: 40,
+            cost: 500,
+            tax: 50,
+            version: 1,
+            description: 'Description',
+            id: $productIdUuid,
+        );
         $this->productRepository->save(product: $product);
 
-        $cart = new Cart(userId: $userId);
-        $this->cartRepository->saveCart(userId: $userId, cart: $cart);
+        $cart = new Cart(userId: $userIdUuid);
+        $this->cartRepository->saveCart(userId: $userIdUuid, cart: $cart);
 
         $command = new AddToCartCommand(userId: $userId, productId: $productId, quantity: 3);
 
@@ -46,7 +61,7 @@ class AddToCartHandlerTest extends TestCase
         $this->handler->handle(command: $command);
 
         // Assert
-        $updatedCart = $this->cartRepository->getCartForUser(userId: $userId);
+        $updatedCart = $this->cartRepository->getCartForUser(userId: $userIdUuid);
         self::assertCount(1, $updatedCart->getItems());
         self::assertEquals(3, $updatedCart->getTotalQuantity());
     }
@@ -54,8 +69,11 @@ class AddToCartHandlerTest extends TestCase
     public function testHandleProductNotFound(): void
     {
         // Arrange
-        $userId = Uuid::uuid4();
-        $productId = Uuid::uuid4();
+        $userIdUuid = Uuid::uuid7();
+        $productIdUuid = Uuid::uuid7();
+        $userId = new UuidV7($userIdUuid);
+        $productId = new UuidV7($productIdUuid);
+
         $command = new AddToCartCommand(userId: $userId, productId: $productId, quantity: 3);
 
         // Assert

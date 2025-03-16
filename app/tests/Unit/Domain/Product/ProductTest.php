@@ -13,7 +13,7 @@ class ProductTest extends TestCase
     public function testProductCreationWithAllFields(): void
     {
         // Arrange
-        $id = Uuid::uuid4();
+        $id = Uuid::uuid7();
         $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 500, tax: 50, version: 1, description: 'A test product', id: $id);
 
         // Assert
@@ -32,7 +32,7 @@ class ProductTest extends TestCase
     public function testProductCreationWithoutDescription(): void
     {
         // Arrange
-        $id = Uuid::uuid4();
+        $id = Uuid::uuid7();
         $product = new Product(name: 'No Desc Product', weight: 200, height: 15, width: 25, length: 35, cost: 1000, tax: 100, version: 1, description: null, id: $id);
 
         // Assert

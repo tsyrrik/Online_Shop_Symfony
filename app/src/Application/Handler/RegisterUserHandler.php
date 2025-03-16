@@ -17,9 +17,10 @@ final readonly class RegisterUserHandler
     public function __invoke(RegisterUserCommand $command): void
     {
         $user = new User(
-            name: $command->getName(),
-            phone: $command->getPhone(),
-            email: $command->getEmail(),
+            id: null,
+            name: $command->name,
+            phone: $command->phone,
+            email: $command->email,
         );
         $this->userRepository->save($user);
     }

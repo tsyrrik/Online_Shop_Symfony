@@ -14,16 +14,7 @@ build:
 	&& docker compose build \
 	&& docker compose up -d
 
-cicd:
-	make cs-fix
-	make phpunit
-	make composer
-	make psalm
-	make di_lint
-	make schema-validate
-	make deptrac
-	make comments_density
-	make rector
+cicd: cs-fix phpunit composer psalm di_lint schema-validate deptrac comments_density rector
 
 cs-fix:
 	./app/vendor/bin/php-cs-fixer -v --config=app/.php-cs-fixer.dist.php fix --dry-run --stop-on-violation --diff   #проверяет весь проект

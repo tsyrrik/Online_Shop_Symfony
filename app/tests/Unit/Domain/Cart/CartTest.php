@@ -20,7 +20,7 @@ class CartTest extends TestCase
     protected function setUp(): void
     {
         // Arrange
-        $this->cart = new Cart(userId: Uuid::uuid4());
+        $this->cart = new Cart(userId: Uuid::uuid7());
     }
 
     public function testCartIsInitiallyEmpty(): void
@@ -34,7 +34,7 @@ class CartTest extends TestCase
     public function testCanAddItemToCart(): void
     {
         // Arrange
-        $productId = Uuid::uuid4();
+        $productId = Uuid::uuid7();
         $item = new CartItem(productId: $productId, quantity: 2);
         // Act
         $this->cart->addItem(item: $item);
@@ -48,7 +48,7 @@ class CartTest extends TestCase
     public function testAddingItemWithSameProductIdIncreasesQuantity(): void
     {
         // Arrange
-        $productId = Uuid::uuid4();
+        $productId = Uuid::uuid7();
         $item1 = new CartItem(productId: $productId, quantity: 2);
         $item2 = new CartItem(productId: $productId, quantity: 3);
         // Act
@@ -65,20 +65,20 @@ class CartTest extends TestCase
     {
         // Arrange
         for ($i = 1; $i <= 20; ++$i) {
-            $this->cart->addItem(item: new CartItem(productId: Uuid::uuid4(), quantity: 1));
+            $this->cart->addItem(item: new CartItem(productId: Uuid::uuid7(), quantity: 1));
         }
         // Act
         self::assertCount(20, $this->cart->getItems());
         $this->expectException(exception: DomainException::class);
         $this->expectExceptionMessage(message: 'There cannot be more than 20 items in an order');
-        $this->cart->addItem(item: new CartItem(productId: Uuid::uuid4(), quantity: 1));
+        $this->cart->addItem(item: new CartItem(productId: Uuid::uuid7(), quantity: 1));
     }
 
     public function testCanRemoveItemFromCart(): void
     {
         // Arrange
-        $productId1 = Uuid::uuid4();
-        $productId2 = Uuid::uuid4();
+        $productId1 = Uuid::uuid7();
+        $productId2 = Uuid::uuid7();
         $item1 = new CartItem(productId: $productId1, quantity: 2);
         $item2 = new CartItem(productId: $productId2, quantity: 3);
         $this->cart->addItem(item: $item1);
@@ -96,11 +96,11 @@ class CartTest extends TestCase
     public function testRemovingNonExistentItemDoesNothing(): void
     {
         // Arrange
-        $productId = Uuid::uuid4();
+        $productId = Uuid::uuid7();
         $item = new CartItem(productId: $productId, quantity: 2);
         $this->cart->addItem(item: $item);
         // Act
-        $this->cart->removeItem(productId: Uuid::uuid4());
+        $this->cart->removeItem(productId: Uuid::uuid7());
         $items = $this->cart->getItems();
         // Assert
         self::assertCount(1, $items);
@@ -110,7 +110,7 @@ class CartTest extends TestCase
 
     public function testAnAddProductToCart(): void
     {
-        $productId = Uuid::uuid4();
+        $productId = Uuid::uuid7();
         $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null, id: $productId);
         $this->cart->addProduct(product: $product, quantity: 2);
         $items = $this->cart->getItems();
@@ -124,7 +124,7 @@ class CartTest extends TestCase
     public function testAddingProductWithExistingProductIncreasesQuantity(): void
     {
         // Arrange
-        $productId = Uuid::uuid4();
+        $productId = Uuid::uuid7();
         $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null, id: $productId);
         // Act
         $this->cart->addProduct(product: $product, quantity: 2);
@@ -149,7 +149,7 @@ class CartTest extends TestCase
     public function testAddProductWithInvalidQuantityThrowsException(): void
     {
         // Arrange
-        $productId = Uuid::uuid4();
+        $productId = Uuid::uuid7();
         $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null, id: $productId);
         // Act
         $this->expectException(exception: InvalidArgumentException::class);
@@ -160,7 +160,7 @@ class CartTest extends TestCase
     public function testUserIdIsSetCorrectly(): void
     {
         // Arrange
-        $userId = Uuid::uuid4();
+        $userId = Uuid::uuid7();
         // Act
         $cart = new Cart(userId: $userId);
         // Assert

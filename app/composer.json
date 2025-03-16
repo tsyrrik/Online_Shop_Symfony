@@ -59,14 +59,14 @@
         "twig/twig": "^2.12 || ^3.20"
     },
     "require-dev": {
-        "deptrac/deptrac": "^2.0.6",
+        "deptrac/deptrac": "^2.0.7",
         "doctrine/doctrine-fixtures-bundle": "^4.0",
         "doctrine/persistence": "^3.4",
         "ergebnis/composer-normalize": "^2.45",
-        "friendsofphp/php-cs-fixer": "^3.70.2",
+        "friendsofphp/php-cs-fixer": "^3.72.0",
         "maglnet/composer-require-checker": "^4.16.1",
         "phpmd/phpmd": "^2.15",
-        "phpstan/phpstan": "^2.1.7",
+        "phpstan/phpstan": "^2.1.8",
         "phpunit/phpunit": "^9.6.22",
         "rector/rector": "^2.0.10",
         "savinmikhail/add_named_arguments_rector": "^0.1.11",
@@ -78,7 +78,7 @@
         "symfony/phpunit-bridge": "^7.2",
         "symfony/stopwatch": "~7.2.4",
         "symfony/web-profiler-bundle": "~7.2.4",
-        "vimeo/psalm": "^6.8.8"
+        "vimeo/psalm": "^6.8.9"
     },
     "replace": {
         "symfony/polyfill-ctype": "*",

@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Exception;
 
-class CheckoutHandler
+final readonly class CheckoutHandler
 {
     public function __construct(
         private CartRepositoryInterface $cartRepository,
@@ -42,9 +42,6 @@ class CheckoutHandler
                 throw new Exception('Product not found or has no ID for ID: ' . ($cartItem->getProductId()?->toString() ?? 'unknown'));
             }
 
-            // Добавляем элемент заказа в коллекцию
-            /** @psalm-assert !null $product */
-            /** @psalm-assert !null $product->getId() */
             $orderItems->add(new OrderItem(
                 $product->getId(),
                 $product->getName(),

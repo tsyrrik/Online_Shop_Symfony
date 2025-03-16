@@ -31,12 +31,12 @@ final class Order
 
     public function __construct(
         UuidInterface $userId,
-        Collection $items, // Указываем тип элементов в аннотации
+        Collection $items,
         string $deliveryMethod,
         string $orderPhone,
     ) {
         /** @var Collection<int, OrderItem> $items */
-        $this->id = Uuid::uuid4();
+        $this->id = Uuid::uuid7();
         $this->userId = $userId;
         $this->items = $items;
         $this->status = OrderStatus::PAID;

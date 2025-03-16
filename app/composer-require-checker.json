@@ -1,3 +1,5 @@
 {
-  "symbol-whitelist": ["App\\Infrastructure\\Api\\Controller\\Security"]
+  "symbol-whitelist": [
+    "Symfony\\Component\\Security\\Core\\Security"
+  ]
 }

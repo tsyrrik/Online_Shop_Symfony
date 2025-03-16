@@ -13,7 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 use function sprintf;
 
-class ReportService
+final class ReportService
 {
     public function __construct(
         private CartRepositoryInterface $cartRepository,

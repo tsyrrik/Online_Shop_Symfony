@@ -4,24 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application\Command;
 
-use Ramsey\Uuid\UuidInterface;
+use App\Domain\ValueObject\UuidV7;
 
 final readonly class AddToCartCommand
 {
-    public function __construct(private UuidInterface $userId, private UuidInterface $productId, private int $quantity = 1) {}
-
-    public function getUserId(): UuidInterface
-    {
-        return $this->userId;
-    }
-
-    public function getProductId(): UuidInterface
-    {
-        return $this->productId;
-    }
-
-    public function getQuantity(): int
-    {
-        return $this->quantity;
-    }
+    public function __construct(
+        public UuidV7 $userId,
+        public UuidV7 $productId,
+        public int $quantity = 1,
+    ) {}
 }

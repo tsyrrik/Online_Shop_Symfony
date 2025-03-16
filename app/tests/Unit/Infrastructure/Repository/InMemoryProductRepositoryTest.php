@@ -15,7 +15,7 @@ class InMemoryProductRepositoryTest extends TestCase
     {
         // Arrange
         $repository = new InMemoryProductRepository();
-        $productId = Uuid::uuid4();
+        $productId = Uuid::uuid7();
         $product = new Product(
             name: 'Test Product',
             weight: 100,

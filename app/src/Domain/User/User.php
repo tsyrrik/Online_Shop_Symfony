@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\ValueObject\UuidV7;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,8 +17,6 @@ class User
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'Ramsey\Uuid\Doctrine\UuidGenerator')]
     private UuidInterface $id;
 
     #[Assert\NotBlank(message: 'Name cannot be empty')]
@@ -35,17 +33,15 @@ class User
     private string $email;
 
     public function __construct(
+        ?UuidV7 $id,
         string $name,
         string $phone,
         string $email,
     ) {
-        $this->id = Uuid::uuid4();
+        $this->id = $id ? $id->getUuid() : Uuid::uuid7();
         $this->name = $name;
         $this->phone = $phone;
         $this->email = $email;
-        $this->validateName(name: $name);
-        $this->validatePhone(phone: $phone);
-        $this->validateEmail(email: $email);
     }
 
     public function getId(): UuidInterface
@@ -66,26 +62,5 @@ class User
     public function getEmail(): string
     {
         return $this->email;
-    }
-
-    private function validateName(string $name): void
-    {
-        if (empty($name) || !preg_match(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', subject: $name)) {
-            throw new InvalidArgumentException(message: 'Invalid name provided');
-        }
-    }
-
-    private function validatePhone(string $phone): void
-    {
-        if (!preg_match(pattern: '/^\+7\d{9,10}$/', subject: $phone)) {
-            throw new InvalidArgumentException(message: 'Invalid phone number provided');
-        }
-    }
-
-    private function validateEmail(string $email): void
-    {
-        if (!filter_var(value: $email, filter: FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException(message: 'Invalid email address provided');
-        }
     }
 }

@@ -15,9 +15,9 @@ class InMemoryCartRepositoryTest extends TestCase
     {
         // Arrange
         $repository = new InMemoryCartRepository();
-        $userId = Uuid::uuid4();
+        $userId = Uuid::uuid7();
         $cart = new Cart(userId: $userId);
-        $nonExistentUserId = Uuid::uuid4();
+        $nonExistentUserId = Uuid::uuid7();
 
         // Act
         $repository->saveCart(userId: $userId, cart: $cart);
