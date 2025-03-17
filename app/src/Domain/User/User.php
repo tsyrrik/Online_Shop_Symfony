@@ -7,8 +7,6 @@ namespace App\Domain\User;
 use App\Domain\ValueObject\UuidV7;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
@@ -17,7 +15,7 @@ class User
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
-    private UuidInterface $id;
+    private UuidV7 $id;
 
     #[Assert\NotBlank(message: 'Name cannot be empty')]
     #[Assert\Regex(pattern: '/^[a-zA-Zа-яА-Я\s]+$/u', message: 'Invalid name provided')]
@@ -38,13 +36,13 @@ class User
         string $phone,
         string $email,
     ) {
-        $this->id = $id ? $id->getUuid() : Uuid::uuid7();
+        $this->id = $id ?? new UuidV7();
         $this->name = $name;
         $this->phone = $phone;
         $this->email = $email;
     }
 
-    public function getId(): UuidInterface
+    public function getId(): UuidV7
     {
         return $this->id;
     }

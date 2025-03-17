@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Product;
 
+use App\Domain\ValueObject\UuidV7;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 class Product
@@ -15,7 +15,7 @@ class Product
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'Ramsey\Uuid\Doctrine\UuidGenerator')]
-    private ?UuidInterface $id = null;
+    private ?UuidV7 $id = null;
 
     public function __construct(
         #[ORM\Column(type: Types::STRING)]
@@ -36,12 +36,12 @@ class Product
         private int $version,
         #[ORM\Column(type: Types::TEXT, nullable: true)]
         private ?string $description = null,
-        ?UuidInterface $id = null,
+        ?UuidV7 $id = null,
     ) {
         $this->id = $id;
     }
 
-    public function getId(): ?UuidInterface
+    public function getId(): ?UuidV7 // Changed from UuidV7 to ?UuidV7
     {
         return $this->id;
     }

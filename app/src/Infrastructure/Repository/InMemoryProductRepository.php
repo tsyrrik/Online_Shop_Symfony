@@ -7,39 +7,33 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Product\Product;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 use InvalidArgumentException;
-use Override;
-use Ramsey\Uuid\UuidInterface;
 
 final class InMemoryProductRepository implements ProductRepositoryInterface
 {
     /** @var array<string, Product> */
     private array $products = [];
 
-    #[Override]
     public function save(Product $product): void
     {
         $id = $product->getId();
-        if ($id === null) {
-            throw new InvalidArgumentException(message: 'Product ID cannot be null');
+        if ($id === null) { // Valid with ?UuidV7
+            throw new InvalidArgumentException('Product ID cannot be null');
         }
         $this->products[$id->toString()] = $product;
     }
 
-    #[Override]
-    public function find(UuidInterface $id): ?Product
+    public function find(string $id): ?Product
     {
-        return $this->products[$id->toString()] ?? null;
+        return $this->products[$id] ?? null;
     }
 
-    #[Override]
-    public function findById(UuidInterface $id): ?Product
+    public function findById(string $id): ?Product
     {
-        return $this->products[$id->toString()] ?? null;
+        return $this->products[$id] ?? null;
     }
 
-    #[Override]
     public function findAll(): array
     {
-        return array_values(array: $this->products);
+        return array_values($this->products);
     }
 }

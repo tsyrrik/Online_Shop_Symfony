@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Cart;
 
 use App\Domain\Cart\CartItem;
+use App\Domain\ValueObject\UuidV7;
 use DomainException;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 class CartItemTest extends TestCase
 {
     public function testConstructorSetsPropertiesCorrectly(): void
     {
         // Arrange
-        $productId = Uuid::uuid7();
+        $productId = new UuidV7();
         $item = new CartItem(productId: $productId, quantity: 5);
         // Assert
         self::assertSame($productId, $item->getProductId());
@@ -24,7 +24,7 @@ class CartItemTest extends TestCase
     public function testCanIncreaseQuantity(): void
     {
         // Arrange
-        $productId = Uuid::uuid7();
+        $productId = new UuidV7();
         $item = new CartItem(productId: $productId, quantity: 5);
         // Act
         $item->increaseQuantity(amount: 3);
@@ -35,7 +35,7 @@ class CartItemTest extends TestCase
     public function testCanDecreaseQuantity(): void
     {
         // Arrange
-        $productId = Uuid::uuid7();
+        $productId = new UuidV7();
         // Act
         $item = new CartItem(productId: $productId, quantity: 5);
         // Assert
@@ -46,7 +46,7 @@ class CartItemTest extends TestCase
     public function testDecreasingQuantityBelowZeroThrowsException(): void
     {
         // Arrange
-        $productId = Uuid::uuid7();
+        $productId = new UuidV7();
         // Act
         $item = new CartItem(productId: $productId, quantity: 1);
         // Assert

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Api\Controller\Admin;
 
 use App\Domain\Order\Repository\OrderRepositoryInterface;
+use App\Domain\ValueObject\UuidV7;
 use App\Enum\OrderStatus;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +34,7 @@ final class AdminOrderController
     #[Route('/admin/orders/{orderId}/status', name: 'admin_order_update_status', methods: ['POST'])]
     public function updateStatus(Request $request, string $orderId): JsonResponse
     {
-        $order = $this->orderRepository->findById(Uuid::fromString($orderId));
+        $order = $this->orderRepository->findById(new UuidV7($orderId));
         if (!$order) {
             return new JsonResponse(['error' => 'Order not found'], 404);
         }

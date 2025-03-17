@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\Cart;
 
+use App\Domain\ValueObject\UuidV7;
 use DomainException;
-use Ramsey\Uuid\UuidInterface;
 
 final class CartItem
 {
-    public function __construct(private UuidInterface $productId, private int $quantity) {}
+    public function __construct(private UuidV7 $productId, private int $quantity) {}
 
-    public function getProductId(): UuidInterface
+    public function getProductId(): UuidV7
     {
         return $this->productId;
     }
@@ -29,7 +29,7 @@ final class CartItem
     public function decreaseQuantity(int $amount = 1): void
     {
         if ($this->quantity - $amount < 0) {
-            throw new DomainException(message: 'Quantity cannot be less than zero.');
+            throw new DomainException('Quantity cannot be less than zero.');
         }
         $this->quantity -= $amount;
     }

@@ -19,20 +19,16 @@ final readonly class AddToCartHandler
 
     public function handle(AddToCartCommand $command): void
     {
-        // Access productId directly and get UuidInterface
-        $product = $this->productRepository->findById($command->productId->getUuid());
+        $product = $this->productRepository->findById($command->productId->toString());
         if (!$product) {
-            throw new Exception(message: 'Product not found');
+            throw new Exception('Product not found');
         }
 
-        // Access userId directly and get UuidInterface; create new Cart if none exists
-        $cart = $this->cartRepository->getCartForUser($command->userId->getUuid())
-            ?? new Cart(userId: $command->userId->getUuid());
+        $cart = $this->cartRepository->getCartForUser($command->userId->toString())
+            ?? new Cart(userId: $command->userId);
 
-        // Access quantity directly
         $cart->addProduct(product: $product, quantity: $command->quantity);
 
-        // Save cart with UuidInterface
-        $this->cartRepository->saveCart($command->userId->getUuid(), $cart);
+        $this->cartRepository->saveCart($command->userId->toString(), $cart);
     }
 }

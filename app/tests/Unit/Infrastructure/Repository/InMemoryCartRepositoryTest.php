@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Infrastructure\Repository;
 
 use App\Domain\Cart\Cart;
+use App\Domain\ValueObject\UuidV7;
 use App\Infrastructure\Repository\InMemoryCartRepository;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 class InMemoryCartRepositoryTest extends TestCase
 {
@@ -15,17 +15,17 @@ class InMemoryCartRepositoryTest extends TestCase
     {
         // Arrange
         $repository = new InMemoryCartRepository();
-        $userId = Uuid::uuid7();
-        $cart = new Cart(userId: $userId);
-        $nonExistentUserId = Uuid::uuid7();
+        $userId = new UuidV7();
+        $cart = new Cart($userId);
+        $nonExistentUserId = (new UuidV7())->toString();
 
         // Act
-        $repository->saveCart(userId: $userId, cart: $cart);
-        $retrievedCart = $repository->getCartForUser(userId: $userId);
-        $cartForNonExistentUser = $repository->getCartForUser(userId: $nonExistentUserId);
+        $repository->saveCart($userId->toString(), $cart);
+        $retrievedCart = $repository->getCartForUser($userId->toString());
+        $cartForNonExistentUser = $repository->getCartForUser($nonExistentUserId);
 
         // Assert
-        self::assertSame(expected: $cart, actual: $retrievedCart);
-        self::assertNull(actual: $cartForNonExistentUser);
+        self::assertSame($cart, $retrievedCart);
+        self::assertNull($cartForNonExistentUser);
     }
 }

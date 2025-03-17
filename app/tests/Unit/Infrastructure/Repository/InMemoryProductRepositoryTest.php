@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Infrastructure\Repository;
 
 use App\Domain\Product\Product;
+use App\Domain\ValueObject\UuidV7;
 use App\Infrastructure\Repository\InMemoryProductRepository;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 class InMemoryProductRepositoryTest extends TestCase
 {
@@ -15,7 +15,7 @@ class InMemoryProductRepositoryTest extends TestCase
     {
         // Arrange
         $repository = new InMemoryProductRepository();
-        $productId = Uuid::uuid7();
+        $productId = new UuidV7();
         $product = new Product(
             name: 'Test Product',
             weight: 100,
@@ -28,10 +28,10 @@ class InMemoryProductRepositoryTest extends TestCase
             description: null,
             id: $productId,
         );
-        $repository->save(product: $product);
+        $repository->save($product);
 
         // Act
-        $result = $repository->find(id: $productId);
+        $result = $repository->find($productId->toString());
 
         // Assert
         self::assertSame($product, $result);

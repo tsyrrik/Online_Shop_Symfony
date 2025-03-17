@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Order;
 
-use Ramsey\Uuid\UuidInterface;
+use App\Domain\ValueObject\UuidV7;
 
 final class OrderItem
 {
-    private UuidInterface $productId;
+    private UuidV7 $productId;
 
     private string $productName;
 
@@ -16,7 +16,7 @@ final class OrderItem
 
     private int $priceAtPurchase;
 
-    public function __construct(UuidInterface $productId, string $productName, int $quantity, int $priceAtPurchase)
+    public function __construct(UuidV7 $productId, string $productName, int $quantity, int $priceAtPurchase)
     {
         $this->productId = $productId;
         $this->productName = $productName;
@@ -24,7 +24,7 @@ final class OrderItem
         $this->priceAtPurchase = $priceAtPurchase;
     }
 
-    public function getProductId(): UuidInterface
+    public function getProductId(): UuidV7
     {
         return $this->productId;
     }

@@ -12,7 +12,6 @@ use App\Domain\Order\OrderItem;
 use App\Domain\Order\Repository\OrderRepositoryInterface;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Exception;
 
 final readonly class CheckoutHandler
@@ -25,47 +24,43 @@ final readonly class CheckoutHandler
 
     public function handle(CheckoutCommand $command): void
     {
-        // Получаем корзину пользователя
-        $cart = $this->cartRepository->getOpenCartForUser($command->getUserId());
+        $cart = $this->cartRepository->getOpenCartForUser((string) $command->userId);
         if (!$cart || $cart->getItems()->isEmpty()) {
             throw new Exception('Cart is empty or not found');
         }
 
-        // Создаем типизированную коллекцию для элементов заказа
-        /** @var ArrayCollection<int, OrderItem> */
+        /** @var ArrayCollection<int, OrderItem> $orderItems */
         $orderItems = new ArrayCollection();
 
         foreach ($cart->getItems() as $cartItem) {
-            // Получаем продукт по ID из корзины
-            $product = $this->productRepository->findById($cartItem->getProductId());
-            if ($product === null || $product->getId() === null) {
-                throw new Exception('Product not found or has no ID for ID: ' . ($cartItem->getProductId()?->toString() ?? 'unknown'));
+            $product = $this->productRepository->findById((string) $cartItem->getProductId());
+            if ($product === null) {
+                throw new Exception('Product not found for ID: ' . $cartItem->getProductId()->toString());
             }
 
+            $productId = $product->getId();
+            if ($productId === null) {
+                throw new Exception('Product ID cannot be null');
+            }
             $orderItems->add(new OrderItem(
-                $product->getId(),
+                $productId,
                 $product->getName(),
                 $cartItem->getQuantity(),
                 $product->getCost(),
             ));
         }
 
-        // Создаем и сохраняем заказ
-        /** @var Order */
         $order = new Order(
-            $command->getUserId(),
-            /** @var Collection<int, OrderItem> */
+            $command->userId,
             $orderItems,
-            $command->getDeliveryMethod(),
-            $command->getOrderPhone(),
+            $command->deliveryMethod,
+            $command->orderPhone,
         );
 
-        // Сохраняем заказ
         $this->orderRepository->save($order);
 
-
-        // Обновляем корзину (если это требуется)
-        $cart = $this->cartRepository->getCartForUser($command->getUserId()) ?? new Cart(userId: $command->getUserId());
-        $this->cartRepository->saveCart($command->getUserId(), $cart);
+        $cart = $this->cartRepository->getCartForUser((string) $command->userId)
+            ?? new Cart(userId: $command->userId);
+        $this->cartRepository->saveCart((string) $command->userId, $cart);
     }
 }

@@ -6,8 +6,8 @@ namespace App\Infrastructure\Api\Controller;
 
 use App\Domain\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Routing\Annotation\Route;
 
 final class ProfileController
 {

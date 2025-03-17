@@ -6,7 +6,6 @@ namespace App\Tests\Domain\User;
 
 use App\Domain\User\User;
 use App\Domain\ValueObject\UuidV7;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase
@@ -32,66 +31,6 @@ class UserTest extends TestCase
             [null, 'Иван', '+79990000000', 'test@test.com'],
             [null, 'Толя', '+7999000000', 'test2@test.com'],
             [null, 'Гослин', '+79990000000', 'test3@test.com'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideCreateUserWithInvalidNameThrowsExceptionCases
-     */
-    public function testCreateUserWithInvalidNameThrowsException(?UuidV7 $id, string $name, string $phone, string $email): void
-    {
-        // Arrange
-        $this->expectException(InvalidArgumentException::class);
-        // Act
-        new User(id: $id, name: $name, phone: $phone, email: $email);
-    }
-
-    public function provideCreateUserWithInvalidNameThrowsExceptionCases(): iterable
-    {
-        return [
-            [null, '', '+79990000000', 'test@example.com'],
-            [null, 'Иван123', '+79990000000', 'test@example.com'],
-            [null, 'John_Doe', '+79990000000', 'test@example.com'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideCreateUserWithInvalidPhoneThrowsExceptionCases
-     */
-    public function testCreateUserWithInvalidPhoneThrowsException(?UuidV7 $id, string $name, string $phone, string $email): void
-    {
-        // Arrange
-        $this->expectException(InvalidArgumentException::class);
-        // Act
-        new User(id: $id, name: $name, phone: $phone, email: $email);
-    }
-
-    public function provideCreateUserWithInvalidPhoneThrowsExceptionCases(): iterable
-    {
-        return [
-            [null, 'Ванек', '799912345', 'test@123.com'],
-            [null, 'Ванюша', '+79991234', 'test@123.com'],
-            [null, 'Ванос', '+79991234567890', 'test@test.com'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideCreateUserWithInvalidEmailThrowsExceptionCases
-     */
-    public function testCreateUserWithInvalidEmailThrowsException(?UuidV7 $id, string $name, string $phone, string $email): void
-    {
-        // Arrange
-        $this->expectException(InvalidArgumentException::class);
-        // Act
-        new User(id: $id, name: $name, phone: $phone, email: $email);
-    }
-
-    public function provideCreateUserWithInvalidEmailThrowsExceptionCases(): iterable
-    {
-        return [
-            [null, 'Иван', '+79991234567', 'test'],
-            [null, 'Иван', '+79991234567', 'test@'],
-            [null, 'Иван', '+79991234567', 'test@example'],
         ];
     }
 

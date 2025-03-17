@@ -4,24 +4,38 @@ declare(strict_types=1);
 
 namespace App\Domain\ValueObject;
 
-use Ramsey\Uuid\UuidInterface;
+use InvalidArgumentException;
+use Ramsey\Uuid\Uuid;
 
 final class UuidV7
 {
-    private UuidInterface $uuid;
+    private string $uuid;
 
-    public function __construct(UuidInterface $uuid)
+    public function __construct(?string $uuid = null)
     {
-        $this->uuid = $uuid;
+        $this->uuid = $uuid ?? Uuid::uuid7()->toString();
+        if (!Uuid::isValid($this->uuid)) {
+            throw new InvalidArgumentException('Invalid UUID');
+        }
     }
 
-    public function getUuid(): UuidInterface
+    public static function fromString(string $uuid): self
     {
-        return $this->uuid;
+        return new self($uuid);
     }
 
     public function toString(): string
     {
-        return $this->uuid->toString();
+        return $this->uuid;
+    }
+
+    public function __toString(): string
+    {
+        return $this->uuid;
+    }
+
+    public function equals(self $other): bool
+    {
+        return $this->uuid === $other->uuid;
     }
 }

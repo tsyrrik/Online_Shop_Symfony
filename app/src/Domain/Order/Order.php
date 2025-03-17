@@ -4,54 +4,42 @@ declare(strict_types=1);
 
 namespace App\Domain\Order;
 
+use App\Domain\ValueObject\UuidV7;
 use App\Enum\OrderStatus;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 final class Order
 {
-    private UuidInterface $id;
-
-    private UuidInterface $userId;
-
-    /** @var Collection<int, OrderItem> */
-    private Collection $items;
+    private UuidV7 $id;
 
     private OrderStatus $status;
-
-    private string $deliveryMethod;
-
-    private string $orderPhone;
 
     private DateTimeImmutable $createdAt;
 
     private DateTimeImmutable $updatedAt;
 
+    /**
+     * @param Collection<int, OrderItem> $items
+     */
     public function __construct(
-        UuidInterface $userId,
-        Collection $items,
-        string $deliveryMethod,
-        string $orderPhone,
+        private UuidV7 $userId,
+        private Collection $items,
+        private string $deliveryMethod,
+        private string $orderPhone,
     ) {
-        /** @var Collection<int, OrderItem> $items */
-        $this->id = Uuid::uuid7();
-        $this->userId = $userId;
-        $this->items = $items;
+        $this->id = new UuidV7();
         $this->status = OrderStatus::PAID;
-        $this->deliveryMethod = $deliveryMethod;
-        $this->orderPhone = $orderPhone;
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
     }
 
-    public function getId(): UuidInterface
+    public function getId(): UuidV7
     {
         return $this->id;
     }
 
-    public function getUserId(): UuidInterface
+    public function getUserId(): UuidV7
     {
         return $this->userId;
     }
