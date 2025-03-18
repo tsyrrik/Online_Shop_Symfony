@@ -21,7 +21,7 @@ final readonly class AddToCartHandler
     {
         $product = $this->productRepository->findById($command->productId->toString());
         if (!$product) {
-            throw new Exception('Product not found');
+            throw new Exception(message: 'Product not found');
         }
 
         $cart = $this->cartRepository->getCartForUser($command->userId->toString())

@@ -29,7 +29,7 @@ final class CartItem
     public function decreaseQuantity(int $amount = 1): void
     {
         if ($this->quantity - $amount < 0) {
-            throw new DomainException('Quantity cannot be less than zero.');
+            throw new DomainException(message: 'Quantity cannot be less than zero.');
         }
         $this->quantity -= $amount;
     }

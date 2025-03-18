@@ -6,8 +6,8 @@ namespace App\Application\Service;
 
 use App\Domain\Cart\Repository\CartRepositoryInterface;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
+use App\Domain\ValueObject\UuidV7;
 use Exception;
-use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -23,7 +23,7 @@ final class ReportService
 
     public function generateSalesReport(): string
     {
-        $reportId = Uuid::uuid4()->toString();
+        $reportId = (new UuidV7())->toString();
         $carts = $this->cartRepository->findCompletedCarts();
         $reportLines = [];
 

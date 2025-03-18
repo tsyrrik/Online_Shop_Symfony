@@ -28,13 +28,13 @@ final class InMemoryCartRepository implements CartRepositoryInterface
     #[Override]
     public function findCompletedCarts(): array
     {
-        return array_filter($this->carts, static fn(Cart $cart) => $cart->isCompleted());
+        return array_filter(array: $this->carts, callback: static fn(Cart $cart) => $cart->isCompleted());
     }
 
     #[Override]
     public function getOpenCartForUser(string $userId): ?Cart
     {
-        $cart = $this->getCartForUser($userId);
+        $cart = $this->getCartForUser(userId: $userId);
         if ($cart && !$cart->isCompleted()) {
             return $cart;
         }

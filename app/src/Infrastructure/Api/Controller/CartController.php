@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Api\Controller;
 
 use App\Application\Command\AddToCartCommand;
+use App\Domain\ValueObject\UuidV7;
 use App\Infrastructure\Api\Request\AddToCartRequest;
-use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +30,8 @@ final class CartController extends AbstractController
     ): JsonResponse {
         try {
             $command = new AddToCartCommand(
-                userId: Uuid::fromString(uuid: $request->userId),
-                productId: Uuid::fromString(uuid: $request->productId),
+                userId: new UuidV7(uuid: $request->userId),
+                productId: new UuidV7(uuid: $request->productId),
                 quantity: $request->quantity,
             );
             $this->commandBus->dispatch($command);

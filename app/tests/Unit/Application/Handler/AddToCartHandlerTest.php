@@ -26,7 +26,7 @@ class AddToCartHandlerTest extends TestCase
     {
         $this->productRepository = new InMemoryProductRepository();
         $this->cartRepository = new InMemoryCartRepository();
-        $this->handler = new AddToCartHandler($this->productRepository, $this->cartRepository);
+        $this->handler = new AddToCartHandler(productRepository: $this->productRepository, cartRepository: $this->cartRepository);
     }
 
     public function testHandleWithExistingCart(): void
@@ -47,18 +47,18 @@ class AddToCartHandlerTest extends TestCase
             description: 'Description',
             id: $productId,
         );
-        $this->productRepository->save($product);
+        $this->productRepository->save(product: $product);
 
-        $cart = new Cart($userId);
-        $this->cartRepository->saveCart($userId->toString(), $cart);
+        $cart = new Cart(userId: $userId);
+        $this->cartRepository->saveCart(userId: $userId->toString(), cart: $cart);
 
-        $command = new AddToCartCommand($userId, $productId, 3);
+        $command = new AddToCartCommand(userId: $userId, productId: $productId, quantity: 3);
 
         // Act
-        $this->handler->handle($command);
+        $this->handler->handle(command: $command);
 
         // Assert
-        $updatedCart = $this->cartRepository->getCartForUser($userId->toString());
+        $updatedCart = $this->cartRepository->getCartForUser(userId: $userId->toString());
         self::assertCount(1, $updatedCart->getItems());
         self::assertEquals(3, $updatedCart->getTotalQuantity());
     }
@@ -69,13 +69,13 @@ class AddToCartHandlerTest extends TestCase
         $userId = new UuidV7();
         $productId = new UuidV7();
 
-        $command = new AddToCartCommand($userId, $productId, 3);
+        $command = new AddToCartCommand(userId: $userId, productId: $productId, quantity: 3);
 
         // Assert
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Product not found');
+        $this->expectException(exception: Exception::class);
+        $this->expectExceptionMessage(message: 'Product not found');
 
         // Act
-        $this->handler->handle($command);
+        $this->handler->handle(command: $command);
     }
 }

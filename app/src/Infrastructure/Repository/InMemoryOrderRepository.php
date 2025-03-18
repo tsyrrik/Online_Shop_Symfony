@@ -20,14 +20,14 @@ final class InMemoryOrderRepository implements OrderRepositoryInterface
 
     public function findAll(): array
     {
-        return array_values($this->orders);
+        return array_values(array: $this->orders);
     }
 
     public function findByUserId(UuidV7 $userId): array
     {
         return array_filter(
-            $this->orders,
-            static fn(Order $order) => $order->getUserId()->toString() === $userId->toString(), // Changed to toString() comparison
+            array: $this->orders,
+            callback: static fn(Order $order) => $order->getUserId()->toString() === $userId->toString(),
         );
     }
 

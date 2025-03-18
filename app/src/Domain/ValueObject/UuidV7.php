@@ -14,8 +14,8 @@ final class UuidV7
     public function __construct(?string $uuid = null)
     {
         $this->uuid = $uuid ?? Uuid::uuid7()->toString();
-        if (!Uuid::isValid($this->uuid)) {
-            throw new InvalidArgumentException('Invalid UUID');
+        if (!Uuid::isValid(uuid: $this->uuid)) {
+            throw new InvalidArgumentException(message: 'Invalid UUID');
         }
     }
 

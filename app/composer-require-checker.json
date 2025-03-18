@@ -1,5 +1,3 @@
 {
-  "symbol-whitelist": [
-    "Symfony\\Component\\Security\\Core\\Security"
-  ]
+
 }

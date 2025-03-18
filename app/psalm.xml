@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <psalm
+        autoloader="vendor/autoload.php"
         cacheDirectory="var/psalm"
         errorLevel="3"
         resolveFromConfigFile="true"

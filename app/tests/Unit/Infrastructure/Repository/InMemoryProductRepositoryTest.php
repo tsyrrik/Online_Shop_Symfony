@@ -28,10 +28,10 @@ class InMemoryProductRepositoryTest extends TestCase
             description: null,
             id: $productId,
         );
-        $repository->save($product);
+        $repository->save(product: $product);
 
         // Act
-        $result = $repository->find($productId->toString());
+        $result = $repository->find(id: $productId->toString());
 
         // Assert
         self::assertSame($product, $result);

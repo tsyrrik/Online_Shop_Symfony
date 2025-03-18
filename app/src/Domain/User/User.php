@@ -30,16 +30,21 @@ class User
     #[ORM\Column(type: Types::STRING, unique: true)]
     private string $email;
 
+    #[ORM\Column(type: Types::STRING)]
+    private string $role = 'ROLE_USER';
+
     public function __construct(
         ?UuidV7 $id,
         string $name,
         string $phone,
         string $email,
+        string $role = 'ROLE_USER',
     ) {
         $this->id = $id ?? new UuidV7();
         $this->name = $name;
         $this->phone = $phone;
         $this->email = $email;
+        $this->role = $role;
     }
 
     public function getId(): UuidV7
@@ -60,5 +65,15 @@ class User
     public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): void
+    {
+        $this->role = $role;
     }
 }

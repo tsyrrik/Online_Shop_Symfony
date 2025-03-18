@@ -17,7 +17,7 @@ final class InMemoryProductRepository implements ProductRepositoryInterface
     {
         $id = $product->getId();
         if ($id === null) { // Valid with ?UuidV7
-            throw new InvalidArgumentException('Product ID cannot be null');
+            throw new InvalidArgumentException(message: 'Product ID cannot be null');
         }
         $this->products[$id->toString()] = $product;
     }
@@ -34,6 +34,6 @@ final class InMemoryProductRepository implements ProductRepositoryInterface
 
     public function findAll(): array
     {
-        return array_values($this->products);
+        return array_values(array: $this->products);
     }
 }

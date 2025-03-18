@@ -26,7 +26,7 @@ final readonly class CheckoutHandler
     {
         $cart = $this->cartRepository->getOpenCartForUser((string) $command->userId);
         if (!$cart || $cart->getItems()->isEmpty()) {
-            throw new Exception('Cart is empty or not found');
+            throw new Exception(message: 'Cart is empty or not found');
         }
 
         /** @var ArrayCollection<int, OrderItem> $orderItems */
@@ -35,26 +35,26 @@ final readonly class CheckoutHandler
         foreach ($cart->getItems() as $cartItem) {
             $product = $this->productRepository->findById((string) $cartItem->getProductId());
             if ($product === null) {
-                throw new Exception('Product not found for ID: ' . $cartItem->getProductId()->toString());
+                throw new Exception(message: 'Product not found for ID: ' . $cartItem->getProductId()->toString());
             }
 
             $productId = $product->getId();
             if ($productId === null) {
-                throw new Exception('Product ID cannot be null');
+                throw new Exception(message: 'Product ID cannot be null');
             }
-            $orderItems->add(new OrderItem(
-                $productId,
-                $product->getName(),
-                $cartItem->getQuantity(),
-                $product->getCost(),
+            $orderItems->add(element: new OrderItem(
+                productId: $productId,
+                productName: $product->getName(),
+                quantity: $cartItem->getQuantity(),
+                priceAtPurchase: $product->getCost(),
             ));
         }
 
         $order = new Order(
-            $command->userId,
-            $orderItems,
-            $command->deliveryMethod,
-            $command->orderPhone,
+            userId: $command->userId,
+            items: $orderItems,
+            deliveryMethod: $command->deliveryMethod,
+            orderPhone: $command->orderPhone,
         );
 
         $this->orderRepository->save($order);

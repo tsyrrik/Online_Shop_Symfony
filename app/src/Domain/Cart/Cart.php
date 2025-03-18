@@ -62,9 +62,9 @@ final class Cart
     public function getTotalQuantity(): int
     {
         return array_reduce(
-            $this->items->toArray(),
-            static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
-            0,
+            array: $this->items->toArray(),
+            callback: static fn(int $carry, CartItem $item) => $carry + $item->getQuantity(),
+            initial: 0,
         );
     }
 
@@ -77,7 +77,7 @@ final class Cart
     {
         $productId = $product->getId();
         if ($productId === null) {
-            throw new InvalidArgumentException('Product ID cannot be null');
+            throw new InvalidArgumentException(message: 'Product ID cannot be null');
         }
 
         if ($quantity <= 0) {

@@ -78,7 +78,7 @@
         "symfony/phpunit-bridge": "^7.2",
         "symfony/stopwatch": "~7.2.4",
         "symfony/web-profiler-bundle": "~7.2.4",
-        "vimeo/psalm": "^6.8.9"
+        "vimeo/psalm": "^6.9.1"
     },
     "replace": {
         "symfony/polyfill-ctype": "*",

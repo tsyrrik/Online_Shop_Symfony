@@ -16,13 +16,13 @@ class InMemoryCartRepositoryTest extends TestCase
         // Arrange
         $repository = new InMemoryCartRepository();
         $userId = new UuidV7();
-        $cart = new Cart($userId);
+        $cart = new Cart(userId: $userId);
         $nonExistentUserId = (new UuidV7())->toString();
 
         // Act
-        $repository->saveCart($userId->toString(), $cart);
-        $retrievedCart = $repository->getCartForUser($userId->toString());
-        $cartForNonExistentUser = $repository->getCartForUser($nonExistentUserId);
+        $repository->saveCart(userId: $userId->toString(), cart: $cart);
+        $retrievedCart = $repository->getCartForUser(userId: $userId->toString());
+        $cartForNonExistentUser = $repository->getCartForUser(userId: $nonExistentUserId);
 
         // Assert
         self::assertSame($cart, $retrievedCart);

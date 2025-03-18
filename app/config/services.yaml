@@ -19,6 +19,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    # Repository interfaces and their implementations
     App\Domain\Product\Repository\ProductRepositoryInterface:
         alias: App\Infrastructure\Repository\InMemoryProductRepository
 
@@ -28,6 +29,7 @@ services:
     App\Domain\User\Repository\UserRepositoryInterface:
         alias: App\Infrastructure\Repository\UserRepository
 
+    # Kafka configuration
     RdKafka\Conf:
         calls:
             - [set, ['metadata.broker.list', 'kafka:9092']]
@@ -36,11 +38,12 @@ services:
         arguments:
             - '@RdKafka\Conf'
 
+    # Application services
     App\Application\Service\ReportService:
         arguments:
-            - '@App\Domain\Cart\Repository\CartRepositoryInterface'
-            - '@Symfony\Component\Filesystem\Filesystem'
-            - '@RdKafka\Producer'
+            $cartRepository: '@App\Domain\Cart\Repository\CartRepositoryInterface'
+            $productRepository: '@App\Domain\Product\Repository\ProductRepositoryInterface'
+            $filesystem: '@Symfony\Component\Filesystem\Filesystem'
 
     App\Infrastructure\Api\Controller\ReportController:
         arguments:
@@ -50,5 +53,6 @@ services:
         arguments:
             $productRepository: '@App\Domain\Product\Repository\ProductRepositoryInterface'
             $cartRepository: '@App\Domain\Cart\Repository\CartRepositoryInterface'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

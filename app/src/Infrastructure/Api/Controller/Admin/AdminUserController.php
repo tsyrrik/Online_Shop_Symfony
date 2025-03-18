@@ -7,7 +7,9 @@ namespace App\Infrastructure\Api\Controller\Admin;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 final class AdminUserController
 {
     public function __construct(private UserRepositoryInterface $userRepository) {}
@@ -16,13 +18,14 @@ final class AdminUserController
     public function list(): JsonResponse
     {
         $users = $this->userRepository->findAll();
-        $data = array_map(static fn($user) => [
+        $data = array_map(callback: static fn($user) => [
             'id' => $user->getId()->toString(),
             'name' => $user->getName(),
             'phone' => $user->getPhone(),
             'email' => $user->getEmail(),
-        ], $users);
+            'role' => $user->getRole(),
+        ], array: $users);
 
-        return new JsonResponse($data);
+        return new JsonResponse(data: $data);
     }
 }
