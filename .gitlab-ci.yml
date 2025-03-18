@@ -11,6 +11,10 @@ variables:
 build_dev_dependencies:
   stage: build
   image: composer:latest
+  before_script:
+    - apt-get update && apt-get install -y librdkafka-dev
+    - pecl install rdkafka
+    - docker-php-ext-enable rdkafka
   script:
     - cd app && composer install --no-interaction
   artifacts:
