@@ -12,12 +12,7 @@ use Override;
 
 final class UserRepository implements UserRepositoryInterface
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
+    public function __construct(private EntityManagerInterface $entityManager) {}
 
     #[Override]
     public function save(User $user): void

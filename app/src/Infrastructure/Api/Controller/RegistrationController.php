@@ -17,15 +17,10 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class RegistrationController extends AbstractController
 {
-    private MessageBusInterface $commandBus;
-
-    private Producer $kafkaProducer;
-
-    public function __construct(MessageBusInterface $commandBus, Producer $kafkaProducer)
-    {
-        $this->commandBus = $commandBus;
-        $this->kafkaProducer = $kafkaProducer;
-    }
+    public function __construct(
+        private MessageBusInterface $commandBus,
+        private Producer $kafkaProducer,
+    ) {}
 
     public function register(
         #[MapRequestPayload]

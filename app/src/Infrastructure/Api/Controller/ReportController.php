@@ -12,12 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ReportController
 {
-    private Producer $kafkaProducer;
-
-    public function __construct(Producer $kafkaProducer)
-    {
-        $this->kafkaProducer = $kafkaProducer;
-    }
+    public function __construct(private Producer $kafkaProducer) {}
 
     #[Route('/api/report/generate', name: 'generate_report', methods: ['POST'])]
     public function generateReport(): JsonResponse

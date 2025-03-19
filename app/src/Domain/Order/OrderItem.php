@@ -8,21 +8,12 @@ use App\Domain\ValueObject\UuidV7;
 
 final class OrderItem
 {
-    private UuidV7 $productId;
-
-    private string $productName;
-
-    private int $quantity;
-
-    private int $priceAtPurchase;
-
-    public function __construct(UuidV7 $productId, string $productName, int $quantity, int $priceAtPurchase)
-    {
-        $this->productId = $productId;
-        $this->productName = $productName;
-        $this->quantity = $quantity;
-        $this->priceAtPurchase = $priceAtPurchase;
-    }
+    public function __construct(
+        private UuidV7 $productId,
+        private string $productName,
+        private int $quantity,
+        private int $priceAtPurchase,
+    ) {}
 
     public function getProductId(): UuidV7
     {
