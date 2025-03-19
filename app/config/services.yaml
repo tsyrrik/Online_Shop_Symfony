@@ -36,7 +36,7 @@ services:
 
     RdKafka\Producer:
         arguments:
-            - '@RdKafka\Conf'
+            $conf: '@RdKafka\Conf'
 
     # Application services
     App\Application\Service\ReportService:
