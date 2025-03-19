@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
+use App\Domain\Product\Product;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 
 final class ProductService
@@ -13,5 +14,10 @@ final class ProductService
     public function getAllProducts(): array
     {
         return $this->productRepository->findAll();
+    }
+
+    public function saveProduct(Product $product): void
+    {
+        $this->productRepository->save($product);
     }
 }

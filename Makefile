@@ -60,4 +60,7 @@ comments_density:
 rector:
 	docker compose exec app bash -c 'cd app && vendor/rector/rector/bin/rector --dry-run'
 
+rector-apply:
+	docker compose exec app bash -c 'cd app && vendor/rector/rector/bin/rector'
+
 
