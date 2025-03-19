@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Order;
 
 use App\Domain\ValueObject\UuidV7;
+use App\Enum\DeliveryMethod;
 use App\Enum\OrderStatus;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
@@ -25,7 +26,7 @@ final class Order
     public function __construct(
         private UuidV7 $userId,
         private Collection $items,
-        private string $deliveryMethod,
+        private DeliveryMethod $deliveryMethod,
         private string $orderPhone,
     ) {
         $this->id = new UuidV7();
@@ -54,7 +55,7 @@ final class Order
         return $this->status;
     }
 
-    public function getDeliveryMethod(): string
+    public function getDeliveryMethod(): DeliveryMethod
     {
         return $this->deliveryMethod;
     }
