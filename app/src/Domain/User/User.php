@@ -76,4 +76,19 @@ class User
     {
         $this->role = $role;
     }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function setPhone(string $phone): void
+    {
+        $this->phone = $phone;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
 }
