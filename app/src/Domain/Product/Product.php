@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Product
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\Column(type: 'uuid_v7', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'Ramsey\Uuid\Doctrine\UuidGenerator')]
     private ?UuidV7 $id = null;
@@ -36,14 +36,16 @@ class Product
         private int $version,
         #[ORM\Column(type: Types::TEXT, nullable: true)]
         private ?string $description = null,
-        ?UuidV7 $id = null,
-    ) {
-        $this->id = $id;
-    }
+    ) {}
 
-    public function getId(): ?UuidV7 // Changed from UuidV7 to ?UuidV7
+    public function getId(): ?UuidV7
     {
         return $this->id;
+    }
+
+    public function setId(UuidV7 $id): void
+    {
+        $this->id = $id;
     }
 
     public function getName(): string

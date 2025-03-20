@@ -26,8 +26,8 @@ class InMemoryProductRepositoryTest extends TestCase
             tax: 10,
             version: 1,
             description: null,
-            id: $productId,
         );
+        $product->setId(id: $productId);
         $repository->save(product: $product);
 
         // Act

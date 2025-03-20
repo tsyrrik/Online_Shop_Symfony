@@ -19,6 +19,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Infrastructure/Doctrine/Type/'
     # Repository interfaces and their implementations
     App\Domain\Product\Repository\ProductRepositoryInterface:
         alias: App\Infrastructure\Repository\InMemoryProductRepository

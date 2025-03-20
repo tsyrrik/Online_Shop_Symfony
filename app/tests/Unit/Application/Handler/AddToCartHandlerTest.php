@@ -45,8 +45,8 @@ class AddToCartHandlerTest extends TestCase
             tax: 50,
             version: 1,
             description: 'Description',
-            id: $productId,
         );
+        $product->setId(id: $productId);
         $this->productRepository->save(product: $product);
 
         $cart = new Cart(userId: $userId);

@@ -5,6 +5,8 @@ doctrine:
         use_savepoints: true
         types:
             uuid: Ramsey\Uuid\Doctrine\UuidType
+            uuid_v7: App\Infrastructure\Doctrine\Type\UuidV7Type
+
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

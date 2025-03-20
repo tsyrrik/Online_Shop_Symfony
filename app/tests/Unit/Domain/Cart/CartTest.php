@@ -95,7 +95,8 @@ class CartTest extends TestCase
     public function testAnAddProductToCart(): void
     {
         $productId = new UuidV7();
-        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null, id: $productId);
+        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null);
+        $product->setId(id: $productId);
         $this->cart->addProduct(product: $product, quantity: 2);
         $items = $this->cart->getItems();
         self::assertCount(1, $items);
@@ -108,7 +109,8 @@ class CartTest extends TestCase
     public function testAddingProductWithExistingProductIncreasesQuantity(): void
     {
         $productId = new UuidV7();
-        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null, id: $productId);
+        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null);
+        $product->setId(id: $productId);
         $this->cart->addProduct(product: $product, quantity: 2);
         $this->cart->addProduct(product: $product, quantity: 3);
         $items = $this->cart->getItems();
@@ -119,7 +121,7 @@ class CartTest extends TestCase
 
     public function testAddProductWithNullIdThrowsException(): void
     {
-        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null, id: null);
+        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null);
         $this->expectException(exception: InvalidArgumentException::class);
         $this->expectExceptionMessage(message: 'Product ID cannot be null');
         $this->cart->addProduct(product: $product, quantity: 1);
@@ -128,7 +130,8 @@ class CartTest extends TestCase
     public function testAddProductWithInvalidQuantityThrowsException(): void
     {
         $productId = new UuidV7();
-        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null, id: $productId);
+        $product = new Product(name: 'Test Product', weight: 100, height: 10, width: 20, length: 30, cost: 1000, tax: 10, version: 1, description: null);
+        $product->setId(id: $productId);
         $this->expectException(exception: InvalidArgumentException::class);
         $this->expectExceptionMessage(message: 'Quantity must be greater than zero');
         $this->cart->addProduct(product: $product, quantity: 0);

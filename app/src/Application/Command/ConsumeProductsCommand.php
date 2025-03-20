@@ -50,7 +50,6 @@ class ConsumeProductsCommand extends Command
                     }
 
                     $product = new Product(
-                        id: new UuidV7(uuid: (string) $payload['id']),
                         name: $payload['name'],
                         weight: $payload['measurments']['weight'],
                         height: $payload['measurments']['height'],
@@ -61,6 +60,7 @@ class ConsumeProductsCommand extends Command
                         tax: $payload['tax'],
                         version: $payload['version'],
                     );
+                    $product->setId(id: new UuidV7(uuid: (string) $payload['id']));
 
                     $this->productService->saveProduct(product: $product);
                     $output->writeln("Product {$payload['id']} saved successfully");
