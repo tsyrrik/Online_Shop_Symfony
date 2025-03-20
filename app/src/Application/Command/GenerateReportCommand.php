@@ -30,8 +30,7 @@ class GenerateReportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('Starting Kafka consumer for report generation...');
-
+        // Configure Kafka consumer
         $conf = new Conf();
         $conf->set(name: 'group.id', value: 'report_generators');
         $conf->set(name: 'metadata.broker.list', value: 'kafka:9092');
@@ -40,57 +39,40 @@ class GenerateReportCommand extends Command
         $consumer = new KafkaConsumer(conf: $conf);
         $consumer->subscribe(topics: ['report_generation']);
 
-        try {
-            while (true) {
-                $message = $consumer->consume(timeout_ms: 120 * 1000);
-                switch ($message->err) {
-                    case RD_KAFKA_RESP_ERR_NO_ERROR:
-                        $payload = json_decode(json: $message->payload, associative: true);
-                        if (!isset($payload['reportId'])) {
-                            $output->writeln('Invalid message payload: missing reportId');
+        while (true) {
+            $message = $consumer->consume(timeout_ms: 120 * 1000);
+            if ($message->err === RD_KAFKA_RESP_ERR_NO_ERROR) {
+                $payload = json_decode(json: $message->payload, associative: true);
+                $reportId = $payload['reportId'] ?? null;
 
-                            continue 2; // Здесь изменено continue на continue 2
-                        }
-                        $reportId = $payload['reportId'];
-                        $output->writeln("Processing report ID: {$reportId}");
+                if ($reportId === null) {
+                    $output->writeln('Invalid payload: missing reportId');
 
-                        try {
-                            $this->reportService->generateSalesReport();
-                            $this->sendReportResult(reportId: $reportId, result: 'success');
-                            $output->writeln("Report {$reportId} generated successfully");
-                        } catch (Exception $e) {
-                            $this->sendReportResult(reportId: $reportId, result: 'fail', errorMessage: $e->getMessage());
-                            $output->writeln("Failed to generate report {$reportId}: " . $e->getMessage());
-                        }
-                        break;
-                    case RD_KAFKA_RESP_ERR__PARTITION_EOF:
-                        $output->writeln('No more messages; waiting for more...');
-                        break;
-                    case RD_KAFKA_RESP_ERR__TIMED_OUT:
-                        $output->writeln('Timed out waiting for messages');
-                        break;
+                    continue;
+                }
 
-                    default:
-                        throw new Exception(message: $message->errstr(), code: $message->err);
+                try {
+                    $filePath = $this->reportService->generateSalesReport();
+                    $this->sendReportResult(reportId: $reportId, result: 'success', filePath: $filePath);
+                } catch (Exception $e) {
+                    $this->sendReportResult(reportId: $reportId, result: 'fail', errorMessage: $e->getMessage());
                 }
             }
-        } catch (Exception $e) {
-            $output->writeln('Error: ' . $e->getMessage());
-
-            return Command::FAILURE;
         }
 
         return Command::SUCCESS;
     }
 
-    private function sendReportResult(string $reportId, string $result, ?string $errorMessage = null): void
+    private function sendReportResult(string $reportId, string $result, ?string $filePath = null, ?string $errorMessage = null): void
     {
         $producer = new Producer();
         $producer->addBrokers(broker_list: 'kafka:9092');
         $topic = $producer->newTopic(topic_name: 'report_result');
 
         $message = ['reportId' => $reportId, 'result' => $result];
-        if ($result === 'fail') {
+        if ($result === 'success' && $filePath) {
+            $message['filePath'] = $filePath;
+        } elseif ($result === 'fail' && $errorMessage) {
             $message['detail'] = ['error' => $errorMessage];
         }
 

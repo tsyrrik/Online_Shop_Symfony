@@ -7,7 +7,6 @@ namespace App\Application\Service;
 use App\Domain\Cart\Repository\CartRepositoryInterface;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 use App\Domain\ValueObject\UuidV7;
-use Exception;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -43,15 +42,9 @@ final class ReportService
             }
         }
 
-        $reportContent = implode(separator: "\n", array: $reportLines);
         $filePath = sprintf('var/reports/report_%s.jsonl', $reportId);
+        $this->filesystem->dumpFile(filename: $filePath, content: implode(separator: "\n", array: $reportLines));
 
-        try {
-            $this->filesystem->dumpFile(filename: $filePath, content: $reportContent);
-
-            return $reportId;
-        } catch (Exception $e) {
-            throw new RuntimeException(message: 'Unable to write report file: ' . $e->getMessage());
-        }
+        return $reportId;
     }
 }
