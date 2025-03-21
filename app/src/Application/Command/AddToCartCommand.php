@@ -11,6 +11,6 @@ final readonly class AddToCartCommand
     public function __construct(
         public UuidV7 $userId,
         public UuidV7 $productId,
-        public int $quantity = 1,
+        public int $quantity,
     ) {}
 }

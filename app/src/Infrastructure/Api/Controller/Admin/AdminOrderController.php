@@ -7,32 +7,42 @@ namespace App\Infrastructure\Api\Controller\Admin;
 use App\Domain\Order\Repository\OrderRepositoryInterface;
 use App\Domain\ValueObject\UuidV7;
 use App\Enum\OrderStatus;
+use App\Infrastructure\Api\DTO\OrderDTO;
+use App\Infrastructure\Api\DTO\OrderItemDTO;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use ValueError;
 
 #[Route('/admin/orders')]
 final class AdminOrderController extends AbstractController
 {
-    public function __construct(private OrderRepositoryInterface $orderRepository) {}
+    public function __construct(
+        private OrderRepositoryInterface $orderRepository,
+        private SerializerInterface $serializer,
+    ) {}
 
     #[Route('', methods: ['GET'])]
     public function list(): JsonResponse
     {
         $orders = $this->orderRepository->findAll();
-        $data = array_map(callback: static fn($order) => [
-            'id' => $order->getId()->toString(),
-            'userId' => $order->getUserId()->toString(),
-            'status' => $order->getStatus()->value,
-            'deliveryMethod' => $order->getDeliveryMethod(),
-            'orderPhone' => $order->getOrderPhone(),
-            'createdAt' => $order->getCreatedAt()->format('Y-m-d H:i:s'),
-        ], array: $orders);
+        $orderDTOs = array_map(
+            callback: static fn($order) => new OrderDTO(
+                id: $order->getId()->toString(),
+                userId: $order->getUserId()->toString(),
+                status: $order->getStatus()->value,
+                deliveryMethod: $order->getDeliveryMethod()->value,
+                orderPhone: $order->getOrderPhone(),
+                createdAt: $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'),
+            ),
+            array: $orders,
+        );
+        $json = $this->serializer->serialize($orderDTOs, 'json', ['groups' => ['order:read']]);
 
-        return new JsonResponse(data: $data);
+        return new JsonResponse(data: $json, json: true);
     }
 
     #[Route('/{id}', methods: ['GET'])]
@@ -43,22 +53,29 @@ final class AdminOrderController extends AbstractController
             return new JsonResponse(data: ['error' => 'Order not found'], status: Response::HTTP_NOT_FOUND);
         }
 
-        $data = [
-            'id' => $order->getId()->toString(),
-            'userId' => $order->getUserId()->toString(),
-            'status' => $order->getStatus()->value,
-            'deliveryMethod' => $order->getDeliveryMethod(),
-            'orderPhone' => $order->getOrderPhone(),
-            'createdAt' => $order->getCreatedAt()->format(format: 'Y-m-d H:i:s'),
-            'items' => array_map(callback: static fn($item) => [
-                'productId' => $item->getProductId()->toString(),
-                'productName' => $item->getProductName(),
-                'quantity' => $item->getQuantity(),
-                'priceAtPurchase' => $item->getPriceAtPurchase(),
-            ], array: $order->getItems()->toArray()),
-        ];
+        $orderItems = array_map(
+            callback: static fn($item) => new OrderItemDTO(
+                productId: $item->getProductId()->toString(),
+                productName: $item->getProductName(),
+                quantity: $item->getQuantity(),
+                priceAtPurchase: $item->getPriceAtPurchase(),
+            ),
+            array: $order->getItems()->toArray(),
+        );
 
-        return new JsonResponse(data: $data);
+        $orderDTO = new OrderDTO(
+            id: $order->getId()->toString(),
+            userId: $order->getUserId()->toString(),
+            status: $order->getStatus()->value,
+            deliveryMethod: $order->getDeliveryMethod()->value,
+            orderPhone: $order->getOrderPhone(),
+            createdAt: $order->getCreatedAt()->format(format: 'Y-m-d\TH:i:s\Z'),
+            items: $orderItems,
+        );
+
+        $json = $this->serializer->serialize($orderDTO, 'json', ['groups' => ['order:read']]);
+
+        return new JsonResponse(data: $json, json: true);
     }
 
     #[Route('/{id}', methods: ['PATCH'])]

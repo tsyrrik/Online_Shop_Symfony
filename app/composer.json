@@ -15,6 +15,7 @@
         "doctrine/doctrine-migrations-bundle": ">=3.4.1",
         "doctrine/migrations": ">=3.8.2",
         "doctrine/orm": ">=3.3.2",
+        "nelmio/api-doc-bundle": "^5.0",
         "phpdocumentor/reflection-docblock": "^5.6.1",
         "phpstan/phpdoc-parser": "^2.1.0",
         "ramsey/uuid": "^4.7.6",
@@ -50,20 +51,20 @@
         "symfony/stimulus-bundle": "^2.23.0",
         "symfony/string": "7.2.0",
         "symfony/translation": "~7.2.4",
-        "symfony/twig-bundle": "~7.2.0",
         "symfony/ux-turbo": "^2.23",
         "symfony/validator": "~7.2.4",
         "symfony/web-link": "~7.2.0",
         "symfony/yaml": "~7.2.3",
         "twig/extra-bundle": "^3.20",
-        "twig/twig": "^2.12 || ^3.20"
+        "twig/twig": "^2.12 || ^3.20",
+        "zircote/swagger-php": "^5.0.7"
     },
     "require-dev": {
         "deptrac/deptrac": "^2.0.7",
         "doctrine/doctrine-fixtures-bundle": "^4.0",
         "doctrine/persistence": "^3.4",
         "ergebnis/composer-normalize": "^2.45",
-        "friendsofphp/php-cs-fixer": "^3.72.0",
+        "friendsofphp/php-cs-fixer": "^3.73.1",
         "maglnet/composer-require-checker": "^4.16.1",
         "phpmd/phpmd": "^2.15",
         "phpstan/phpstan": "^2.1.8",
@@ -78,7 +79,7 @@
         "symfony/phpunit-bridge": "^7.2",
         "symfony/stopwatch": "~7.2.4",
         "symfony/web-profiler-bundle": "~7.2.4",
-        "vimeo/psalm": "^6.9.1"
+        "vimeo/psalm": "^6.9.4"
     },
     "replace": {
         "symfony/polyfill-ctype": "*",

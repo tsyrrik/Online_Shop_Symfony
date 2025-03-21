@@ -15,11 +15,11 @@ enum OrderStatus: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::PAID => 'Оплачен и ждёт сборки',
-            self::IN_ASSEMBLY => 'В сборке',
-            self::READY_FOR_DELIVERY => 'Готов к выдаче/доставляется',
-            self::DELIVERED => 'Получен',
-            self::CANCELLED => 'Отменён',
+            self::PAID => 'Paid and awaiting assembly',
+            self::IN_ASSEMBLY => 'In assembly',
+            self::READY_FOR_DELIVERY => 'Ready for pickup/delivered',
+            self::DELIVERED => 'Received',
+            self::CANCELLED => 'Cancelled',
         };
     }
 }

@@ -5,21 +5,24 @@ declare(strict_types=1);
 namespace App\Application\Command;
 
 use App\Application\Service\ReportService;
+use App\Infrastructure\Api\DTO\ReportResultDTO;
 use Exception;
 use RdKafka\Conf;
 use RdKafka\KafkaConsumer;
 use RdKafka\Producer;
-use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class GenerateReportCommand extends Command
 {
     protected static $defaultName = 'app:generate-report';
 
-    public function __construct(private ReportService $reportService)
-    {
+    public function __construct(
+        private ReportService $reportService,
+        private SerializerInterface $serializer,
+    ) {
         parent::__construct();
     }
 
@@ -30,7 +33,6 @@ class GenerateReportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Configure Kafka consumer
         $conf = new Conf();
         $conf->set(name: 'group.id', value: 'report_generators');
         $conf->set(name: 'metadata.broker.list', value: 'kafka:9092');
@@ -53,9 +55,21 @@ class GenerateReportCommand extends Command
 
                 try {
                     $filePath = $this->reportService->generateSalesReport();
-                    $this->sendReportResult(reportId: $reportId, result: 'success', filePath: $filePath);
+                    $this->sendReportResult(
+                        reportId: $reportId,
+                        result: 'success',
+                        filePath: $filePath,
+                        errorMessage: null,
+                        serializer: $this->serializer,
+                    );
                 } catch (Exception $e) {
-                    $this->sendReportResult(reportId: $reportId, result: 'fail', errorMessage: $e->getMessage());
+                    $this->sendReportResult(
+                        reportId: $reportId,
+                        result: 'fail',
+                        filePath: null,
+                        errorMessage: $e->getMessage(),
+                        serializer: $this->serializer,
+                    );
                 }
             }
         }
@@ -63,23 +77,20 @@ class GenerateReportCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function sendReportResult(string $reportId, string $result, ?string $filePath = null, ?string $errorMessage = null): void
-    {
+    private function sendReportResult(
+        string $reportId,
+        string $result,
+        ?string $filePath,
+        ?string $errorMessage,
+        SerializerInterface $serializer,
+    ): void {
         $producer = new Producer();
         $producer->addBrokers(broker_list: 'kafka:9092');
         $topic = $producer->newTopic(topic_name: 'report_result');
 
-        $message = ['reportId' => $reportId, 'result' => $result];
-        if ($result === 'success' && $filePath) {
-            $message['filePath'] = $filePath;
-        } elseif ($result === 'fail' && $errorMessage) {
-            $message['detail'] = ['error' => $errorMessage];
-        }
-
-        $encodedMessage = json_encode(value: $message);
-        if ($encodedMessage === false) {
-            throw new RuntimeException(message: 'Failed to encode message to JSON');
-        }
+        $detail = $result === 'fail' && $errorMessage ? ['error' => $errorMessage] : null;
+        $dto = new ReportResultDTO(reportId: $reportId, result: $result, filePath: $filePath, detail: $detail);
+        $encodedMessage = $serializer->serialize($dto, 'json');
 
         $topic->produce(partition: RD_KAFKA_PARTITION_UA, msgflags: 0, payload: $encodedMessage);
         $producer->flush(timeout_ms: 10000);
