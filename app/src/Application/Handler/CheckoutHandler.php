@@ -13,6 +13,8 @@ use App\Domain\Order\Repository\OrderRepositoryInterface;
 use App\Domain\Product\Repository\ProductRepositoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use RdKafka\Producer;
+use RuntimeException;
 
 final readonly class CheckoutHandler
 {
@@ -20,6 +22,7 @@ final readonly class CheckoutHandler
         private CartRepositoryInterface $cartRepository,
         private ProductRepositoryInterface $productRepository,
         private OrderRepositoryInterface $orderRepository,
+        private Producer $kafkaProducer,
     ) {}
 
     public function handle(CheckoutCommand $command): void
@@ -59,8 +62,41 @@ final readonly class CheckoutHandler
 
         $this->orderRepository->save($order);
 
+        // Отправляем уведомление в Kafka
+        $this->sendOrderNotification(order: $order, notificationType: 'requires_payment');
+
         $cart = $this->cartRepository->getCartForUser((string) $command->userId)
             ?? new Cart(userId: $command->userId);
         $this->cartRepository->saveCart((string) $command->userId, $cart);
+    }
+
+    private function sendOrderNotification(Order $order, string $notificationType): void
+    {
+        $topic = $this->kafkaProducer->newTopic(topic_name: 'order_notifications');
+
+        $message = [
+            'type' => 'sms',
+            'userPhone' => $order->getOrderPhone(),
+            'notificationType' => $notificationType,
+            'orderNum' => $order->getId()->toString(),
+            'orderItems' => array_map(callback: static fn(OrderItem $item) => [
+                'name' => $item->getProductName(),
+                'cost' => $item->getPriceAtPurchase(),
+                'additionalInfo' => null,
+            ], array: $order->getItems()->toArray()),
+            'deliveryType' => $order->getDeliveryMethod()->value,
+            'deliveryAddress' => [
+                'kladrId' => null,
+                'fullAddress' => null,
+            ],
+        ];
+
+        $jsonPayload = json_encode(value: $message);
+        if ($jsonPayload === false) {
+            throw new RuntimeException(message: 'Failed to encode message to JSON');
+        }
+
+        $topic->produce(partition: RD_KAFKA_PARTITION_UA, msgflags: 0, payload: $jsonPayload);
+        $this->kafkaProducer->flush(timeout_ms: 10000);
     }
 }
